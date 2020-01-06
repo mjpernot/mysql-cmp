@@ -174,33 +174,10 @@ pip install -r requirements-python-lib.txt --target mysql_lib/lib --trusted-host
 # Unit test runs for mysql_rep_cmp.py:
   * Replace **{Python_Project}** with the baseline path of the python program.
 
+### Unit testing:
 ```
 cd {Python_Project}/mysql-cmp
-```
-
-### Unit:  help_message
-```
 test/unit/mysql_rep_cmp/help_message.py
-```
-
-### Unit:  
-```
-test/unit/mysql_rep_cmp/
-```
-
-### Unit:  
-```
-test/unit/mysql_rep_cmp/
-```
-
-### Unit:  run_program
-```
-test/unit/mysql_rep_cmp/run_program.py
-```
-
-### Unit:  main
-```
-test/unit/mysql_rep_cmp/main.py
 ```
 
 ### All unit testing
