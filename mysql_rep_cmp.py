@@ -79,7 +79,6 @@ import mysql_lib.mysql_libs as mysql_libs
 import mysql_lib.mysql_class as mysql_class
 import version
 
-# Version
 __version__ = version.__version__
 
 
