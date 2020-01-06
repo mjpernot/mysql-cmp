@@ -177,6 +177,7 @@ pip install -r requirements-python-lib.txt --target mysql_lib/lib --trusted-host
 ### Unit testing:
 ```
 cd {Python_Project}/mysql-cmp
+test/unit/mysql_rep_cmp/fetch_db_list.py
 test/unit/mysql_rep_cmp/help_message.py
 ```
 
