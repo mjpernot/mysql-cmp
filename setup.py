@@ -18,7 +18,7 @@ import setuptools
 import version
 
 
-# Read in long description from README file.
+# Read in long description from README.md file.
 here = os.path.abspath(os.path.dirname(__file__))
 
 with open(os.path.join(here, "README.md")) as f_hdlr:
