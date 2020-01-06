@@ -96,7 +96,7 @@ def help_message():
     print(__doc__)
 
 
-def fetch_db_list(SERVER, ign_db_list=None, db_name=None):
+def fetch_db_list(SERVER, ign_db_list=None, db_name=None, **kwargs):
 
     """Function:  fetch_db_list
 
@@ -134,7 +134,7 @@ def fetch_db_list(SERVER, ign_db_list=None, db_name=None):
         return db_list
 
 
-def recur_tbl_cmp(MASTER, SLAVE, db, tbl, recur):
+def recur_tbl_cmp(MASTER, SLAVE, db, tbl, recur, **kwargs):
 
     """Function:  recur_tbl_cmp
 
@@ -175,7 +175,7 @@ def recur_tbl_cmp(MASTER, SLAVE, db, tbl, recur):
         return
 
 
-def run_cmp(MASTER, SLAVE, db, tbl_list):
+def run_cmp(MASTER, SLAVE, db, tbl_list, **kwargs):
 
     """Function:  run_cmp
 
