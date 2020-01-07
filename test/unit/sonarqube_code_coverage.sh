@@ -10,6 +10,7 @@ echo ""
 echo "Running unit test modules in conjunction with coverage"
 coverage run -a --source=mysql_rep_cmp test/unit/mysql_rep_cmp/fetch_db_list.py
 coverage run -a --source=mysql_rep_cmp test/unit/mysql_rep_cmp/help_message.py
+coverage run -a --source=mysql_rep_cmp test/unit/mysql_rep_cmp/recur_tbl_cmp.py
 
 echo ""
 echo "Producing code coverage report"

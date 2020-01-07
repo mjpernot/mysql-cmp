@@ -24,6 +24,7 @@ pipeline {
                 pip2 install mysql-connector-python==8.0.16 --user
                 ./test/unit/mysql_rep_cmp/fetch_db_list.py
                 ./test/unit/mysql_rmp_cmp/help_message.py
+                ./test/unit/mysql_rep_cmp/recur_tbl_cmp.py
                 deactivate
                 rm -rf test_env
                 """

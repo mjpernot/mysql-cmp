@@ -8,3 +8,4 @@ echo ""
 echo "Unit testing..."
 test/unit/mysql_rep_cmp/fetch_db_list.py
 test/unit/mysql_rep_cmp/help_message.py
+test/unit/mysql_rep_cmp/recur_tbl_cmp.py
