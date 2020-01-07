@@ -43,6 +43,8 @@ class Server(object):
 
     Methods:
         __init__ -> Class initialization.
+        fetch_do_db -> Stub holder for mysql_class.Server.fetch_do_db method.
+        fetch_ign_db -> Stub holder for mysql_class.Server.fetch_ign_db method.
 
     """
 
