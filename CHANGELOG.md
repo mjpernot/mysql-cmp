@@ -12,6 +12,11 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - run_program:  Fixed problem with mutable default arguments issue.
 
 ### Changed
+- fetch_db_list:  Changed variable name to standard convention.
+- recur_tbl_cmp:  Changed variable name to standard convention.
+- run_cmp:  Changed variable name to standard convention.
+- setup_cmp:  Changed variable name to standard convention.
+- run_program:  Changed variable name to standard convention.
 - run_program:  Converted program to use mysql-lib v4.0.0.
 - Added \*\*kwargs to those function parameter lists without the keyword argument capability.
 - Documentation updates.
