@@ -271,11 +271,11 @@ def run_program(args_array, sys_ign_db, **kwargs):
     Arguments:
         (input) args_array -> Array of command line options and values.
         (input) sys_ign_db -> List of system databases to ignore.
-        (input) **kwargs:
-            ign_db_tbl -> Dictionary-List of dbs & tables to be ignored.
 
     """
 
+    args_array = dict(args_array)
+    sys_ign_db = list(sys_ign_db)
     MASTER = mysql_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mysql_class.MasterRep)
     SLAVE = mysql_libs.create_instance(args_array["-r"], args_array["-d"],
@@ -285,17 +285,17 @@ def run_program(args_array, sys_ign_db, **kwargs):
     if SLAVE.server_id in gen_libs.dict_2_list(MASTER.show_slv_hosts(),
                                                "Server_id"):
 
-        # Table check
+        # Check specified tables in database
         if "-t" in args_array:
             setup_cmp(MASTER, SLAVE, sys_ign_db, args_array["-B"],
                       args_array["-t"], **kwargs)
 
-        # Database check
+        # Check single database
         elif "-B" in args_array:
             setup_cmp(MASTER, SLAVE, sys_ign_db, args_array["-B"], "",
                       **kwargs)
 
-        # Check all
+        # Check all tables in all databases
         else:
             setup_cmp(MASTER, SLAVE, sys_ign_db, "", "", **kwargs)
 
