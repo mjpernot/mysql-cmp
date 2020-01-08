@@ -219,6 +219,19 @@ def setup_cmp(MASTER, SLAVE, sys_ign_db, db_name=None, tbl_name=None,
 
     """
 
+    if db_name is None:
+        db_name = list()
+
+    else:
+        db_name = list(db_name)
+
+    if tbl_name is None:
+        tbl_name = list()
+
+    else:
+        tbl_name = list(tbl_name)
+
+    sys_ign_db = list(sys_ign_db)
     ign_db_tbl = kwargs.get("ign_db_tbl", None)
     mst_dbs = fetch_db_list(MASTER)
     slv_dbs = fetch_db_list(SLAVE, sys_ign_db, db_name)
@@ -228,9 +241,8 @@ def setup_cmp(MASTER, SLAVE, sys_ign_db, db_name=None, tbl_name=None,
 
     for db in db_list:
         # Get master list of tables.
-        mst_tbl_list = gen_libs.dict_2_list(mysql_libs.fetch_tbl_dict(MASTER,
-                                                                      db),
-                                            "table_name")
+        mst_tbl_list = gen_libs.dict_2_list(mysql_libs.fetch_tbl_dict(
+            MASTER, db), "table_name")
 
         # Database in "to do" list.
         if db in slv_do_dict:
@@ -238,9 +250,8 @@ def setup_cmp(MASTER, SLAVE, sys_ign_db, db_name=None, tbl_name=None,
 
         else:
             # Get list of tables from slave.
-            slv_tbl_list = \
-                gen_libs.dict_2_list(mysql_libs.fetch_tbl_dict(SLAVE, db),
-                                     "table_name")
+            slv_tbl_list = gen_libs.dict_2_list(
+                mysql_libs.fetch_tbl_dict(SLAVE, db), "table_name")
 
         slv_ign_tbl = []
 
