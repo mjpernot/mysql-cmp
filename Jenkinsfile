@@ -26,6 +26,7 @@ pipeline {
                 ./test/unit/mysql_rmp_cmp/help_message.py
                 ./test/unit/mysql_rep_cmp/recur_tbl_cmp.py
                 ./test/unit/mysql_rep_cmp/run_cmp.py
+                ./test/unit/mysql_rep_cmp/run_program.py
                 ./test/unit/mysql_rep_cmp/setup_cmp.py
                 deactivate
                 rm -rf test_env
