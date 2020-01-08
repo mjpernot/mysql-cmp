@@ -143,7 +143,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(mysql_rep_cmp.fetch_db_list(
             self.server, db_name=self.dolist3, ign_db_list=self.ignlist),
-                         self.dblist2)
+            self.dblist2)
 
     def test_db_name_ign_db_list(self):
 
