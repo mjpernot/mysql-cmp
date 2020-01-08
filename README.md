@@ -179,6 +179,7 @@ pip install -r requirements-python-lib.txt --target mysql_lib/lib --trusted-host
 cd {Python_Project}/mysql-cmp
 test/unit/mysql_rep_cmp/fetch_db_list.py
 test/unit/mysql_rep_cmp/help_message.py
+test/unit/mysql_rep_cmp/main.py
 test/unit/mysql_rep_cmp/recur_tbl_cmp.py
 test/unit/mysql_rep_cmp/run_cmp.py
 test/unit/mysql_rep_cmp/run_program.py
