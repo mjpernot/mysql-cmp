@@ -190,6 +190,7 @@ def run_cmp(MASTER, SLAVE, db, tbl_list, **kwargs):
 
     """
 
+    tbl_list = list(tbl_list)
     print("\nDatabase: {0}".format(db))
 
     for tbl in tbl_list:
