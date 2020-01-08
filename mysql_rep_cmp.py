@@ -294,8 +294,10 @@ def run_program(args_array, sys_ign_db, **kwargs):
     sys_ign_db = list(sys_ign_db)
     MASTER = mysql_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mysql_class.MasterRep)
+    MASTER.connect()
     SLAVE = mysql_libs.create_instance(args_array["-r"], args_array["-d"],
                                        mysql_class.SlaveRep)
+    SLAVE.connect()
 
     # Is slave in replication with master
     if SLAVE.server_id in gen_libs.dict_2_list(MASTER.show_slv_hosts(),
