@@ -361,12 +361,12 @@ def main():
     args_array = arg_parser.arg_parse2(sys.argv, opt_val_list,
                                        multi_val=opt_multi_list)
 
-    if not gen_libs.help_func(args_array, __version__, help_message):
-        if arg_parser.arg_req_xor(args_array, opt_req_xor_list) \
-           and not arg_parser.arg_require(args_array, opt_req_list) \
-           and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
-           and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list):
-            run_program(args_array, sys_ign_db, ign_db_tbl=ign_db_tbl)
+    if not gen_libs.help_func(args_array, __version__, help_message) \
+       and arg_parser.arg_req_xor(args_array, opt_req_xor_list) \
+       and not arg_parser.arg_require(args_array, opt_req_list) \
+       and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
+       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list):
+        run_program(args_array, sys_ign_db, ign_db_tbl=ign_db_tbl)
 
 
 if __name__ == "__main__":
