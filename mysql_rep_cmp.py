@@ -112,7 +112,16 @@ def fetch_db_list(SERVER, ign_db_list=None, db_name=None, **kwargs):
     """
 
     if ign_db_list is None:
-        ign_db_list = []
+        ign_db_list = list()
+
+    else:
+        ign_db_list = list(ign_db_list)
+
+    if db_name is None:
+        db_name = list()
+
+    else:
+        db_name = list(db_name)
 
     if SERVER.do_db:
         db_list = SERVER.fetch_do_db()
@@ -152,13 +161,10 @@ def recur_tbl_cmp(MASTER, SLAVE, db, tbl, recur, **kwargs):
 
     """
 
-    # Recursion level reached.
     if recur < 4:
 
-        # Are tables in sync
-        if mysql_libs.checksum(MASTER, db, tbl) == mysql_libs.checksum(SLAVE,
-                                                                       db,
-                                                                       tbl):
+        if mysql_libs.checksum(MASTER, db, tbl) == \
+           mysql_libs.checksum(SLAVE, db, tbl):
             print("Synced")
             return
 
@@ -166,10 +172,8 @@ def recur_tbl_cmp(MASTER, SLAVE, db, tbl, recur, **kwargs):
             recur += 1
             time.sleep(5)
 
-            # Recursion call.
             recur_tbl_cmp(MASTER, SLAVE, db, tbl, recur)
 
-    # Table is out of sync.
     else:
         print("Error:  Checksums do not match.")
         return
