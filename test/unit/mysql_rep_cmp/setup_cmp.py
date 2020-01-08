@@ -98,6 +98,14 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_tbl_name -> Test with tbl_name is passed.
+        test_db_name -> Test with db_name is passed.
+        test_sys_ign_db -> Test with sys_ign_db is passed.
+        test_ign_db_tbls -> Test with ign_db_tbl parameter passed.
+        test_ign_tbls -> Test with slave ignore tables found.
+        test_do_tbls2 -> Test with slave do tables found.
+        test_do_tbls -> Test with slave do tables found.
+        test_no_matches -> Test with no matches between master and slave.
         test_two_dbs -> Test with two databases to check.
         test_one_db -> Test with one database to check.
         test_no_dbs -> Test with no databases from master or slave.
@@ -120,6 +128,179 @@ class UnitTest(unittest.TestCase):
         self.databases2 = [{"table_name": "tbl3"}, {"table_name": "tbl4"}]
         self.dblist = ["db1"]
         self.dblist2 = ["db1", "db2"]
+        self.dblist3 = ["db3", "db4"]
+        self.ign_db_tbl = {"db1": ["tbl1"]}
+        self.sys_ign_db = ["performance_schema", "information_schema"]
+        self.tbllist = ["tbl1"]
+
+    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
+    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    @mock.patch("mysql_rep_cmp.fetch_db_list")
+    def test_tbl_name(self, mock_fetch, mock_tbl):
+
+        """Function:  test_tbl_name
+
+        Description:  Test with tbl_name is passed.
+
+        Arguments:
+
+        """
+        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
+
+        mock_fetch.side_effect = [self.dblist2, self.dblist2]
+        mock_tbl.side_effect = [self.databases, self.databases,
+                                self.databases2, self.databases2]
+
+        self.assertFalse(mysql_rep_cmp.setup_cmp(
+            self.master, self.slave, self.sys_ign_db, tbl_name=self.tbllist,
+            ign_db_tbl={}))
+
+    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
+    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    @mock.patch("mysql_rep_cmp.fetch_db_list")
+    def test_db_name(self, mock_fetch, mock_tbl):
+
+        """Function:  test_db_name
+
+        Description:  Test with db_name is passed.
+
+        Arguments:
+
+        """
+        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
+
+        mock_fetch.side_effect = [self.dblist2, self.dblist2]
+        mock_tbl.side_effect = [self.databases, self.databases,
+                                self.databases2, self.databases2]
+
+        self.assertFalse(mysql_rep_cmp.setup_cmp(
+            self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
+            ign_db_tbl={}))
+
+    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
+    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    @mock.patch("mysql_rep_cmp.fetch_db_list")
+    def test_sys_ign_db(self, mock_fetch, mock_tbl):
+
+        """Function:  test_sys_ign_db
+
+        Description:  Test with sys_ign_db is passed.
+
+        Arguments:
+
+        """
+        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
+
+        mock_fetch.side_effect = [self.dblist2, self.dblist2]
+        mock_tbl.side_effect = [self.databases, self.databases,
+                                self.databases2, self.databases2]
+
+        self.assertFalse(mysql_rep_cmp.setup_cmp(
+            self.master, self.slave, self.sys_ign_db, ign_db_tbl={}))
+
+    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    @mock.patch("mysql_rep_cmp.fetch_db_list")
+    def test_ign_db_tbls(self, mock_fetch, mock_tbl):
+
+        """Function:  test_ign_db_tbls
+
+        Description:  Test with ign_db_tbl parameter passed.
+
+        Arguments:
+
+        """
+        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
+
+        mock_fetch.side_effect = [self.dblist2, self.dblist2]
+        mock_tbl.side_effect = [self.databases, self.databases,
+                                self.databases2, self.databases2]
+
+        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, [],
+                                                 ign_db_tbl=self.ign_db_tbl))
+
+    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
+    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    @mock.patch("mysql_rep_cmp.fetch_db_list")
+    def test_ign_tbls(self, mock_fetch, mock_tbl):
+
+        """Function:  test_ign_tbls
+
+        Description:  Test with slave ignore tables found.
+
+        Arguments:
+
+        """
+        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
+
+        mock_fetch.side_effect = [self.dblist2, self.dblist2]
+        mock_tbl.side_effect = [self.databases, self.databases,
+                                self.databases2, self.databases2]
+
+        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, [],
+                                                 ign_db_tbl={}))
+
+    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
+    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    @mock.patch("mysql_rep_cmp.fetch_db_list")
+    def test_do_tbls2(self, mock_fetch, mock_tbl):
+
+        """Function:  test_do_tbls2
+
+        Description:  Test with slave do tables found.
+
+        Arguments:
+
+        """
+
+        self.slave.do_tbl = {"db1": ["tbl1", "tbl2"]}
+        mock_fetch.side_effect = [self.dblist2, self.dblist2]
+        mock_tbl.side_effect = [self.databases,
+                                self.databases2, self.databases2]
+
+        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, [],
+                                                 ign_db_tbl={}))
+
+    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
+    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    @mock.patch("mysql_rep_cmp.fetch_db_list")
+    def test_do_tbls(self, mock_fetch, mock_tbl):
+
+        """Function:  test_do_tbls
+
+        Description:  Test with slave do tables found.
+
+        Arguments:
+
+        """
+
+        self.slave.do_tbl = {"db1": ["tbl1", "tbl2"], "db2": ["tbl3"]}
+        mock_fetch.side_effect = [self.dblist2, self.dblist2]
+        mock_tbl.side_effect = [self.databases, self.databases2]
+
+        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, [],
+                                                 ign_db_tbl={}))
+
+    @mock.patch("mysql_rep_cmp.fetch_db_list")
+    def test_no_matches(self, mock_fetch):
+
+        """Function:  test_no_matches
+
+        Description:  Test with no matches between master and slave.
+
+        Arguments:
+
+        """
+
+        mock_fetch.side_effect = [self.dblist2, self.dblist3]
+
+        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
 
     # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
