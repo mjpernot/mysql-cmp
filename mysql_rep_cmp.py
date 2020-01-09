@@ -240,7 +240,7 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         tbl_name = list(tbl_name)
 
     sys_ign_db = list(sys_ign_db)
-    ign_db_tbl = kwargs.get("ign_db_tbl", None)
+    ign_db_tbl = kwargs.get("ign_db_tbl", {})
     mst_dbs = fetch_db_list(master)
     slv_dbs = fetch_db_list(slave, sys_ign_db, db_name)
     db_list = gen_libs.del_not_in_list(mst_dbs, slv_dbs)
