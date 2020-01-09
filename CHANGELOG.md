@@ -12,6 +12,8 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - run_program:  Fixed problem with mutable default arguments issue.
 
 ### Changed
+- recur_tbl_cmp: Set recursion level to a default of 0.
+- recur_tbl_cmp: Refactored recursion call to improve performance.
 - main:  Added program lock functionality to program.
 - main:  Added new option -y to the program.
 - main:  Refactored if statements.

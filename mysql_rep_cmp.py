@@ -148,7 +148,7 @@ def fetch_db_list(server, ign_db_list=None, db_name=None, **kwargs):
         return db_list
 
 
-def recur_tbl_cmp(master, slave, db, tbl, recur, **kwargs):
+def recur_tbl_cmp(master, slave, db, tbl, recur=0, **kwargs):
 
     """Function:  recur_tbl_cmp
 
@@ -174,10 +174,8 @@ def recur_tbl_cmp(master, slave, db, tbl, recur, **kwargs):
             return
 
         else:
-            recur += 1
             time.sleep(5)
-
-            recur_tbl_cmp(master, slave, db, tbl, recur)
+            recur_tbl_cmp(master, slave, db, tbl, recur + 1)
 
     else:
         print("Error:  Checksums do not match.")
