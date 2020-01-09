@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [3.1.0] - 2020-01-06
+### Fixed
+- setup_cmp:  Set ign_db_tbl default value to empty dictionary.
+- fetch_db_list:  Fixed problem with mutable default arguments issue.
+- run_cmp:  Fixed problem with mutable default arguments issue.
+- setup_cmp:  Fixed problem with mutable default arguments issue.
+- run_program:  Fixed problem with mutable default arguments issue.
+
+### Changed
+- run_program:  Replaced sys.exit() call with print call.
+- recur_tbl_cmp: Set recursion level to a default of 0.
+- recur_tbl_cmp: Refactored recursion call to improve performance.
+- main:  Added program lock functionality to program.
+- main:  Added new option -y to the program.
+- main:  Refactored if statements.
+- fetch_db_list:  Changed variable name to standard convention.
+- recur_tbl_cmp:  Changed variable name to standard convention.
+- run_cmp:  Changed variable name to standard convention.
+- setup_cmp:  Changed variable name to standard convention.
+- run_program:  Changed variable name to standard convention.
+- run_program:  Converted program to use mysql-lib v4.0.0.
+- Added \*\*kwargs to those function parameter lists without the keyword argument capability.
+- Documentation updates.
+
+
 ## [3.0.1] - 2018-12-06
 ### Fixed
 - fetch_db_list:  Changed function parameter mutable argument default to immutable argument default.
@@ -35,7 +60,7 @@ Breaking Change
 ### Changed
 - Convert program to use local libraries from ./lib directory.
 - Change single quotes to double quotes.
-- Help_Message:  Replace docstring with printing the programs __doc__.
+- Help_Message:  Replace docstring with printing the programs \_\_doc\_\_.
 
 
 ## [2.3.0] - 2016-11-22
@@ -49,9 +74,9 @@ Breaking Change
 ## [2.2.0] - 2016-09-23
 ### Changed
 - MySQL 5.6 has 5 new tables in the mysql database that are not replicated between master and slave.  These tables show up as out of synce when a comparsion is ran.  Ignore these tables for checking.  Tables are listed in ign_db_tbl.
-- main:  Added variable: ign_db_tbl and passed as **kwargs argument.
-- Run_Program:  Added **kwargs to functions argument list.  Added **kwargs to function call to Setup_Cmp (3X).
-- Setup_Cmp:  Added **kwargs to functions argument list.  Add ignore tables to the slave ignore table list.
+- main:  Added variable: ign_db_tbl and passed as \*\*kwargs argument.
+- Run_Program:  Added \*\*kwargs to functions argument list.  Added \*\*kwargs to function call to Setup_Cmp (3X).
+- Setup_Cmp:  Added \*\*kwargs to functions argument list.  Add ignore tables to the slave ignore table list.
 - Modifications work both for Mysql 5.5 and 5.6.
 
 

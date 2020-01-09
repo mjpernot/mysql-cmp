@@ -12,7 +12,7 @@
 
     Usage:
         mysql_rep_cmp.py -c file -r file -d path
-            {-A | -B name [-t name1 [name2 name3 ...]} [-v | -h]
+            {-A | -B name [-t name1 [name2 name3 ...]} [-y flavor_id] [-v | -h]
 
     Arguments:
         -c file => Master configuration file.  Required arg.
@@ -22,35 +22,39 @@
         -B Database name => Name of database.  Required XOR arg.
         -t Table name(s) => Name of tables, space delimited.
             Requires -B option.
+        -y value => A flavor id for the program lock.  To create unique lock.
         -v => Display version of this program.
         -h => Help and usage message.
 
         NOTE 1:  -v or -h overrides the other options.
-
         NOTE 2:  -A and -B are required XOR arguments.
 
     Notes:
-        Database configuration file format (mysql_{host}.py):
-            # Configuration file for {Database Name/Server}
+        Database configuration file format (mysql_cfg.py.TEMPLATE):
+            # Configuration file for each Master/Slave Database
             user = "root"
             passwd = "ROOT_PASSWORD"
             host = "IP_ADDRESS"
-            serv_os = "Linux" or "Solaris"
+            serv_os = "Linux"
             name = "HOSTNAME"
             port = PORT_NUMBER (default of mysql is 3306)
             cfg_file = "DIRECTORY_PATH/my.cfg"
             sid = "SERVER_ID"
-            extra_def_file = "DIRECTORY_PATH/myextra.cfg"
+            extra_def_file = "DIRECTORY_PATH/mysql.cfg"
 
-        Slave configuration file is the same format as the Master.
-
-        NOTE:  Include the cfg_file even if running remotely as the file will
+        NOTE 1:  Include the cfg_file even if running remotely as the file will
             be used in future releases.
+
+        NOTE 2:  In MySQL 5.6 - it now gives warning if password is passed on
+            the command line.  To suppress this warning, will require the use
+            of the --defaults-extra-file option (i.e. extra_def_file) in the
+            database configuration file.  See below for the defaults-extra-file
+            format.
 
         configuration modules -> name is runtime dependent as it can be
             used to connect to different databases with different names.
 
-        Defaults Extra File format (filename.cfg):
+        Defaults Extra File format (mysql.cfg.TEMPLATE):
             [client]
             password="ROOT_PASSWORD"
             socket="DIRECTORY_PATH/mysql.sock"
@@ -74,12 +78,12 @@ import time
 # Local
 import lib.arg_parser as arg_parser
 import lib.gen_libs as gen_libs
+import lib.gen_class as gen_class
 import lib.cmds_gen as cmds_gen
 import mysql_lib.mysql_libs as mysql_libs
 import mysql_lib.mysql_class as mysql_class
 import version
 
-# Version
 __version__ = version.__version__
 
 
@@ -97,7 +101,7 @@ def help_message():
     print(__doc__)
 
 
-def fetch_db_list(SERVER, ign_db_list=None, db_name=None):
+def fetch_db_list(server, ign_db_list=None, db_name=None, **kwargs):
 
     """Function:  fetch_db_list
 
@@ -105,7 +109,7 @@ def fetch_db_list(SERVER, ign_db_list=None, db_name=None):
         list or return the databases in the do list.
 
     Arguments:
-        (input) SERVER -> Server instance.
+        (input) server -> Server instance.
         (input) ign_db_list -> List of databases to be ignored.
         (input) db_name -> List of specify database names to be checked.
         (output) db_list | db_name -> List of databases.
@@ -113,17 +117,26 @@ def fetch_db_list(SERVER, ign_db_list=None, db_name=None):
     """
 
     if ign_db_list is None:
-        ign_db_list = []
-
-    if SERVER.do_db:
-        db_list = SERVER.fetch_do_db()
+        ign_db_list = list()
 
     else:
-        db_list = gen_libs.dict_2_list(mysql_libs.fetch_db_dict(SERVER),
+        ign_db_list = list(ign_db_list)
+
+    if db_name is None:
+        db_name = list()
+
+    else:
+        db_name = list(db_name)
+
+    if server.do_db:
+        db_list = server.fetch_do_db()
+
+    else:
+        db_list = gen_libs.dict_2_list(mysql_libs.fetch_db_dict(server),
                                        "Database")
 
-    if SERVER.ign_db:
-        ign_db_list = SERVER.fetch_ign_db() + ign_db_list
+    if server.ign_db:
+        ign_db_list = server.fetch_ign_db() + ign_db_list
 
     # Remove "ignore" databases from database list.
     db_list = gen_libs.del_not_and_list(db_list, ign_db_list)
@@ -135,7 +148,7 @@ def fetch_db_list(SERVER, ign_db_list=None, db_name=None):
         return db_list
 
 
-def recur_tbl_cmp(MASTER, SLAVE, db, tbl, recur):
+def recur_tbl_cmp(master, slave, db, tbl, recur=0, **kwargs):
 
     """Function:  recur_tbl_cmp
 
@@ -145,38 +158,31 @@ def recur_tbl_cmp(MASTER, SLAVE, db, tbl, recur):
         between calls.
 
     Arguments:
-        (input) MASTER -> Master instance.
-        (input) SLAVE -> Slave instance.
+        (input) master -> Master instance.
+        (input) slave -> Slave instance.
         (input) db -> Database name.
         (input) tbl -> Table name.
         (input) recur -> Current level of recursion.
 
     """
 
-    # Recursion level reached.
     if recur < 4:
 
-        # Are tables in sync
-        if mysql_libs.checksum(MASTER, db, tbl) == mysql_libs.checksum(SLAVE,
-                                                                       db,
-                                                                       tbl):
+        if mysql_libs.checksum(master, db, tbl) == \
+           mysql_libs.checksum(slave, db, tbl):
             print("Synced")
             return
 
         else:
-            recur += 1
             time.sleep(5)
+            recur_tbl_cmp(master, slave, db, tbl, recur + 1)
 
-            # Recursion call.
-            recur_tbl_cmp(MASTER, SLAVE, db, tbl, recur)
-
-    # Table is out of sync.
     else:
         print("Error:  Checksums do not match.")
         return
 
 
-def run_cmp(MASTER, SLAVE, db, tbl_list):
+def run_cmp(master, slave, db, tbl_list, **kwargs):
 
     """Function:  run_cmp
 
@@ -184,13 +190,14 @@ def run_cmp(MASTER, SLAVE, db, tbl_list):
         replica databases.
 
     Arguments:
-        (input) MASTER -> Master instance.
-        (input) SLAVE -> Slave instance.
+        (input) master -> Master instance.
+        (input) slave -> Slave instance.
         (input) db -> Database name.
         (input) tbl_list -> List of tables to be compared.
 
     """
 
+    tbl_list = list(tbl_list)
     print("\nDatabase: {0}".format(db))
 
     for tbl in tbl_list:
@@ -198,10 +205,10 @@ def run_cmp(MASTER, SLAVE, db, tbl_list):
         recur = 1
 
         # Recursive compare.
-        recur_tbl_cmp(MASTER, SLAVE, db, tbl, recur)
+        recur_tbl_cmp(master, slave, db, tbl, recur)
 
 
-def setup_cmp(MASTER, SLAVE, sys_ign_db, db_name=None, tbl_name=None,
+def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
               **kwargs):
 
     """Function:  setup_cmp
@@ -210,8 +217,8 @@ def setup_cmp(MASTER, SLAVE, sys_ign_db, db_name=None, tbl_name=None,
         tables then calling the compare function.
 
     Arguments:
-        (input) MASTER -> Master instance.
-        (input) SLAVE -> Slave instance.
+        (input) master -> Master instance.
+        (input) slave -> Slave instance.
         (input) sys_ign_db -> List of system databases to ignore.
         (input) db_name -> List of database names.
         (input) tbl_name -> List of table names.
@@ -220,18 +227,30 @@ def setup_cmp(MASTER, SLAVE, sys_ign_db, db_name=None, tbl_name=None,
 
     """
 
-    ign_db_tbl = kwargs.get("ign_db_tbl", None)
-    mst_dbs = fetch_db_list(MASTER)
-    slv_dbs = fetch_db_list(SLAVE, sys_ign_db, db_name)
+    if db_name is None:
+        db_name = list()
+
+    else:
+        db_name = list(db_name)
+
+    if tbl_name is None:
+        tbl_name = list()
+
+    else:
+        tbl_name = list(tbl_name)
+
+    sys_ign_db = list(sys_ign_db)
+    ign_db_tbl = kwargs.get("ign_db_tbl", {})
+    mst_dbs = fetch_db_list(master)
+    slv_dbs = fetch_db_list(slave, sys_ign_db, db_name)
     db_list = gen_libs.del_not_in_list(mst_dbs, slv_dbs)
-    slv_do_dict = SLAVE.fetch_do_tbl()
-    slv_ign_dict = SLAVE.fetch_ign_tbl()
+    slv_do_dict = slave.fetch_do_tbl()
+    slv_ign_dict = slave.fetch_ign_tbl()
 
     for db in db_list:
         # Get master list of tables.
-        mst_tbl_list = gen_libs.dict_2_list(mysql_libs.fetch_tbl_dict(MASTER,
-                                                                      db),
-                                            "table_name")
+        mst_tbl_list = gen_libs.dict_2_list(mysql_libs.fetch_tbl_dict(
+            master, db), "table_name")
 
         # Database in "to do" list.
         if db in slv_do_dict:
@@ -239,9 +258,8 @@ def setup_cmp(MASTER, SLAVE, sys_ign_db, db_name=None, tbl_name=None,
 
         else:
             # Get list of tables from slave.
-            slv_tbl_list = \
-                gen_libs.dict_2_list(mysql_libs.fetch_tbl_dict(SLAVE, db),
-                                     "table_name")
+            slv_tbl_list = gen_libs.dict_2_list(
+                mysql_libs.fetch_tbl_dict(slave, db), "table_name")
 
         slv_ign_tbl = []
 
@@ -260,7 +278,7 @@ def setup_cmp(MASTER, SLAVE, sys_ign_db, db_name=None, tbl_name=None,
         if tbl_name:
             tbl_list = gen_libs.del_not_in_list(tbl_list, tbl_name)
 
-        run_cmp(MASTER, SLAVE, db, tbl_list)
+        run_cmp(master, slave, db, tbl_list)
 
 
 def run_program(args_array, sys_ign_db, **kwargs):
@@ -272,39 +290,41 @@ def run_program(args_array, sys_ign_db, **kwargs):
     Arguments:
         (input) args_array -> Array of command line options and values.
         (input) sys_ign_db -> List of system databases to ignore.
-        (input) **kwargs:
-            ign_db_tbl -> Dictionary-List of dbs & tables to be ignored.
 
     """
 
-    MASTER = mysql_libs.create_instance(args_array["-c"], args_array["-d"],
+    args_array = dict(args_array)
+    sys_ign_db = list(sys_ign_db)
+    master = mysql_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mysql_class.MasterRep)
-    SLAVE = mysql_libs.create_instance(args_array["-r"], args_array["-d"],
+    master.connect()
+    slave = mysql_libs.create_instance(args_array["-r"], args_array["-d"],
                                        mysql_class.SlaveRep)
+    slave.connect()
 
     # Is slave in replication with master
-    if SLAVE.server_id in gen_libs.dict_2_list(MASTER.show_slv_hosts(),
+    if slave.server_id in gen_libs.dict_2_list(master.show_slv_hosts(),
                                                "Server_id"):
 
-        # Table check
+        # Check specified tables in database
         if "-t" in args_array:
-            setup_cmp(MASTER, SLAVE, sys_ign_db, args_array["-B"],
+            setup_cmp(master, slave, sys_ign_db, args_array["-B"],
                       args_array["-t"], **kwargs)
 
-        # Database check
+        # Check single database
         elif "-B" in args_array:
-            setup_cmp(MASTER, SLAVE, sys_ign_db, args_array["-B"], "",
+            setup_cmp(master, slave, sys_ign_db, args_array["-B"], "",
                       **kwargs)
 
-        # Check all
+        # Check all tables in all databases
         else:
-            setup_cmp(MASTER, SLAVE, sys_ign_db, "", "", **kwargs)
+            setup_cmp(master, slave, sys_ign_db, "", "", **kwargs)
 
-        cmds_gen.disconnect(MASTER, SLAVE)
+        cmds_gen.disconnect(master, slave)
 
     else:
-        cmds_gen.disconnect(MASTER, SLAVE)
-        sys.exit("Error:  Replica is not in replication with Master.")
+        cmds_gen.disconnect(master, slave)
+        print("Error:  Replica is not in replication with Master.")
 
 
 def main():
@@ -337,19 +357,28 @@ def main():
     opt_multi_list = ["-B", "-t"]
     opt_req_list = ["-r", "-c", "-d"]
     opt_req_xor_list = {"-A": "-B"}
-    opt_val_list = ["-r", "-c", "-d"]
+    opt_val_list = ["-r", "-c", "-d", "-y"]
     sys_ign_db = ["performance_schema", "information_schema"]
 
     # Process argument list from command line.
     args_array = arg_parser.arg_parse2(sys.argv, opt_val_list,
                                        multi_val=opt_multi_list)
 
-    if not gen_libs.help_func(args_array, __version__, help_message):
-        if arg_parser.arg_req_xor(args_array, opt_req_xor_list) \
-           and not arg_parser.arg_require(args_array, opt_req_list) \
-           and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
-           and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list):
+    if not gen_libs.help_func(args_array, __version__, help_message) \
+       and arg_parser.arg_req_xor(args_array, opt_req_xor_list) \
+       and not arg_parser.arg_require(args_array, opt_req_list) \
+       and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
+       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list):
+
+        try:
+            prog_lock = gen_class.ProgramLock(sys.argv,
+                                              args_array.get("-y", ""))
             run_program(args_array, sys_ign_db, ign_db_tbl=ign_db_tbl)
+            del prog_lock
+
+        except gen_class.SingleInstanceException:
+            print("WARNING:  lock in place for mysql_rep_cmp with id of: %s"
+                  % (args_array.get("-y", "")))
 
 
 if __name__ == "__main__":
