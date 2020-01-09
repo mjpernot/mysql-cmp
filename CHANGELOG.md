@@ -12,6 +12,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - run_program:  Fixed problem with mutable default arguments issue.
 
 ### Changed
+- run_program:  Replaced sys.exit() call with print call.
 - recur_tbl_cmp: Set recursion level to a default of 0.
 - recur_tbl_cmp: Refactored recursion call to improve performance.
 - main:  Added program lock functionality to program.

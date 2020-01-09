@@ -324,7 +324,7 @@ def run_program(args_array, sys_ign_db, **kwargs):
 
     else:
         cmds_gen.disconnect(master, slave)
-        sys.exit("Error:  Replica is not in replication with Master.")
+        print("Error:  Replica is not in replication with Master.")
 
 
 def main():
