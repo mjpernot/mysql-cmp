@@ -72,6 +72,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_no_recur -> Test with no recur parameter set.
         test_reached_max -> Test with reaching max checks.
         test_check_once -> Test with checksumming at once.
         test_default -> Test with default arguments only.
@@ -90,6 +91,23 @@ class UnitTest(unittest.TestCase):
 
         self.master = Server()
         self.slave = Server()
+
+    @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
+    def test_no_recur(self, mock_checksum):
+
+        """Function:  test_no_recur
+
+        Description:  Test with no recur parameter set.
+
+        Arguments:
+
+        """
+
+        mock_checksum.side_effect = [10, 10]
+
+        with gen_libs.no_std_out():
+            self.assertFalse(mysql_rep_cmp.recur_tbl_cmp(
+                self.master, self.slave, "db1", "tbl1"))
 
     @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
     def test_reached_max(self, mock_checksum):
