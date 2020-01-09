@@ -133,7 +133,6 @@ class UnitTest(unittest.TestCase):
         self.sys_ign_db = ["performance_schema", "information_schema"]
         self.tbllist = ["tbl1"]
 
-    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
@@ -153,10 +152,8 @@ class UnitTest(unittest.TestCase):
                                 self.databases2, self.databases2]
 
         self.assertFalse(mysql_rep_cmp.setup_cmp(
-            self.master, self.slave, self.sys_ign_db, tbl_name=self.tbllist,
-            ign_db_tbl={}))
+            self.master, self.slave, self.sys_ign_db, tbl_name=self.tbllist))
 
-    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
@@ -176,10 +173,8 @@ class UnitTest(unittest.TestCase):
                                 self.databases2, self.databases2]
 
         self.assertFalse(mysql_rep_cmp.setup_cmp(
-            self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
-            ign_db_tbl={}))
+            self.master, self.slave, self.sys_ign_db, db_name=self.dblist))
 
-    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
@@ -198,8 +193,8 @@ class UnitTest(unittest.TestCase):
         mock_tbl.side_effect = [self.databases, self.databases,
                                 self.databases2, self.databases2]
 
-        self.assertFalse(mysql_rep_cmp.setup_cmp(
-            self.master, self.slave, self.sys_ign_db, ign_db_tbl={}))
+        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave,
+                                                 self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
@@ -222,7 +217,6 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, [],
                                                  ign_db_tbl=self.ign_db_tbl))
 
-    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
@@ -241,10 +235,8 @@ class UnitTest(unittest.TestCase):
         mock_tbl.side_effect = [self.databases, self.databases,
                                 self.databases2, self.databases2]
 
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, [],
-                                                 ign_db_tbl={}))
+        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
 
-    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
@@ -263,10 +255,8 @@ class UnitTest(unittest.TestCase):
         mock_tbl.side_effect = [self.databases,
                                 self.databases2, self.databases2]
 
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, [],
-                                                 ign_db_tbl={}))
+        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
 
-    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
@@ -284,8 +274,7 @@ class UnitTest(unittest.TestCase):
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases, self.databases2]
 
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, [],
-                                                 ign_db_tbl={}))
+        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
 
     @mock.patch("mysql_rep_cmp.fetch_db_list")
     def test_no_matches(self, mock_fetch):
@@ -302,7 +291,6 @@ class UnitTest(unittest.TestCase):
 
         self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
 
-    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
@@ -320,10 +308,8 @@ class UnitTest(unittest.TestCase):
         mock_tbl.side_effect = [self.databases, self.databases,
                                 self.databases2, self.databases2]
 
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, [],
-                                                 ign_db_tbl={}))
+        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
 
-    # Remove "ign_db_tbl={}" when ign_db_tbl default value bug has been fixed.
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
@@ -340,8 +326,7 @@ class UnitTest(unittest.TestCase):
         mock_fetch.side_effect = [self.dblist, self.dblist]
         mock_tbl.side_effect = [self.databases, self.databases]
 
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, [],
-                                                 ign_db_tbl={}))
+        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
 
     @mock.patch("mysql_rep_cmp.fetch_db_list")
     def test_no_dbs(self, mock_fetch):
