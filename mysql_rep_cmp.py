@@ -12,7 +12,7 @@
 
     Usage:
         mysql_rep_cmp.py -c file -r file -d path
-            {-A | -B name [-t name1 [name2 name3 ...]} [-v | -h]
+            {-A | -B name [-t name1 [name2 name3 ...]} [-y flavor_id] [-v | -h]
 
     Arguments:
         -c file => Master configuration file.  Required arg.
@@ -22,35 +22,39 @@
         -B Database name => Name of database.  Required XOR arg.
         -t Table name(s) => Name of tables, space delimited.
             Requires -B option.
+        -y value => A flavor id for the program lock.  To create unique lock.
         -v => Display version of this program.
         -h => Help and usage message.
 
         NOTE 1:  -v or -h overrides the other options.
-
         NOTE 2:  -A and -B are required XOR arguments.
 
     Notes:
-        Database configuration file format (mysql_{host}.py):
-            # Configuration file for {Database Name/Server}
+        Database configuration file format (mysql_cfg.py.TEMPLATE):
+            # Configuration file for each Master/Slave Database
             user = "root"
             passwd = "ROOT_PASSWORD"
             host = "IP_ADDRESS"
-            serv_os = "Linux" or "Solaris"
+            serv_os = "Linux"
             name = "HOSTNAME"
             port = PORT_NUMBER (default of mysql is 3306)
             cfg_file = "DIRECTORY_PATH/my.cfg"
             sid = "SERVER_ID"
-            extra_def_file = "DIRECTORY_PATH/myextra.cfg"
+            extra_def_file = "DIRECTORY_PATH/mysql.cfg"
 
-        Slave configuration file is the same format as the Master.
-
-        NOTE:  Include the cfg_file even if running remotely as the file will
+        NOTE 1:  Include the cfg_file even if running remotely as the file will
             be used in future releases.
+
+        NOTE 2:  In MySQL 5.6 - it now gives warning if password is passed on
+            the command line.  To suppress this warning, will require the use
+            of the --defaults-extra-file option (i.e. extra_def_file) in the
+            database configuration file.  See below for the defaults-extra-file
+            format.
 
         configuration modules -> name is runtime dependent as it can be
             used to connect to different databases with different names.
 
-        Defaults Extra File format (filename.cfg):
+        Defaults Extra File format (mysql.cfg.TEMPLATE):
             [client]
             password="ROOT_PASSWORD"
             socket="DIRECTORY_PATH/mysql.sock"
@@ -354,7 +358,7 @@ def main():
     opt_multi_list = ["-B", "-t"]
     opt_req_list = ["-r", "-c", "-d"]
     opt_req_xor_list = {"-A": "-B"}
-    opt_val_list = ["-r", "-c", "-d"]
+    opt_val_list = ["-r", "-c", "-d", "-y"]
     sys_ign_db = ["performance_schema", "information_schema"]
 
     # Process argument list from command line.
@@ -366,7 +370,16 @@ def main():
        and not arg_parser.arg_require(args_array, opt_req_list) \
        and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
        and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list):
-        run_program(args_array, sys_ign_db, ign_db_tbl=ign_db_tbl)
+
+        try:
+            prog_lock = gen_class.ProgramLock(sys.argv,
+                                              args_array.get("-y", ""))
+            run_program(args_array, sys_ign_db, ign_db_tbl=ign_db_tbl)
+            del prog_lock
+
+        except gen_class.SingleInstanceException:
+            print("WARNING:  lock in place for mysql_rep_cmp with id of: %s"
+                  % (args_array.get("-y", "")))
 
 
 if __name__ == "__main__":

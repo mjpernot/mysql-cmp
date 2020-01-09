@@ -12,6 +12,8 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - run_program:  Fixed problem with mutable default arguments issue.
 
 ### Changed
+- main:  Added program lock functionality to program.
+- main:  Added new option -y to the program.
 - main:  Refactored if statements.
 - fetch_db_list:  Changed variable name to standard convention.
 - recur_tbl_cmp:  Changed variable name to standard convention.
