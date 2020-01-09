@@ -43,7 +43,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
-        test_programlock_id -> 
+        test_programlock_id -> Test with ProgramLock with flavor id.
         test_programlock_false -> Test with ProgramLock returns False.
         test_programlock_true -> Test with ProgramLock returns True.
         test_arg_dir_chk_crt_false -> Test arg_dir_chk_crt if returns false.
