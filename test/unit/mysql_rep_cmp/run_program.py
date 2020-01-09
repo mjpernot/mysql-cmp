@@ -175,7 +175,6 @@ class UnitTest(unittest.TestCase):
         self.sys_ign_db = ["performance_schema", "information_schema"]
         self.args_array = {"-c": True, "-d": True, "-r": True}
 
-    @mock.patch("mysql_rep_cmp.sys.exit", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance",
@@ -190,8 +189,9 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
-                                                   self.sys_ign_db))
+        with gen_libs.no_std_out():
+            self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
+                                                       self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
