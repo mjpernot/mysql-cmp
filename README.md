@@ -31,6 +31,7 @@
     - lib/cmds_gen
     - lib/arg_parser
     - lib/gen_libs
+    - lib/gen_class
     - mysql_lib/mysql_libs
     - mysql_lib/mysql_class
 
@@ -66,7 +67,7 @@ pip install -r requirements-python-lib.txt --target mysql_lib/lib --trusted-host
 
 # Configuration:
 
-Create MySQL configuration file.
+Create MySQL configuration file for Master database.
   * Replace **{Python_Project}** with the baseline path of the python program.
 
 ```
@@ -87,7 +88,7 @@ vim mysql_cfg.py
 chmod 600 mysql_cfg.py
 ```
 
-Create MySQL definition file.
+Create MySQL definition file for Master database.
 
 ```
 cp mysql.cfg.TEMPLATE mysql.cfg
@@ -103,23 +104,17 @@ vim mysql.cfg
 chmod 600 mysql.cfg
 ```
 
-Create a MySQL slave configuration file.
+For the Slave database, create a seperate MySQL configuration and MySQL definition file.
+
+Make the appropriate change to the Slave environment.  See above for the changes required in each file.  In addition, the "extra_def_file" entry will require "mysql.cfg" to be changed to "mysql\_{SlaveName}.cfg".
 
 ```
-cp slave.txt.TEMPLATE slave.txt
-```
-
-Make the appropriate change to the environment.
-  * Change these entries in the MySQL slave setup:
-    * NOTE:  Create a new set of entries for each slave in the MySQL replica set.
-    - passwd = ROOT_PASSWORD
-    - host = HOST_IP
-    - name = HOSTNAME
-    - sid = SERVER_ID
-
-```
-vim slave.txt
-chmod 600 slave.txt
+cp mysql_cfg.py.TEMPLATE mysql_cfg_{SlaveName}.py
+vim mysql_cfg_{SlaveName}.py
+chmod 600 mysql_cfg_{SlaveName}.py
+cp mysql.cfg.TEMPLATE mysql_{SlaveName}.cfg
+vim mysql_{SlaveName}.cfg
+chmod 600 mysql_{SlaveName}.cfg
 ```
 
 
