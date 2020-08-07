@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [3.2.0] - 2020-08-07
+### Changed
+- Documentation updates.
+
+
 ## [3.1.0] - 2020-01-06
 ### Fixed
 - setup_cmp:  Set ign_db_tbl default value to empty dictionary.
