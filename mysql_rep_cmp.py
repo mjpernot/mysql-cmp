@@ -336,6 +336,7 @@ def run_program(args_array, sys_ign_db, **kwargs):
     args_array = dict(args_array)
     sys_ign_db = list(sys_ign_db)
     mail = None
+    no_std = args_array.get("-z", False)
     master = mysql_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mysql_class.MasterRep)
     master.connect()
@@ -354,16 +355,17 @@ def run_program(args_array, sys_ign_db, **kwargs):
         # Check specified tables in database
         if "-t" in args_array:
             setup_cmp(master, slave, sys_ign_db, args_array["-B"],
-                      args_array["-t"], mail=mail, **kwargs)
+                      args_array["-t"], mail=mail, no_std=no_std, **kwargs)
 
         # Check single database
         elif "-B" in args_array:
             setup_cmp(master, slave, sys_ign_db, args_array["-B"], "",
-                      mail=mail, **kwargs)
+                      mail=mail, no_std=no_std, **kwargs)
 
         # Check all tables in all databases
         else:
-            setup_cmp(master, slave, sys_ign_db, "", "", mail=mail, **kwargs)
+            setup_cmp(master, slave, sys_ign_db, "", "", mail=mail,
+                      no_std=no_std, **kwargs)
 
         cmds_gen.disconnect(master, slave)
 
