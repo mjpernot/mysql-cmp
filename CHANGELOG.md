@@ -9,6 +9,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Added email capability for output of comparsion checks.
 
 ### Changed
+- main:  Added -e and -s options to parsing for email capability.
 - Documentation updates.
 
 

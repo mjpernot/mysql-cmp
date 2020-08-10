@@ -362,11 +362,11 @@ def main():
     ign_db_tbl = {"mysql": ["innodb_index_stats", "innodb_table_stats",
                             "slave_master_info", "slave_relay_log_info",
                             "slave_worker_info"]}
-    opt_con_req_list = {"-t": ["-B"]}
-    opt_multi_list = ["-B", "-t"]
+    opt_con_req_list = {"-t": ["-B"], "-s": ["-e"]}
+    opt_multi_list = ["-B", "-e", "-s", "-t"]
     opt_req_list = ["-r", "-c", "-d"]
     opt_req_xor_list = {"-A": "-B"}
-    opt_val_list = ["-r", "-c", "-d", "-y"]
+    opt_val_list = ["-r", "-c", "-d", "-e", "-s", "-y"]
     sys_ign_db = ["performance_schema", "information_schema"]
 
     # Process argument list from command line.
