@@ -161,7 +161,7 @@ def fetch_db_list(server, ign_db_list=None, db_name=None, **kwargs):
     return db_list
 
 
-def recur_tbl_cmp(master, slave, db, tbl, recur=0, **kwargs):
+def recur_tbl_cmp(master, slave, dbs, tbl, recur=0, **kwargs):
 
     """Function:  recur_tbl_cmp
 
@@ -173,7 +173,7 @@ def recur_tbl_cmp(master, slave, db, tbl, recur=0, **kwargs):
     Arguments:
         (input) master -> Master instance.
         (input) slave -> Slave instance.
-        (input) db -> Database name.
+        (input) dbs -> Database name.
         (input) tbl -> Table name.
         (input) recur -> Current level of recursion.
         (input) **kwargs:
@@ -187,8 +187,8 @@ def recur_tbl_cmp(master, slave, db, tbl, recur=0, **kwargs):
 
     if recur < 4:
 
-        if mysql_libs.checksum(master, db, tbl) == \
-           mysql_libs.checksum(slave, db, tbl):
+        if mysql_libs.checksum(master, dbs, tbl) == \
+           mysql_libs.checksum(slave, dbs, tbl):
 
             data = "\tChecking: {0} {1}".format(tbl.ljust(40), "Synced")
 
@@ -202,7 +202,7 @@ def recur_tbl_cmp(master, slave, db, tbl, recur=0, **kwargs):
 
         else:
             time.sleep(5)
-            recur_tbl_cmp(master, slave, db, tbl, recur + 1, mail=mail,
+            recur_tbl_cmp(master, slave, dbs, tbl, recur + 1, mail=mail,
                           no_std=no_std)
 
     else:
