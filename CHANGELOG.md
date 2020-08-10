@@ -7,6 +7,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ## [3.2.0] - 2020-08-07
 ### Added
 - Added email capability for output of comparsion checks.
+- Added standard out suppression option.
 
 ### Fixed
 - main:  Fixed handling command line arguments from SonarQube scan finding.

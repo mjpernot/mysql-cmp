@@ -13,7 +13,8 @@
     Usage:
         mysql_rep_cmp.py -c master_cfg -r slave_cfg -d path
             {-A | -B name [-t name1 [name2 name3 ...]}
-            [-e email_addr {email_addr2 ...} {-s subject_line}] [-y flavor_id]
+            [-e email_addr {email_addr2 ...} {-s subject_line}]
+            [-y flavor_id] [-z]
             [-v | -h]
 
     Arguments:
@@ -32,6 +33,7 @@
         -s subject_line => Subject line of email.  If none is provided then a
             default one will be used.
         -y value => A flavor id for the program lock.  To create unique lock.
+        -z => Suppress standard out.
         -v => Display version of this program.
         -h => Help and usage message.
 
