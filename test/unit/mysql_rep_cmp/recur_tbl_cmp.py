@@ -30,6 +30,7 @@ import mock
 sys.path.append(os.getcwd())
 import mysql_rep_cmp
 import lib.gen_libs as gen_libs
+import lib.gen_class as gen_class
 import version
 
 __version__ = version.__version__
@@ -72,6 +73,10 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_default_email -> Test with default arguments with email.
+        test_check_once_email -> Test with checksumming at once with email.
+        test_reached_max_mail -> Test with reaching max checks with email.
+        test_no_recur_email -> Test with no recur parameter set with email.
         test_no_recur -> Test with no recur parameter set.
         test_reached_max -> Test with reaching max checks.
         test_check_once -> Test with checksumming at once.
@@ -91,6 +96,88 @@ class UnitTest(unittest.TestCase):
 
         self.master = Server()
         self.slave = Server()
+        self.mail = gen_class.setup_mail("email_addr", subj="subjectline")
+        self.tbl = "tbl1"
+        self.results = "\tChecking: {0} {1}".format(self.tbl.ljust(40),
+                                                    "Synced")
+        self.results2 = "\tChecking: {0} {1}".format(self.tbl.ljust(40),
+                                             "Error:  Checksums do not match")
+
+    @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
+    def test_default_email(self, mock_checksum):
+
+        """Function:  test_default_email
+
+        Description:  Test with default arguments with email.
+
+        Arguments:
+
+        """
+
+        mock_checksum.side_effect = [10, 10]
+
+        with gen_libs.no_std_out():
+            self.assertFalse(mysql_rep_cmp.recur_tbl_cmp(
+                self.master, self.slave, "db1", "tbl1", 1, mail=self.mail))
+
+        self.assertEqual(self.mail.msg, self.results)
+
+    @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
+    def test_check_once_email(self, mock_checksum):
+
+        """Function:  test_check_once_email
+
+        Description:  Test with checksumming at once with email.
+
+        Arguments:
+
+        """
+
+        mock_checksum.side_effect = [10, 11, 10, 10]
+
+        with gen_libs.no_std_out():
+            self.assertFalse(mysql_rep_cmp.recur_tbl_cmp(
+                self.master, self.slave, "db1", "tbl1", 1, mail=self.mail))
+
+        self.assertEqual(self.mail.msg, self.results)
+
+    @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
+    def test_reached_max_mail(self, mock_checksum):
+
+        """Function:  test_reached_max_mail
+
+        Description:  Test with reaching max checks with email.
+
+        Arguments:
+
+        """
+
+        mock_checksum.side_effect = [10, 11, 10, 11]
+
+        with gen_libs.no_std_out():
+            self.assertFalse(mysql_rep_cmp.recur_tbl_cmp(
+                self.master, self.slave, "db1", "tbl1", 3, mail=self.mail))
+
+        self.assertEqual(self.mail.msg, self.results2)
+
+    @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
+    def test_no_recur_email(self, mock_checksum):
+
+        """Function:  test_no_recur_email
+
+        Description:  Test with no recur parameter set with email.
+
+        Arguments:
+
+        """
+
+        mock_checksum.side_effect = [10, 10]
+
+        with gen_libs.no_std_out():
+            self.assertFalse(mysql_rep_cmp.recur_tbl_cmp(
+                self.master, self.slave, "db1", "tbl1", mail=self.mail))
+
+        self.assertEqual(self.mail.msg, self.results)
 
     @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
     def test_no_recur(self, mock_checksum):
@@ -146,7 +233,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
     def test_default(self, mock_checksum):
 
-        """Function:  test_recur_tbl_cmp
+        """Function:  test_default
 
         Description:  Test with default arguments only.
 
