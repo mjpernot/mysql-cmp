@@ -11,17 +11,26 @@
         of sync, then further investigation will be required.
 
     Usage:
-        mysql_rep_cmp.py -c file -r file -d path
-            {-A | -B name [-t name1 [name2 name3 ...]} [-y flavor_id] [-v | -h]
+        mysql_rep_cmp.py -c master_cfg -r slave_cfg -d path
+            {-A | -B name [-t name1 [name2 name3 ...]}
+            [-e email_addr {email_addr2 ...} {-s subject_line}] [-y flavor_id]
+            [-v | -h]
 
     Arguments:
-        -c file => Master configuration file.  Required arg.
-        -r file => Replica configuration file.  Required arg.
+        -c master_cfg => Master configuration file.  Required arg.
+        -r slave_cfg => Slave configuration file.  Required arg.
         -d dir path => Directory path to config files.  Required arg.
         -A => Check of all databases and tables.  Required XOR arg.
+            NOTE:  Some system tables may not be in sync in mysql and sys
+                databases.
         -B Database name => Name of database.  Required XOR arg.
         -t Table name(s) => Name of tables, space delimited.
             Requires -B option.
+        -e email_addr email_addr2 => Enables emailing capability for an option
+            if the option allows it.  Sends output to one or more email
+            addresses.
+        -s subject_line => Subject line of email.  If none is provided then a
+            default one will be used.
         -y value => A flavor id for the program lock.  To create unique lock.
         -v => Display version of this program.
         -h => Help and usage message.

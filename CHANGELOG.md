@@ -5,6 +5,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 
 ## [3.2.0] - 2020-08-07
+### Added
+- Added email capability for output of comparsion checks.
+
 ### Changed
 - Documentation updates.
 
