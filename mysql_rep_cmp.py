@@ -304,12 +304,17 @@ def run_program(args_array, sys_ign_db, **kwargs):
 
     args_array = dict(args_array)
     sys_ign_db = list(sys_ign_db)
+    mail = None
     master = mysql_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mysql_class.MasterRep)
     master.connect()
     slave = mysql_libs.create_instance(args_array["-r"], args_array["-d"],
                                        mysql_class.SlaveRep)
     slave.connect()
+
+    if args_array.get("-e", None):
+        mail = gen_class.setup_mail(args_array.get("-e"),
+                                    subj=args_array.get("-s", None))
 
     # Is slave in replication with master
     if slave.server_id in gen_libs.dict_2_list(master.show_slv_hosts(),
@@ -318,16 +323,16 @@ def run_program(args_array, sys_ign_db, **kwargs):
         # Check specified tables in database
         if "-t" in args_array:
             setup_cmp(master, slave, sys_ign_db, args_array["-B"],
-                      args_array["-t"], **kwargs)
+                      args_array["-t"], mail=mail, **kwargs)
 
         # Check single database
         elif "-B" in args_array:
             setup_cmp(master, slave, sys_ign_db, args_array["-B"], "",
-                      **kwargs)
+                      mail=mail, **kwargs)
 
         # Check all tables in all databases
         else:
-            setup_cmp(master, slave, sys_ign_db, "", "", **kwargs)
+            setup_cmp(master, slave, sys_ign_db, "", "", mail=mail, **kwargs)
 
         cmds_gen.disconnect(master, slave)
 
