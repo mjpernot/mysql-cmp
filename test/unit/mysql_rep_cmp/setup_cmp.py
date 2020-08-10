@@ -35,6 +35,43 @@ import version
 __version__ = version.__version__
 
 
+class Mail(object):
+
+    """Class:  Mail
+
+    Description:  Class stub holder for gen_class.Mail class.
+
+    Methods:
+        __init__ -> Class initialization.
+        send_mail -> Stub method holder for Mail.send_mail.
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.data = None
+
+    def send_mail(self):
+
+        """Method:  send_mail
+
+        Description:  Stub method holder for Mail.send_mail.
+
+        Arguments:
+
+        """
+
+        return True
+
+
 class Server(object):
 
     """Class:  Server
@@ -98,6 +135,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_email -> Test with email is passed.
         test_tbl_name -> Test with tbl_name is passed.
         test_db_name -> Test with db_name is passed.
         test_sys_ign_db -> Test with sys_ign_db is passed.
@@ -124,6 +162,7 @@ class UnitTest(unittest.TestCase):
 
         self.master = Server()
         self.slave = Server()
+        self.mail = Mail()
         self.databases = [{"table_name": "tbl1"}, {"table_name": "tbl2"}]
         self.databases2 = [{"table_name": "tbl3"}, {"table_name": "tbl4"}]
         self.dblist = ["db1"]
@@ -132,6 +171,29 @@ class UnitTest(unittest.TestCase):
         self.ign_db_tbl = {"db1": ["tbl1"]}
         self.sys_ign_db = ["performance_schema", "information_schema"]
         self.tbllist = ["tbl1"]
+
+    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    @mock.patch("mysql_rep_cmp.fetch_db_list")
+    def test_email(self, mock_fetch, mock_tbl):
+
+        """Function:  test_email
+
+        Description:  Test with email is passed.
+
+        Arguments:
+
+        """
+
+        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
+
+        mock_fetch.side_effect = [self.dblist2, self.dblist2]
+        mock_tbl.side_effect = [self.databases, self.databases,
+                                self.databases2, self.databases2]
+
+        self.assertFalse(mysql_rep_cmp.setup_cmp(
+            self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
+            mail=self.mail))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
@@ -145,6 +207,7 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
+
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
@@ -166,6 +229,7 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
+
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
@@ -187,6 +251,7 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
+
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
@@ -208,6 +273,7 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
+
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
@@ -229,6 +295,7 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
+
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
@@ -251,6 +318,7 @@ class UnitTest(unittest.TestCase):
         """
 
         self.slave.do_tbl = {"db1": ["tbl1", "tbl2"]}
+
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases,
                                 self.databases2, self.databases2]
@@ -271,6 +339,7 @@ class UnitTest(unittest.TestCase):
         """
 
         self.slave.do_tbl = {"db1": ["tbl1", "tbl2"], "db2": ["tbl3"]}
+
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases, self.databases2]
 
