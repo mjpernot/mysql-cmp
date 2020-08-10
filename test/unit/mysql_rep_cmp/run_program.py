@@ -35,6 +35,32 @@ import version
 __version__ = version.__version__
 
 
+class Mail(object):
+
+    """Class:  Mail
+
+    Description:  Class stub holder for gen_class.Mail class.
+
+    Methods:
+        __init__ -> Class initialization.
+        add_2_msg -> Stub method holder for Mail.add_2_msg.
+        send_mail -> Stub method holder for Mail.send_mail.
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.data = None
+
+
 class Server2(object):
 
     """Class:  Server
@@ -155,6 +181,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_email_no_subj -> Test with email, but no subject line.
+        test_email -> Test with email setup.
         test_slave_not_present -> Test with slave not in replic set.
         test_database_option -> Test with database option in args_array.
         test_table_option -> Test with table option in args_array.
@@ -172,8 +200,55 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.mail = Mail()
         self.sys_ign_db = ["performance_schema", "information_schema"]
         self.args_array = {"-c": True, "-d": True, "-r": True}
+        self.args_array2 = {"-c": True, "-d": True, "-r": True,
+                            "-e": "email_address", "-s": "subject_line"}
+        self.args_array3 = {"-c": True, "-d": True, "-r": True,
+                            "-e": "email_address"}
+
+    @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+                mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.create_instance",
+                mock.Mock(return_value=Server()))
+    @mock.patch("mysql_rep_cmp.gen_class.setup_mail")
+    def test_email_no_subj(self, mock_mail):
+
+        """Function:  test_email_no_subj
+
+        Description:  Test with email, but no subject line.
+
+        Arguments:
+
+        """
+
+        mock_mail.return_value = self.mail
+
+        self.assertFalse(mysql_rep_cmp.run_program(self.args_array3,
+                                                   self.sys_ign_db))
+
+    @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+                mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.create_instance",
+                mock.Mock(return_value=Server()))
+    @mock.patch("mysql_rep_cmp.gen_class.setup_mail")
+    def test_email(self, mock_mail):
+
+        """Function:  test_email
+
+        Description:  Test with email setup.
+
+        Arguments:
+
+        """
+
+        mock_mail.return_value = self.mail
+
+        self.assertFalse(mysql_rep_cmp.run_program(self.args_array2,
+                                                   self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
                 mock.Mock(return_value=True))
