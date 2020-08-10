@@ -13,7 +13,8 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main:  Fixed handling command line arguments from SonarQube scan finding.
 
 ### Changed
-- run_program:  Determined if standard out suppression was selected.
+- setup_cmp:  Passed standard out suppression to function as keyword arg.
+- run_program:  Determined if standard out suppression was selected and passed to setup_cmp.
 - recur_tbl_cmp:  Added statements to email instance and passed email to recursive call.
 - recur_tbl_cmp:  Added print check statement from run_cmp function.
 - run_cmp:  Moved print check statement into recur_tbl_cmp function.

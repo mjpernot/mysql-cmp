@@ -258,6 +258,7 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         (input) **kwargs:
             ign_db_tbl -> Dictionary-List of dbs & tables to be ignored.
             mail -> Mail class instance.
+            no_std -> Suppress standard out.
 
     """
 
@@ -276,6 +277,7 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
     sys_ign_db = list(sys_ign_db)
     ign_db_tbl = kwargs.get("ign_db_tbl", {})
     mail = kwargs.get("mail", None)
+    no_std = kwargs.get("no_std", False)
     mst_dbs = fetch_db_list(master)
     slv_dbs = fetch_db_list(slave, sys_ign_db, db_name)
     db_list = gen_libs.del_not_in_list(mst_dbs, slv_dbs)
@@ -313,7 +315,7 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         if tbl_name:
             tbl_list = gen_libs.del_not_in_list(tbl_list, tbl_name)
 
-        run_cmp(master, slave, db, tbl_list, mail=mail)
+        run_cmp(master, slave, db, tbl_list, mail=mail, no_std=no_std)
 
     if mail:
         mail.send_mail()
