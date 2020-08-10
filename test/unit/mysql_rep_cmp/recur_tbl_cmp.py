@@ -98,10 +98,87 @@ class UnitTest(unittest.TestCase):
         self.slave = Server()
         self.mail = gen_class.setup_mail("email_addr", subj="subjectline")
         self.tbl = "tbl1"
+        self.no_std = True
         self.results = "\tChecking: {0} {1}".format(self.tbl.ljust(40),
                                                     "Synced")
         self.results2 = "\tChecking: {0} {1}".format(self.tbl.ljust(40),
                                              "Error:  Checksums do not match")
+
+    @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
+    def test_default_no_std(self, mock_checksum):
+
+        """Function:  test_default_no_std
+
+        Description:  Test with default arguments with no_std.
+
+        Arguments:
+
+        """
+
+        mock_checksum.side_effect = [10, 10]
+
+        self.assertFalse(mysql_rep_cmp.recur_tbl_cmp(
+            self.master, self.slave, "db1", "tbl1", 1, mail=self.mail,
+            no_std=self.no_std))
+
+        self.assertEqual(self.mail.msg, self.results)
+
+    @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
+    def test_check_once_no_std(self, mock_checksum):
+
+        """Function:  test_check_once_no_std
+
+        Description:  Test with checksumming at once with no_std.
+
+        Arguments:
+
+        """
+
+        mock_checksum.side_effect = [10, 11, 10, 10]
+
+        self.assertFalse(mysql_rep_cmp.recur_tbl_cmp(
+            self.master, self.slave, "db1", "tbl1", 1, mail=self.mail,
+            no_std=self.no_std))
+
+        self.assertEqual(self.mail.msg, self.results)
+
+    @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
+    def test_reached_max_no_std(self, mock_checksum):
+
+        """Function:  test_reached_max_no_std
+
+        Description:  Test with reaching max checks with no_std.
+
+        Arguments:
+
+        """
+
+        mock_checksum.side_effect = [10, 11, 10, 11]
+
+        self.assertFalse(mysql_rep_cmp.recur_tbl_cmp(
+            self.master, self.slave, "db1", "tbl1", 3, mail=self.mail,
+            no_std=self.no_std))
+
+        self.assertEqual(self.mail.msg, self.results2)
+
+    @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
+    def test_no_recur_no_std(self, mock_checksum):
+
+        """Function:  test_no_recur_no_std
+
+        Description:  Test with no recur parameter set with no_std.
+
+        Arguments:
+
+        """
+
+        mock_checksum.side_effect = [10, 10]
+
+        self.assertFalse(mysql_rep_cmp.recur_tbl_cmp(
+            self.master, self.slave, "db1", "tbl1", mail=self.mail,
+            no_std=self.no_std))
+
+        self.assertEqual(self.mail.msg, self.results)
 
     @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
     def test_default_email(self, mock_checksum):
