@@ -314,8 +314,7 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         run_cmp(master, slave, db, tbl_list, mail=mail)
 
     if mail:
-        #mail.send_mail()
-        print(mail.print_email())
+        mail.send_mail()
 
 
 def run_program(args_array, sys_ign_db, **kwargs):
