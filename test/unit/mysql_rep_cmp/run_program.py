@@ -181,6 +181,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_no_std_out -> Test with no standard out suppression selected.
         test_email_no_subj -> Test with email, but no subject line.
         test_email -> Test with email setup.
         test_slave_not_present -> Test with slave not in replic set.
@@ -207,6 +208,25 @@ class UnitTest(unittest.TestCase):
                             "-e": "email_address", "-s": "subject_line"}
         self.args_array3 = {"-c": True, "-d": True, "-r": True,
                             "-e": "email_address"}
+        self.args_array4 = {"-c": True, "-d": True, "-r": True, "-z": True}
+
+    @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+                mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.create_instance",
+                mock.Mock(return_value=Server()))
+    def test_no_std_out(self):
+
+        """Function:  test_no_std_out
+
+        Description:  Test with no standard out suppression selected.
+
+        Arguments:
+
+        """
+
+        self.assertFalse(mysql_rep_cmp.run_program(self.args_array4,
+                                                   self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
