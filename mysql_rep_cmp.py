@@ -158,8 +158,7 @@ def fetch_db_list(server, ign_db_list=None, db_name=None, **kwargs):
     if db_name:
         return gen_libs.del_not_in_list(db_name, db_list)
 
-    else:
-        return db_list
+    return db_list
 
 
 def recur_tbl_cmp(master, slave, db, tbl, recur=0, **kwargs):
