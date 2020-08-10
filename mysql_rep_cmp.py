@@ -172,22 +172,37 @@ def recur_tbl_cmp(master, slave, db, tbl, recur=0, **kwargs):
         (input) db -> Database name.
         (input) tbl -> Table name.
         (input) recur -> Current level of recursion.
+        (input) **kwargs:
+            mail -> Mail class instance.
 
     """
+
+    mail = kwargs.get("mail", None)
 
     if recur < 4:
 
         if mysql_libs.checksum(master, db, tbl) == \
            mysql_libs.checksum(slave, db, tbl):
-            print("Synced")
+
+            print("\tChecking: {0} {1}".format(tbl.ljust(40), "Synced"))
+
+            if mail:
+                mail.add_2_msg("\tChecking: {0} {1}".format(tbl.ljust(40),
+                                                            "Synced"))
             return
 
         else:
             time.sleep(5)
-            recur_tbl_cmp(master, slave, db, tbl, recur + 1)
+            recur_tbl_cmp(master, slave, db, tbl, recur + 1, mail=mail)
 
     else:
-        print("Error:  Checksums do not match.")
+        print("\tChecking: {0} {1}".format(tbl.ljust(40),
+                                           "Error:  Checksums do not match"))
+
+        if mail:
+            mail.add_2_msg(
+                "\tChecking: {0} {1}".format(tbl.ljust(40),
+                                             "Error:  Checksums do not match"))
         return
 
 
@@ -216,10 +231,8 @@ def run_cmp(master, slave, db, tbl_list, **kwargs):
         mail.add_2_msg("\nDatabase: {0}".format(db))
 
     for tbl in tbl_list:
-        print("\tChecking: {0}".format(tbl.ljust(40)), end="")
-        recur = 1
-
         # Recursive compare.
+        recur = 1
         recur_tbl_cmp(master, slave, db, tbl, recur, mail=mail)
 
 

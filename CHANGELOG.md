@@ -9,6 +9,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Added email capability for output of comparsion checks.
 
 ### Changed
+- recur_tbl_cmp:  Added statements to email instance and passed email to recursive call.
+- recur_tbl_cmp:  Added print check statement from run_cmp function.
+- run_cmp:  Moved print check statement into recur_tbl_cmp function.
 - run_cmp:  Added statements to email instance and passed email to relevant functions.
 - setup_cmp:  Sent email if email instance exists and passed email to relevant functions.
 - run_program:  Created email instance and passed to relevant functions.
