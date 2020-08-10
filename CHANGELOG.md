@@ -14,7 +14,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - run_cmp:  Moved print check statement into recur_tbl_cmp function.
 - run_cmp:  Added statements to email instance and passed email to relevant functions.
 - setup_cmp:  Sent email if email instance exists and passed email to relevant functions.
-- run_program:  Created email instance and passed to relevant functions.
+- run_program:  Created email instance, added default subject line, and passed to relevant functions.
 - main:  Added -e and -s options to parsing for email capability.
 - Documentation updates.
 

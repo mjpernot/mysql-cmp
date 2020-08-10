@@ -95,6 +95,9 @@ import version
 
 __version__ = version.__version__
 
+# Global
+SUBJ_LINE = "MySQL_Replication_Comparsion"
+
 
 def help_message():
 
@@ -311,7 +314,8 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         run_cmp(master, slave, db, tbl_list, mail=mail)
 
     if mail:
-        mail.send_mail()
+        #mail.send_mail()
+        print(mail.print_email())
 
 
 def run_program(args_array, sys_ign_db, **kwargs):
@@ -326,6 +330,8 @@ def run_program(args_array, sys_ign_db, **kwargs):
 
     """
 
+    global SUBJ_LINE
+
     args_array = dict(args_array)
     sys_ign_db = list(sys_ign_db)
     mail = None
@@ -338,7 +344,7 @@ def run_program(args_array, sys_ign_db, **kwargs):
 
     if args_array.get("-e", None):
         mail = gen_class.setup_mail(args_array.get("-e"),
-                                    subj=args_array.get("-s", None))
+                                    subj=args_array.get("-s", SUBJ_LINE))
 
     # Is slave in replication with master
     if slave.server_id in gen_libs.dict_2_list(master.show_slv_hosts(),
