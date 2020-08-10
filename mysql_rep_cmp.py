@@ -179,10 +179,12 @@ def recur_tbl_cmp(master, slave, db, tbl, recur=0, **kwargs):
         (input) recur -> Current level of recursion.
         (input) **kwargs:
             mail -> Mail class instance.
+            no_std -> Suppress standard out.
 
     """
 
     mail = kwargs.get("mail", None)
+    no_std = kwargs.get("no_std", False)
 
     if recur < 4:
 
@@ -190,20 +192,26 @@ def recur_tbl_cmp(master, slave, db, tbl, recur=0, **kwargs):
            mysql_libs.checksum(slave, db, tbl):
 
             data = "\tChecking: {0} {1}".format(tbl.ljust(40), "Synced")
-            print(data)
+
+            if not no_std:
+                print(data)
 
             if mail:
                 mail.add_2_msg(data)
+
             return
 
         else:
             time.sleep(5)
-            recur_tbl_cmp(master, slave, db, tbl, recur + 1, mail=mail)
+            recur_tbl_cmp(master, slave, db, tbl, recur + 1, mail=mail,
+                          no_std=no_std)
 
     else:
         data = "\tChecking: {0} {1}".format(tbl.ljust(40),
                                             "Error:  Checksums do not match")
-        print(data)
+
+        if not no_std:
+            print(data)
 
         if mail:
             mail.add_2_msg(data)

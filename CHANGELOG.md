@@ -13,6 +13,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main:  Fixed handling command line arguments from SonarQube scan finding.
 
 ### Changed
+- recur_tbl_cmp:  Added checks for standard out prints for standard out suppression and passed no_std to recursive call.
 - run_cmp:  Added check for standard out prints for standard out suppression and passed to recur_tbl_cmp function.
 - setup_cmp:  Passed standard out suppression to function as keyword arg.
 - run_program:  Determined if standard out suppression was selected and passed to setup_cmp.
