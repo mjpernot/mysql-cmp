@@ -218,7 +218,7 @@ def recur_tbl_cmp(master, slave, dbs, tbl, recur=0, **kwargs):
         return
 
 
-def run_cmp(master, slave, db, tbl_list, **kwargs):
+def run_cmp(master, slave, dbs, tbl_list, **kwargs):
 
     """Function:  run_cmp
 
@@ -228,7 +228,7 @@ def run_cmp(master, slave, db, tbl_list, **kwargs):
     Arguments:
         (input) master -> Master instance.
         (input) slave -> Slave instance.
-        (input) db -> Database name.
+        (input) dbs -> Database name.
         (input) tbl_list -> List of tables to be compared.
         (input) **kwargs:
             mail -> Mail class instance.
@@ -239,7 +239,7 @@ def run_cmp(master, slave, db, tbl_list, **kwargs):
     tbl_list = list(tbl_list)
     mail = kwargs.get("mail", None)
     no_std = kwargs.get("no_std", False)
-    data = "\nDatabase: {0}".format(db)
+    data = "\nDatabase: {0}".format(dbs)
 
     if not no_std:
         print(data)
@@ -250,7 +250,7 @@ def run_cmp(master, slave, db, tbl_list, **kwargs):
     for tbl in tbl_list:
         # Recursive compare.
         recur = 1
-        recur_tbl_cmp(master, slave, db, tbl, recur, mail=mail, no_std=no_std)
+        recur_tbl_cmp(master, slave, dbs, tbl, recur, mail=mail, no_std=no_std)
 
 
 def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
