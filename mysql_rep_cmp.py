@@ -187,11 +187,11 @@ def recur_tbl_cmp(master, slave, db, tbl, recur=0, **kwargs):
         if mysql_libs.checksum(master, db, tbl) == \
            mysql_libs.checksum(slave, db, tbl):
 
-            print("\tChecking: {0} {1}".format(tbl.ljust(40), "Synced"))
+            data = "\tChecking: {0} {1}".format(tbl.ljust(40), "Synced")
+            print(data)
 
             if mail:
-                mail.add_2_msg("\tChecking: {0} {1}".format(tbl.ljust(40),
-                                                            "Synced"))
+                mail.add_2_msg(data)
             return
 
         else:
@@ -199,13 +199,13 @@ def recur_tbl_cmp(master, slave, db, tbl, recur=0, **kwargs):
             recur_tbl_cmp(master, slave, db, tbl, recur + 1, mail=mail)
 
     else:
-        print("\tChecking: {0} {1}".format(tbl.ljust(40),
-                                           "Error:  Checksums do not match"))
+        data = "\tChecking: {0} {1}".format(tbl.ljust(40),
+                                            "Error:  Checksums do not match")
+        print(data)
 
         if mail:
-            mail.add_2_msg(
-                "\tChecking: {0} {1}".format(tbl.ljust(40),
-                                             "Error:  Checksums do not match"))
+            mail.add_2_msg(data)
+
         return
 
 
@@ -392,6 +392,7 @@ def main():
 
     """
 
+    cmdline = gen_libs.get_inst(sys)
     dir_chk_list = ["-d"]
     ign_db_tbl = {"mysql": ["innodb_index_stats", "innodb_table_stats",
                             "slave_master_info", "slave_relay_log_info",
@@ -404,7 +405,7 @@ def main():
     sys_ign_db = ["performance_schema", "information_schema"]
 
     # Process argument list from command line.
-    args_array = arg_parser.arg_parse2(sys.argv, opt_val_list,
+    args_array = arg_parser.arg_parse2(cmdline.argv, opt_val_list,
                                        multi_val=opt_multi_list)
 
     if not gen_libs.help_func(args_array, __version__, help_message) \
@@ -414,7 +415,7 @@ def main():
        and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list):
 
         try:
-            prog_lock = gen_class.ProgramLock(sys.argv,
+            prog_lock = gen_class.ProgramLock(cmdline.argv,
                                               args_array.get("-y", ""))
             run_program(args_array, sys_ign_db, ign_db_tbl=ign_db_tbl)
             del prog_lock

@@ -8,6 +8,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ### Added
 - Added email capability for output of comparsion checks.
 
+### Fixed
+- main:  Fixed handling command line arguments from SonarQube scan finding.
+
 ### Changed
 - recur_tbl_cmp:  Added statements to email instance and passed email to recursive call.
 - recur_tbl_cmp:  Added print check statement from run_cmp function.
