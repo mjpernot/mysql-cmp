@@ -296,28 +296,28 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
     slv_do_dict = slave.fetch_do_tbl()
     slv_ign_dict = slave.fetch_ign_tbl()
 
-    for db in db_list:
+    for dbs in db_list:
         # Get master list of tables.
         mst_tbl_list = gen_libs.dict_2_list(mysql_libs.fetch_tbl_dict(
-            master, db), "table_name")
+            master, dbs), "table_name")
 
         # Database in "to do" list.
-        if db in slv_do_dict:
-            slv_tbl_list = slv_do_dict[db]
+        if dbs in slv_do_dict:
+            slv_tbl_list = slv_do_dict[dbs]
 
         else:
             # Get list of tables from slave.
             slv_tbl_list = gen_libs.dict_2_list(
-                mysql_libs.fetch_tbl_dict(slave, db), "table_name")
+                mysql_libs.fetch_tbl_dict(slave, dbs), "table_name")
 
         slv_ign_tbl = []
 
         # Database in slave "ignore" list
-        if db in slv_ign_dict:
-            slv_ign_tbl = slv_ign_dict[db]
+        if dbs in slv_ign_dict:
+            slv_ign_tbl = slv_ign_dict[dbs]
 
-        if db in ign_db_tbl:
-            slv_ign_tbl = slv_ign_tbl + ign_db_tbl[db]
+        if dbs in ign_db_tbl:
+            slv_ign_tbl = slv_ign_tbl + ign_db_tbl[dbs]
 
         # Drop "ignore" tables.
         slv_tbl_list = gen_libs.del_not_and_list(slv_tbl_list, slv_ign_tbl)
@@ -327,7 +327,7 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         if tbl_name:
             tbl_list = gen_libs.del_not_in_list(tbl_list, tbl_name)
 
-        run_cmp(master, slave, db, tbl_list, mail=mail, no_std=no_std)
+        run_cmp(master, slave, dbs, tbl_list, mail=mail, no_std=no_std)
 
     if mail:
         mail.send_mail()

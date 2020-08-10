@@ -13,6 +13,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main:  Fixed handling command line arguments from SonarQube scan finding.
 
 ### Changed
+- setup_cmp:  Changed variable name to standard naming convention.
 - run_cmp:  Changed variable name to standard naming convention.
 - recur_tbl_cmp:  Changed variable name to standard naming convention.
 - fetch_db_list:  Removed unnecessary else clause in if statement.
