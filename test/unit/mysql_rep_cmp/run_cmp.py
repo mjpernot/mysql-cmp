@@ -111,7 +111,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
-        test_no_std__out -> 
+        test_no_std__out -> Test with no standard out suppression.
         test_email -> Test with email.
         test_multiple_tables -> Test with multiple tables in list.
         test_empty_list -> Test with empty table list.
