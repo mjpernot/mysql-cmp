@@ -9,6 +9,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Added email capability for output of comparsion checks.
 
 ### Changed
+- setup_cmp:  Send email if email instance is present and pass email to relevant functions.
 - run_program:  Create email instance and pass to relevant functions.
 - main:  Added -e and -s options to parsing for email capability.
 - Documentation updates.
