@@ -13,6 +13,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main:  Fixed handling command line arguments from SonarQube scan finding.
 
 ### Changed
+- recur_tbl_cmp:  Removed unnecessary returns.
 - config/mysql_cfg.py.TEMPLATE:  Changed name of configuration entry.
 - setup_cmp:  Changed variable name to standard naming convention.
 - run_cmp:  Changed variable name to standard naming convention.

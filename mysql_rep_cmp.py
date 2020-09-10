@@ -198,8 +198,6 @@ def recur_tbl_cmp(master, slave, dbs, tbl, recur=0, **kwargs):
             if mail:
                 mail.add_2_msg(data)
 
-            return
-
         else:
             time.sleep(5)
             recur_tbl_cmp(master, slave, dbs, tbl, recur + 1, mail=mail,
@@ -214,8 +212,6 @@ def recur_tbl_cmp(master, slave, dbs, tbl, recur=0, **kwargs):
 
         if mail:
             mail.add_2_msg(data)
-
-        return
 
 
 def run_cmp(master, slave, dbs, tbl_list, **kwargs):
