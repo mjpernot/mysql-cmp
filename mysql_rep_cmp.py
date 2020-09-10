@@ -44,7 +44,7 @@
         Database configuration file format (config/mysql_cfg.py.TEMPLATE):
             # Configuration file for each Master/Slave Database
             user = "USER"
-            passwd = "PASSWORD"
+            japd = "PASSWORD"
             host = "SERVER_IP"
             name = "HOST_NAME"
             sid = SERVER_ID
