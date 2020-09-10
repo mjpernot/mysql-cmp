@@ -2,7 +2,7 @@
 # Classification (U)
 # Unclassified until filled in.
 user = 'USER'
-passwd = 'PASSWORD'
+japd = 'PASSWORD'
 # MySQL DB host information
 host = 'SERVER_IP'
 name = 'HOST_NAME'
