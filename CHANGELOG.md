@@ -5,6 +5,8 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 
 ## [3.2.0] - 2020-08-07
+- Updated to use the mysql_libs v5.0.0 library.
+
 ### Added
 - Added email capability for output of comparsion checks.
 - Added standard out suppression option.
