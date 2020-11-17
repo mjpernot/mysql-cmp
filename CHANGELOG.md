@@ -6,6 +6,10 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ## [3.2.0] - 2020-08-07
 - Updated to use the mysql_libs v5.0.0 library.
+- Updated to work with (much older) mysql.connector v1.1.6 library module.
+
+### Changed
+- run_program:  Determine if server_id from the server is a string or integer and convert the slave's server_id to corresponding datatype.
 
 ### Fixed
 - config/mysql.cfg.TEMPLATE:  Point to correct socket file.

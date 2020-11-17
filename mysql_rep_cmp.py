@@ -358,9 +358,17 @@ def run_program(args_array, sys_ign_db, **kwargs):
         mail = gen_class.setup_mail(args_array.get("-e"),
                                     subj=args_array.get("-s", SUBJ_LINE))
 
+    # Determine if output of server_id is string or integer.
+    slv_list = gen_libs.dict_2_list(master.show_slv_hosts(), "Server_id")
+
+    if isinstance(slv_list[0], str):
+        slv_id = str(slave.server_id)
+
+    else:
+        slv_id = slave.server_id
+
     # Is slave in replication with master
-    if slave.server_id in gen_libs.dict_2_list(master.show_slv_hosts(),
-                                               "Server_id"):
+    if slv_id in slv_list:
 
         # Check specified tables in database
         if "-t" in args_array:
