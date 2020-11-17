@@ -147,6 +147,7 @@ class Server(object):
         self.do_tbl = {}
         self.ign_tbl = {}
         self.server_id = 10
+        self.slv_lists = [{"Server_id": 10}]
 
     def connect(self):
 
@@ -170,7 +171,7 @@ class Server(object):
 
         """
 
-        return [{"Server_id": 10}]
+        return self.slv_lists
 
 
 class UnitTest(unittest.TestCase):
@@ -181,6 +182,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_str_server_id -> Test with integer server_id.
+        test_int_server_id -> Test with integer server_id.
         test_no_std_out -> Test with no standard out suppression selected.
         test_email_no_subj -> Test with email, but no subject line.
         test_email -> Test with email setup.
@@ -202,6 +205,8 @@ class UnitTest(unittest.TestCase):
         """
 
         self.mail = Mail()
+        self.server = Server()
+        self.server2 = Server()
         self.sys_ign_db = ["performance_schema", "information_schema"]
         self.args_array = {"-c": True, "-d": True, "-r": True}
         self.args_array2 = {"-c": True, "-d": True, "-r": True,
@@ -209,6 +214,46 @@ class UnitTest(unittest.TestCase):
         self.args_array3 = {"-c": True, "-d": True, "-r": True,
                             "-e": "email_address"}
         self.args_array4 = {"-c": True, "-d": True, "-r": True, "-z": True}
+
+    @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+                mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
+    def test_str_server_id(self, mock_server):
+
+        """Function:  test_str_server_id
+
+        Description:  Test with string server_id.
+
+        Arguments:
+
+        """
+
+        self.server.slv_lists = [{"Server_id": "10"}]
+
+        mock_server.side_effect = [self.server, self.server2]
+
+        self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
+                                                   self.sys_ign_db))
+
+    @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+                mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
+    def test_int_server_id(self, mock_server):
+
+        """Function:  test_int_server_id
+
+        Description:  Test with integer server_id.
+
+        Arguments:
+
+        """
+
+        mock_server.return_value = self.server
+
+        self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
+                                                   self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
