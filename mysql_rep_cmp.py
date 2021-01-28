@@ -12,43 +12,51 @@
 
     Usage:
         mysql_rep_cmp.py -c master_cfg -r slave_cfg -d path
-            {-A | -B name [-t name1 [name2 name3 ...]}
-            [-e email_addr {email_addr2 ...} {-s subject_line}]
-            [-y flavor_id] [-z]
+            {-A [-e addr [addr2 ...] [-s subject_line]] [-z] |
+             -B name [-t name [name2 name3 ...]
+                 [-e addr [addr2 ...] [-s subject_line]] [-z]}
+            [-y flavor_id]
             [-v | -h]
 
     Arguments:
         -c master_cfg => Master configuration file.  Required arg.
         -r slave_cfg => Slave configuration file.  Required arg.
         -d dir path => Directory path to config files.  Required arg.
-        -A => Check of all databases and tables.  Required XOR arg.
-            NOTE:  Some system tables may not be in sync in mysql and sys
-                databases.
-        -B Database name => Name of database.  Required XOR arg.
-        -t Table name(s) => Name of tables, space delimited.
-            Requires -B option.
-        -e email_addr email_addr2 => Enables emailing capability for an option
-            if the option allows it.  Sends output to one or more email
-            addresses.
-        -s subject_line => Subject line of email.  If none is provided then a
-            default one will be used.
+
+        -A => Check all databases and tables.
+            -e addr [addr2 ...] => Sends output to one or more email addresses.
+                -s subject_line => Subject line of email.
+            -z => Suppress standard out.
+
+        -B Database name => Name of database.
+            -t Table name(s) => Name of tables, space delimited.
+            -e addr [addr2 ...] => Sends output to one or more email addresses.
+                -s subject_line => Subject line of email.
+            -z => Suppress standard out.
+
         -y value => A flavor id for the program lock.  To create unique lock.
-        -z => Suppress standard out.
         -v => Display version of this program.
         -h => Help and usage message.
 
         NOTE 1:  -v or -h overrides the other options.
+
         NOTE 2:  -A and -B are required XOR arguments.
+
+        NOTE 3:  -A option:  Some system tables may not be in sync in mysql and
+             sys databases.
+
+        NOTE 4:  -s option:  If not provided, then a default subject line will
+            be created.
 
     Notes:
         Database configuration file format (config/mysql_cfg.py.TEMPLATE):
             # Configuration file for each Master/Slave Database
             user = "USER"
-            japd = "PASSWORD"
-            host = "SERVER_IP"
+            japd = "PSWORD"
+            host = "HOST_IP"
             name = "HOST_NAME"
             sid = SERVER_ID
-            extra_def_file = "DIRECTORY_PATH/config/mysql.cfg"
+            extra_def_file = "PYTHON_PROJECT/config/mysql.cfg"
             serv_os = "Linux"
             port = 3306
             cfg_file = "MYSQL_DIRECTORY/mysqld.cnf"
@@ -68,13 +76,13 @@
         Defaults Extra File format (config/mysql.cfg.TEMPLATE):
             [client]
             password="PASSWORD"
-            socket=MYSQL_DIRECTORY/mysql.sock
+            socket=DIRECTORY_PATH/mysql.sock
 
         NOTE:  The socket information can be obtained from the my.cnf
             file under ~/mysql directory.
 
     Example:
-        mysql_rep_cmp.py -r slave -c master -d config -A
+        mysql_rep_cmp.py -c master -r slave -d config -A
 
 """
 
