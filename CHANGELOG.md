@@ -8,25 +8,19 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Updated to use the mysql_libs v5.0.0 library.
 - Updated to work with (much older) mysql.connector v1.1.6 library module.
 
-### Changed
-- run_program:  Determine if server_id from the server is a string or integer and convert the slave's server_id to corresponding datatype.
-
-### Fixed
-- config/mysql.cfg.TEMPLATE:  Point to correct socket file.
-
 ### Added
 - Added email capability for output of comparsion checks.
 - Added standard out suppression option.
 
 ### Fixed
 - main:  Fixed handling command line arguments from SonarQube scan finding.
+- config/mysql.cfg.TEMPLATE:  Point to correct socket file.
 
 ### Changed
+- run_program:  Determine if server_id from the server is a string or integer and convert the slave's server_id to corresponding datatype.
 - recur_tbl_cmp:  Removed unnecessary returns.
-- config/mysql_cfg.py.TEMPLATE:  Changed name of configuration entry.
-- setup_cmp:  Changed variable name to standard naming convention.
-- run_cmp:  Changed variable name to standard naming convention.
-- recur_tbl_cmp:  Changed variable name to standard naming convention.
+- config/mysql_cfg.py.TEMPLATE:  Changed configuration entry.
+- setup_cmp, run_cmp, recur_tbl_cmp:  Changed variable name to standard naming convention.
 - fetch_db_list:  Removed unnecessary else clause in if statement.
 - recur_tbl_cmp:  Added checks for standard out prints for standard out suppression and passed no_std to recursive call.
 - run_cmp:  Added check for standard out prints for standard out suppression and passed to recur_tbl_cmp function.
@@ -45,10 +39,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ## [3.1.0] - 2020-01-06
 ### Fixed
 - setup_cmp:  Set ign_db_tbl default value to empty dictionary.
-- fetch_db_list:  Fixed problem with mutable default arguments issue.
-- run_cmp:  Fixed problem with mutable default arguments issue.
-- setup_cmp:  Fixed problem with mutable default arguments issue.
-- run_program:  Fixed problem with mutable default arguments issue.
+- fetch_db_list, run_cmp, setup_cmp, run_program:  Fixed problem with mutable default arguments issue.
 
 ### Changed
 - run_program:  Replaced sys.exit() call with print call.
@@ -57,11 +48,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main:  Added program lock functionality to program.
 - main:  Added new option -y to the program.
 - main:  Refactored if statements.
-- fetch_db_list:  Changed variable name to standard convention.
-- recur_tbl_cmp:  Changed variable name to standard convention.
-- run_cmp:  Changed variable name to standard convention.
-- setup_cmp:  Changed variable name to standard convention.
-- run_program:  Changed variable name to standard convention.
+- fetch_db_list, recur_tbl_cmp, run_cmp, setup_cmp, run_program:  Changed variable name to standard convention.
 - run_program:  Converted program to use mysql-lib v4.0.0.
 - Added \*\*kwargs to those function parameter lists without the keyword argument capability.
 - Documentation updates.
@@ -76,11 +63,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 Breaking Change
 
 ### Changed
-- Changed "mysql_class" calls to new naming schema.
-- Changed "mysql_libs" calls to new naming schema.
-- Changed "cmds_gen" calls to new naming schema.
-- Changed "gen_libs" calls to new naming schema.
-- Changed "arg_parser" calls to new naming schema.
+- mysql_class, mysql_libs, cmds_gen, gen_libs, arg_parser:  Changed calls to new naming schema.
 - Changed function names from uppercase to lowercase.
 - Setup single-source version control.
 
