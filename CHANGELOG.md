@@ -11,6 +11,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 ### Added
 - Added email capability for output of comparsion checks.
 - Added standard out suppression option.
+- Allow to override the default sendmail (postfix) and use mailx command.
 
 ### Fixed
 - main:  Fixed handling command line arguments from SonarQube scan finding.
@@ -33,7 +34,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - run_cmp:  Added statements to email instance and passed email to relevant functions.
 - setup_cmp:  Sent email if email instance exists and passed email to relevant functions.
 - run_program:  Created email instance, added default subject line, and passed to relevant functions.
-- main:  Added -e and -s options to parsing for email capability.
+- main:  Added -e, -s, and -u options to parsing for email capability.
 - Documentation updates.
 
 

@@ -12,9 +12,9 @@
 
     Usage:
         mysql_rep_cmp.py -c master_cfg -r slave_cfg -d path
-            {-A [-e addr [addr2 ...] [-s subject_line]] [-z] |
+            {-A [-e addr [addr2 ...] [-s subject_line] [-u]] [-z] |
              -B name [-t name [name2 name3 ...]
-                 [-e addr [addr2 ...] [-s subject_line]] [-z]}
+                 [-e addr [addr2 ...] [-s subject_line] [-u]] [-z]}
             [-y flavor_id]
             [-v | -h]
 
@@ -427,7 +427,7 @@ def main():
     ign_db_tbl = {"mysql": ["innodb_index_stats", "innodb_table_stats",
                             "slave_master_info", "slave_relay_log_info",
                             "slave_worker_info"]}
-    opt_con_req_list = {"-t": ["-B"], "-s": ["-e"]}
+    opt_con_req_list = {"-t": ["-B"], "-s": ["-e"], "-u": ["-e"]}
     opt_multi_list = ["-B", "-e", "-s", "-t"]
     opt_req_list = ["-r", "-c", "-d"]
     opt_req_xor_list = {"-A": "-B"}
