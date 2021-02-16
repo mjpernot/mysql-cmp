@@ -275,6 +275,7 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
             ign_db_tbl -> Dictionary-List of dbs & tables to be ignored.
             mail -> Mail class instance.
             no_std -> Suppress standard out.
+            use_mailx -> Use the mailx command for sending emails.
 
     """
 
@@ -334,7 +335,7 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         run_cmp(master, slave, dbs, tbl_list, mail=mail, no_std=no_std)
 
     if mail:
-        mail.send_mail()
+        mail.send_mail(use_mailx=kwargs.get("use_mailx", False))
 
 
 def run_program(args_array, sys_ign_db, **kwargs):
