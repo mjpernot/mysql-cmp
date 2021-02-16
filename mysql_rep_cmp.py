@@ -123,7 +123,7 @@ def help_message():
     print(__doc__)
 
 
-def fetch_db_list(server, ign_db_list=None, db_name=None, **kwargs):
+def fetch_db_list(server, ign_db_list=None, db_name=None):
 
     """Function:  fetch_db_list
 

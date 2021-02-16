@@ -17,6 +17,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - config/mysql.cfg.TEMPLATE:  Point to correct socket file.
 
 ### Changed
+- fetch_db_list:  Remove \*\*kwargs from argument list.
 - run_program:  Determine if server_id from the server is a string or integer and convert the slave's server_id to corresponding datatype.
 - recur_tbl_cmp:  Removed unnecessary returns.
 - config/mysql_cfg.py.TEMPLATE:  Changed configuration entry.
