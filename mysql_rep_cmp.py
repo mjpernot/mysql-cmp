@@ -364,46 +364,53 @@ def run_program(args_array, sys_ign_db, **kwargs):
                                        mysql_class.SlaveRep)
     slave.connect()
 
-    if args_array.get("-e", None):
-        mail = gen_class.setup_mail(args_array.get("-e"),
-                                    subj=args_array.get("-s", SUBJ_LINE))
-        use_mailx = args_array.get("-u", False)
-
-    # Determine if output of server_id is string or integer.
-    slv_list = gen_libs.dict_2_list(master.show_slv_hosts(), "Server_id")
-
-    if isinstance(slv_list[0], str):
-        slv_id = str(slave.server_id)
+    if master.conn_msg or slave.conn_msg:
+        print("run_program: Error encountered with connection of master/slave")
+        print("\tMaster:  %s" % (master.conn_msg))
+        print("\tSlave:  %s" % (slave.conn_msg))
 
     else:
-        slv_id = slave.server_id
+        if args_array.get("-e", None):
+            mail = gen_class.setup_mail(args_array.get("-e"),
+                                        subj=args_array.get("-s", SUBJ_LINE))
+            use_mailx = args_array.get("-u", False)
 
-    # Is slave in replication with master
-    if slv_id in slv_list:
+        # Determine if output of server_id is string or integer.
+        slv_list = gen_libs.dict_2_list(master.show_slv_hosts(), "Server_id")
 
-        # Check specified tables in database
-        if "-t" in args_array:
-            setup_cmp(
-                master, slave, sys_ign_db, args_array["-B"], args_array["-t"],
-                mail=mail, no_std=no_std, use_mailx=use_mailx, **kwargs)
+        if isinstance(slv_list[0], str):
+            slv_id = str(slave.server_id)
 
-        # Check single database
-        elif "-B" in args_array:
-            setup_cmp(
-                master, slave, sys_ign_db, args_array["-B"], "", mail=mail,
-                no_std=no_std, use_mailx=use_mailx, **kwargs)
-
-        # Check all tables in all databases
         else:
-            setup_cmp(
-                master, slave, sys_ign_db, "", "", mail=mail, no_std=no_std,
-                use_mailx=use_mailx, **kwargs)
+            slv_id = slave.server_id
 
-        cmds_gen.disconnect(master, slave)
+        # Is slave in replication with master
+        if slv_id in slv_list:
 
-    else:
-        cmds_gen.disconnect(master, slave)
-        print("Error:  Replica is not in replication with Master.")
+            # Check specified tables in database
+            if "-t" in args_array:
+                setup_cmp(
+                    master, slave, sys_ign_db, args_array["-B"],
+                    args_array["-t"], mail=mail, no_std=no_std,
+                    use_mailx=use_mailx, **kwargs)
+
+            # Check single database
+            elif "-B" in args_array:
+                setup_cmp(
+                    master, slave, sys_ign_db, args_array["-B"], "", mail=mail,
+                    no_std=no_std, use_mailx=use_mailx, **kwargs)
+
+            # Check all tables in all databases
+            else:
+                setup_cmp(
+                    master, slave, sys_ign_db, "", "", mail=mail,
+                    no_std=no_std, use_mailx=use_mailx, **kwargs)
+
+            cmds_gen.disconnect(master, slave)
+
+        else:
+            cmds_gen.disconnect(master, slave)
+            print("Error:  Replica is not in replication with Master.")
 
 
 def main():
