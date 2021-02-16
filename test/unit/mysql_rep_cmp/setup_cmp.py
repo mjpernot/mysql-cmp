@@ -58,17 +58,23 @@ class Mail(object):
 
         self.data = None
 
-    def send_mail(self):
+    def send_mail(self, use_mailx=False):
 
         """Method:  send_mail
 
         Description:  Stub method holder for Mail.send_mail.
 
         Arguments:
+            (input) use_mailx -> Use the mailx command instead of sendmail.
 
         """
 
-        return True
+        status = True
+
+        if use_mailx:
+            status = True
+
+        return status
 
 
 class Server(object):
@@ -135,6 +141,8 @@ class UnitTest(unittest.TestCase):
     Methods:
         setUp -> Initialize testing environment.
         test_no_std_out -> Test with passing no standard out suppression.
+        test_email_mailx2 -> Test with email using use_mailx option.
+        test_email_mailx -> Test with email using use_mailx option.
         test_email -> Test with email is passed.
         test_tbl_name -> Test with tbl_name is passed.
         test_db_name -> Test with db_name is passed.
@@ -195,6 +203,52 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mysql_rep_cmp.setup_cmp(
             self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
             no_std=self.no_std))
+
+    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    @mock.patch("mysql_rep_cmp.fetch_db_list")
+    def test_email_mailx2(self, mock_fetch, mock_tbl):
+
+        """Function:  test_email_mailx2
+
+        Description:  Test with email using use_mailx option.
+
+        Arguments:
+
+        """
+
+        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
+
+        mock_fetch.side_effect = [self.dblist2, self.dblist2]
+        mock_tbl.side_effect = [self.databases, self.databases,
+                                self.databases2, self.databases2]
+
+        self.assertFalse(mysql_rep_cmp.setup_cmp(
+            self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
+            mail=self.mail, use_mailx=True))
+
+    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    @mock.patch("mysql_rep_cmp.fetch_db_list")
+    def test_email_mailx(self, mock_fetch, mock_tbl):
+
+        """Function:  test_email_mailx
+
+        Description:  Test with email using use_mailx option.
+
+        Arguments:
+
+        """
+
+        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
+
+        mock_fetch.side_effect = [self.dblist2, self.dblist2]
+        mock_tbl.side_effect = [self.databases, self.databases,
+                                self.databases2, self.databases2]
+
+        self.assertFalse(mysql_rep_cmp.setup_cmp(
+            self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
+            mail=self.mail, use_mailx=False))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
