@@ -127,6 +127,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(self.mail.msg, self.results)
 
+    @mock.patch("mysql_rep_cmp.time.sleep", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
     def test_check_once_no_std(self, mock_checksum):
 
@@ -146,6 +147,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(self.mail.msg, self.results)
 
+    @mock.patch("mysql_rep_cmp.time.sleep", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
     def test_reached_max_no_std(self, mock_checksum):
 
@@ -203,6 +205,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(self.mail.msg, self.results)
 
+    @mock.patch("mysql_rep_cmp.time.sleep", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
     def test_check_once_email(self, mock_checksum):
 
@@ -222,6 +225,7 @@ class UnitTest(unittest.TestCase):
 
         self.assertEqual(self.mail.msg, self.results)
 
+    @mock.patch("mysql_rep_cmp.time.sleep", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
     def test_reached_max_mail(self, mock_checksum):
 
@@ -277,6 +281,7 @@ class UnitTest(unittest.TestCase):
             self.assertFalse(mysql_rep_cmp.recur_tbl_cmp(
                 self.master, self.slave, "db1", "tbl1"))
 
+    @mock.patch("mysql_rep_cmp.time.sleep", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
     def test_reached_max(self, mock_checksum):
 
@@ -294,6 +299,7 @@ class UnitTest(unittest.TestCase):
             self.assertFalse(mysql_rep_cmp.recur_tbl_cmp(
                 self.master, self.slave, "db1", "tbl1", 3))
 
+    @mock.patch("mysql_rep_cmp.time.sleep", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.checksum")
     def test_check_once(self, mock_checksum):
 
