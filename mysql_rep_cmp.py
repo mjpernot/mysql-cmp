@@ -354,6 +354,7 @@ def run_program(args_array, sys_ign_db, **kwargs):
     args_array = dict(args_array)
     sys_ign_db = list(sys_ign_db)
     mail = None
+    use_mailx = False
     no_std = args_array.get("-z", False)
     master = mysql_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mysql_class.MasterRep)
@@ -365,6 +366,7 @@ def run_program(args_array, sys_ign_db, **kwargs):
     if args_array.get("-e", None):
         mail = gen_class.setup_mail(args_array.get("-e"),
                                     subj=args_array.get("-s", SUBJ_LINE))
+        use_mailx = args_array.get("-u", False)
 
     # Determine if output of server_id is string or integer.
     slv_list = gen_libs.dict_2_list(master.show_slv_hosts(), "Server_id")
@@ -380,18 +382,21 @@ def run_program(args_array, sys_ign_db, **kwargs):
 
         # Check specified tables in database
         if "-t" in args_array:
-            setup_cmp(master, slave, sys_ign_db, args_array["-B"],
-                      args_array["-t"], mail=mail, no_std=no_std, **kwargs)
+            setup_cmp(
+                master, slave, sys_ign_db, args_array["-B"], args_array["-t"],
+                mail=mail, no_std=no_std, use_mailx=use_mailx, **kwargs)
 
         # Check single database
         elif "-B" in args_array:
-            setup_cmp(master, slave, sys_ign_db, args_array["-B"], "",
-                      mail=mail, no_std=no_std, **kwargs)
+            setup_cmp(
+                master, slave, sys_ign_db, args_array["-B"], "", mail=mail,
+                no_std=no_std, use_mailx=use_mailx, **kwargs)
 
         # Check all tables in all databases
         else:
-            setup_cmp(master, slave, sys_ign_db, "", "", mail=mail,
-                      no_std=no_std, **kwargs)
+            setup_cmp(
+                master, slave, sys_ign_db, "", "", mail=mail, no_std=no_std,
+                use_mailx=use_mailx, **kwargs)
 
         cmds_gen.disconnect(master, slave)
 
