@@ -200,6 +200,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.err_msg = "Failed Conection Message"
         self.mail = Mail()
         self.master = MasterRep()
         self.slave = SlaveRep()
@@ -230,8 +231,8 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.master.conn_msg = "Failed Conection Message"
-        self.slave.conn_msg = "Failed Conection Message"
+        self.master.conn_msg = self.err_msg
+        self.slave.conn_msg = self.err_msg
 
         mock_server.side_effect = [self.master, self.slave]
 
@@ -253,7 +254,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.slave.conn_msg = "Failed Conection Message"
+        self.slave.conn_msg = self.err_msg
 
         mock_server.side_effect = [self.master, self.slave]
 
@@ -275,7 +276,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.master.conn_msg = "Failed Conection Message"
+        self.master.conn_msg = self.err_msg
 
         mock_server.side_effect = [self.master, self.slave]
 
