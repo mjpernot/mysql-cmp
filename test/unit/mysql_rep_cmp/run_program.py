@@ -115,7 +115,6 @@ class MasterRep(object):
         __init__ -> Class initialization.
         connect -> Method stub holder for mysql_class.MasterRep.connect.
         show_slv_hosts -> Metho for mysql_class.MasterRep.show_slv_hosts.
-        
 
     """
 
@@ -214,7 +213,7 @@ class UnitTest(unittest.TestCase):
         self.args_array3 = {"-c": True, "-d": True, "-r": True,
                             "-e": "email_address"}
         self.args_array3a = {"-c": True, "-d": True, "-r": True,
-                            "-e": "email_address", "-u": True}
+                             "-e": "email_address", "-u": True}
         self.args_array4 = {"-c": True, "-d": True, "-r": True, "-z": True}
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
