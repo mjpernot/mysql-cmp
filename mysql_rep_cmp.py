@@ -375,14 +375,12 @@ def run_program(args_array, sys_ign_db, **kwargs):
                                         subj=args_array.get("-s", SUBJ_LINE))
             use_mailx = args_array.get("-u", False)
 
-        # Determine if output of server_id is string or integer.
+        # Determine datatype of server_id and convert appropriately.
+        #   Required for mysql.connector v1.1.6 as this version assigns the
+        #   id to a different datatype then later mysql.connector versions.
         slv_list = gen_libs.dict_2_list(master.show_slv_hosts(), "Server_id")
-
-        if isinstance(slv_list[0], str):
-            slv_id = str(slave.server_id)
-
-        else:
-            slv_id = slave.server_id
+        slv_id = str(slave.server_id) \
+                 if isinstance(slv_list[0], str) else slave.server_id
 
         # Is slave in replication with master
         if slv_id in slv_list:

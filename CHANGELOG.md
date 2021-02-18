@@ -18,6 +18,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - config/mysql.cfg.TEMPLATE:  Point to correct socket file.
 
 ### Changed
+- run_program:  Refactored part of the function to reduce complexity.
 - run_program:  Check and process connection status for master and slave connections.
 - run_program:  Determine if mail will use sendmail or mailx.
 - fetch_db_list:  Remove \*\*kwargs from argument list.
