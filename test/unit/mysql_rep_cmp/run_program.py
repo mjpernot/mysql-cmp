@@ -217,7 +217,7 @@ class UnitTest(unittest.TestCase):
         self.args_array4 = {"-c": True, "-d": True, "-r": True, "-z": True}
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     def test_both_conn_fail(self, mock_server):
@@ -240,7 +240,7 @@ class UnitTest(unittest.TestCase):
                                                        self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     def test_slave_conn_fail(self, mock_server):
@@ -262,7 +262,7 @@ class UnitTest(unittest.TestCase):
                                                        self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     def test_master_conn_fail(self, mock_server):
@@ -284,7 +284,7 @@ class UnitTest(unittest.TestCase):
                                                        self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     def test_conn_success(self, mock_server):
@@ -303,7 +303,7 @@ class UnitTest(unittest.TestCase):
                                                    self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     def test_str_server_id(self, mock_server):
@@ -324,7 +324,7 @@ class UnitTest(unittest.TestCase):
                                                    self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     def test_int_server_id(self, mock_server):
@@ -343,7 +343,7 @@ class UnitTest(unittest.TestCase):
                                                    self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     def test_no_std_out(self, mock_server):
@@ -362,7 +362,7 @@ class UnitTest(unittest.TestCase):
                                                    self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     @mock.patch("mysql_rep_cmp.gen_class.setup_mail")
@@ -383,7 +383,7 @@ class UnitTest(unittest.TestCase):
                                                    self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     @mock.patch("mysql_rep_cmp.gen_class.setup_mail")
@@ -404,7 +404,7 @@ class UnitTest(unittest.TestCase):
                                                    self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     @mock.patch("mysql_rep_cmp.gen_class.setup_mail")
@@ -425,7 +425,7 @@ class UnitTest(unittest.TestCase):
                                                    self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     @mock.patch("mysql_rep_cmp.gen_class.setup_mail")
@@ -445,7 +445,7 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mysql_rep_cmp.run_program(self.args_array2,
                                                    self.sys_ign_db))
 
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     def test_slave_not_present(self, mock_server):
@@ -467,7 +467,7 @@ class UnitTest(unittest.TestCase):
                                                        self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     def test_database_option(self, mock_server):
@@ -488,7 +488,7 @@ class UnitTest(unittest.TestCase):
                                                    self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     def test_table_option(self, mock_server):
@@ -510,7 +510,7 @@ class UnitTest(unittest.TestCase):
                                                    self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.cmds_gen.disconnect",
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
     def test_run_program(self, mock_server):
