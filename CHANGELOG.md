@@ -42,6 +42,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main:  Added -e, -s, and -u options to parsing for email capability.
 - Documentation updates.
 
+### Removed
+- cmds_gen module
+
 
 ## [3.1.0] - 2020-01-06
 ### Fixed
