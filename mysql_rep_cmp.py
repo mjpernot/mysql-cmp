@@ -26,12 +26,14 @@
         -A => Check all databases and tables.
             -e addr [addr2 ...] => Sends output to one or more email addresses.
                 -s subject_line => Subject line of email.
+                -u => Override the default mail command and use mailx.
             -z => Suppress standard out.
 
         -B Database name => Name of database.
             -t Table name(s) => Name of tables, space delimited.
             -e addr [addr2 ...] => Sends output to one or more email addresses.
                 -s subject_line => Subject line of email.
+                -u => Override the default mail command and use mailx.
             -z => Suppress standard out.
 
         -y value => A flavor id for the program lock.  To create unique lock.
@@ -380,7 +382,7 @@ def run_program(args_array, sys_ign_db, **kwargs):
         #   id to a different datatype then later mysql.connector versions.
         slv_list = gen_libs.dict_2_list(master.show_slv_hosts(), "Server_id")
         slv_id = str(slave.server_id) \
-                 if isinstance(slv_list[0], str) else slave.server_id
+            if isinstance(slv_list[0], str) else slave.server_id
 
         # Is slave in replication with master
         if slv_id in slv_list:
