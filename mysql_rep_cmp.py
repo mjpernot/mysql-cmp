@@ -359,10 +359,10 @@ def run_program(args_array, sys_ign_db, **kwargs):
     no_std = args_array.get("-z", False)
     master = mysql_libs.create_instance(args_array["-c"], args_array["-d"],
                                         mysql_class.MasterRep)
-    master.connect()
+    master.connect(silent=True)
     slave = mysql_libs.create_instance(args_array["-r"], args_array["-d"],
                                        mysql_class.SlaveRep)
-    slave.connect()
+    slave.connect(silent=True)
 
     if master.conn_msg or slave.conn_msg:
         print("run_program: Error encountered with connection of master/slave")

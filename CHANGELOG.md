@@ -18,6 +18,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - config/mysql.cfg.TEMPLATE:  Point to correct socket file.
 
 ### Changed
+- run_program:  Added silent option to the connect methods.
 - run_program:  Replaced cmds_gen.disconnect with mysql_libs.connect.
 - run_program:  Refactored part of the function to reduce complexity.
 - run_program:  Check and process connection status for master and slave connections.
