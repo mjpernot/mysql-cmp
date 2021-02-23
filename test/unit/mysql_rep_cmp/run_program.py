@@ -92,7 +92,7 @@ class SlaveRep(object):
         self.server_id = 11
         self.conn_msg = None
 
-    def connect(self):
+    def connect(self, silent=False):
 
         """Method:  connect
 
@@ -102,7 +102,12 @@ class SlaveRep(object):
 
         """
 
-        return True
+        status = True
+
+        if silent:
+            status = True
+
+        return status
 
 
 class MasterRep(object):
@@ -138,7 +143,7 @@ class MasterRep(object):
         self.slv_lists = [{"Server_id": 11}]
         self.conn_msg = None
 
-    def connect(self):
+    def connect(self, silent=False):
 
         """Method:  connect
 
@@ -148,7 +153,12 @@ class MasterRep(object):
 
         """
 
-        return True
+        status = True
+
+        if silent:
+            status = True
+
+        return status
 
     def show_slv_hosts(self):
 
