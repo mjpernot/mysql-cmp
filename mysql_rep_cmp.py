@@ -404,10 +404,10 @@ def run_program(args_array, sys_ign_db, **kwargs):
                     master, slave, sys_ign_db, "", "", mail=mail,
                     no_std=no_std, use_mailx=use_mailx, **kwargs)
 
-            cmds_gen.disconnect(master, slave)
+            mysql_libs.disconnect(master, slave)
 
         else:
-            cmds_gen.disconnect(master, slave)
+            mysql_libs.disconnect(master, slave)
             print("Error:  Replica is not in replication with Master.")
 
 
