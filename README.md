@@ -70,7 +70,7 @@ Make the appropriate change to the environment.
   * Change these entries in the MySQL setup:
     - user = "USER"
     - passwd = "PASSWORD"
-    - host = "SERVER_IP"
+    - host = "HOST_IP"
     - name = "HOST_NAME"
     - sid = SERVER_ID
     - extra_def_file = "DIRECTORY_PATH/config/mysql.cfg"
