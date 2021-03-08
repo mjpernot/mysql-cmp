@@ -35,6 +35,45 @@ import version
 __version__ = version.__version__
 
 
+class Mail(object):
+
+    """Class:  Mail
+
+    Description:  Class stub holder for gen_class.Mail class.
+
+    Methods:
+        __init__ -> Class initialization.
+        add_2_msg -> Stub method holder for Mail.add_2_msg.
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.data = None
+
+    def add_2_msg(self, data):
+
+        """Method:  add_2_msg
+
+        Description:  Stub method holder for Mail.add_2_msg.
+
+        Arguments:
+
+        """
+
+        self.data = data
+
+        return True
+
+
 class Server(object):
 
     """Class:  Server
@@ -72,6 +111,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp -> Initialize testing environment.
+        test_no_std__out -> Test with no standard out suppression.
+        test_email -> Test with email.
         test_multiple_tables -> Test with multiple tables in list.
         test_empty_list -> Test with empty table list.
         test_default -> Test with default arguments only.
@@ -90,8 +131,39 @@ class UnitTest(unittest.TestCase):
 
         self.master = Server()
         self.slave = Server()
+        self.mail = Mail()
         self.tbllist = ["tbl1"]
         self.tbllist2 = ["tbl1", "tbl2"]
+        self.no_std = True
+
+    @mock.patch("mysql_rep_cmp.recur_tbl_cmp", mock.Mock(return_value=True))
+    def test_no_std__out(self):
+
+        """Function:  test_no_std__out
+
+        Description:  Test with no standard out suppression.
+
+        Arguments:
+
+        """
+
+        self.assertFalse(mysql_rep_cmp.run_cmp(
+            self.master, self.slave, "db1", self.tbllist, no_std=self.no_std))
+
+    @mock.patch("mysql_rep_cmp.recur_tbl_cmp", mock.Mock(return_value=True))
+    def test_email(self):
+
+        """Function:  test_email
+
+        Description:  Test with email.
+
+        Arguments:
+
+        """
+
+        with gen_libs.no_std_out():
+            self.assertFalse(mysql_rep_cmp.run_cmp(
+                self.master, self.slave, "db1", self.tbllist2, mail=self.mail))
 
     @mock.patch("mysql_rep_cmp.recur_tbl_cmp", mock.Mock(return_value=True))
     def test_multiple_tables(self):
@@ -126,7 +198,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.recur_tbl_cmp", mock.Mock(return_value=True))
     def test_default(self):
 
-        """Function:  test_run_cmp
+        """Function:  test_default
 
         Description:  Test with default arguments only.
 

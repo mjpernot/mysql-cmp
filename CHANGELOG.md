@@ -4,13 +4,52 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [3.2.0] - 2020-08-07
+- Updated to use the mysql_libs v5.0.0 library.
+- Updated to work with (much older) mysql.connector v1.1.6 library module.
+
+### Added
+- Added email capability for output of comparsion checks.
+- Added standard out suppression option.
+- Allow to override the default sendmail (postfix) and use mailx command.
+
+### Fixed
+- main:  Fixed handling command line arguments from SonarQube scan finding.
+- config/mysql.cfg.TEMPLATE:  Point to correct socket file.
+
+### Changed
+- run_program:  Added silent option to the connect methods.
+- run_program:  Replaced cmds_gen.disconnect with mysql_libs.connect.
+- run_program:  Refactored part of the function to reduce complexity.
+- run_program:  Check and process connection status for master and slave connections.
+- run_program:  Determine if mail will use sendmail or mailx.
+- fetch_db_list:  Remove \*\*kwargs from argument list.
+- run_program:  Determine if server_id from the server is a string or integer and convert the slave's server_id to corresponding datatype.
+- recur_tbl_cmp:  Removed unnecessary returns.
+- config/mysql_cfg.py.TEMPLATE:  Changed configuration entry.
+- setup_cmp, run_cmp, recur_tbl_cmp:  Changed variable name to standard naming convention.
+- fetch_db_list:  Removed unnecessary else clause in if statement.
+- recur_tbl_cmp:  Added checks for standard out prints for standard out suppression and passed no_std to recursive call.
+- run_cmp:  Added check for standard out prints for standard out suppression and passed to recur_tbl_cmp function.
+- setup_cmp:  Passed standard out suppression to function as keyword arg.
+- run_program:  Determined if standard out suppression was selected and passed to setup_cmp.
+- recur_tbl_cmp:  Added statements to email instance and passed email to recursive call.
+- recur_tbl_cmp:  Added print check statement from run_cmp function.
+- run_cmp:  Moved print check statement into recur_tbl_cmp function.
+- run_cmp:  Added statements to email instance and passed email to relevant functions.
+- setup_cmp:  Send email if email instance exists along with use_mailx option and passed email to relevant functions.
+- run_program:  Created email instance, added default subject line, and passed to relevant functions.
+- main:  Added -e, -s, and -u options to parsing for email capability.
+- Documentation updates.
+
+### Removed
+- cmds_gen module
+
+
 ## [3.1.0] - 2020-01-06
 ### Fixed
 - setup_cmp:  Set ign_db_tbl default value to empty dictionary.
-- fetch_db_list:  Fixed problem with mutable default arguments issue.
-- run_cmp:  Fixed problem with mutable default arguments issue.
-- setup_cmp:  Fixed problem with mutable default arguments issue.
-- run_program:  Fixed problem with mutable default arguments issue.
+- fetch_db_list, run_cmp, setup_cmp, run_program:  Fixed problem with mutable default arguments issue.
 
 ### Changed
 - run_program:  Replaced sys.exit() call with print call.
@@ -19,11 +58,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - main:  Added program lock functionality to program.
 - main:  Added new option -y to the program.
 - main:  Refactored if statements.
-- fetch_db_list:  Changed variable name to standard convention.
-- recur_tbl_cmp:  Changed variable name to standard convention.
-- run_cmp:  Changed variable name to standard convention.
-- setup_cmp:  Changed variable name to standard convention.
-- run_program:  Changed variable name to standard convention.
+- fetch_db_list, recur_tbl_cmp, run_cmp, setup_cmp, run_program:  Changed variable name to standard convention.
 - run_program:  Converted program to use mysql-lib v4.0.0.
 - Added \*\*kwargs to those function parameter lists without the keyword argument capability.
 - Documentation updates.
@@ -38,11 +73,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 Breaking Change
 
 ### Changed
-- Changed "mysql_class" calls to new naming schema.
-- Changed "mysql_libs" calls to new naming schema.
-- Changed "cmds_gen" calls to new naming schema.
-- Changed "gen_libs" calls to new naming schema.
-- Changed "arg_parser" calls to new naming schema.
+- mysql_class, mysql_libs, cmds_gen, gen_libs, arg_parser:  Changed calls to new naming schema.
 - Changed function names from uppercase to lowercase.
 - Setup single-source version control.
 
