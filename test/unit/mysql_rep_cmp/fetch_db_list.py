@@ -29,7 +29,6 @@ import mock
 # Local
 sys.path.append(os.getcwd())
 import mysql_rep_cmp
-import lib.gen_libs as gen_libs
 import version
 
 __version__ = version.__version__
@@ -141,8 +140,9 @@ class UnitTest(unittest.TestCase):
 
         self.server.do_db = self.dblist
 
-        self.assertEqual(mysql_rep_cmp.fetch_db_list(
-            self.server, db_name=self.dolist3, ign_db_list=self.ignlist),
+        self.assertEqual(
+            mysql_rep_cmp.fetch_db_list(
+                self.server, db_name=self.dolist3, ign_db_list=self.ignlist),
             self.dblist2)
 
     def test_db_name_ign_db_list(self):

@@ -2,7 +2,7 @@
 # Classification (U)
 
 # Description:
-  This program is used to compare tables between a master and slave database to ensure they are in sync.
+  Used to compare tables between a master and slave database to ensure they are in sync.
 
 
 ###  This README file is broken down into the following sections:
@@ -22,8 +22,6 @@
 # Prerequisites:
 
   * List of Linux packages that need to be installed on the server.
-    - python-libs
-    - python-devel
     - git
     - python-pip
 
@@ -68,53 +66,50 @@ pip install -r requirements-python-lib.txt --target mysql_lib/lib --trusted-host
 # Configuration:
 
 Create MySQL configuration file for Master database.
-  * Replace **{Python_Project}** with the baseline path of the python program.
+Make the appropriate change to the environment.
+  * Change these entries in the MySQL setup:
+    - user = "USER"
+    - passwd = "PASSWORD"
+    - host = "HOST_IP"
+    - name = "HOST_NAME"
+    - sid = SERVER_ID
+    - extra_def_file = "DIRECTORY_PATH/config/mysql.cfg"
+    - cfg_file = "MYSQL_DIRECTORY/mysqld.cnf"
+  * Change these entries only if required:
+    - serv_os = Linux
+    - port = 3306
 
 ```
 cd config
 cp mysql_cfg.py.TEMPLATE mysql_cfg.py
-```
-
-Make the appropriate change to the environment.
-  * Change these entries in the MySQL setup:
-    - passwd = "ROOT_PASSWORD"
-    - host = "SERVER_IP"
-    - name = "HOST_NAME"
-    - sid = SERVER_ID
-    - extra_def_file = "{Python_Project}/config/mysql.cfg"
-
-```
 vim mysql_cfg.py
 chmod 600 mysql_cfg.py
 ```
 
 Create MySQL definition file for Master database.
+Make the appropriate change to the environment.
+  * Change these entries in the MySQL definition file:
+    - password="PASSWORD"
+    - socket=MYSQL_DIRECTORY/mysql.sock
 
 ```
 cp mysql.cfg.TEMPLATE mysql.cfg
-```
-
-Make the appropriate change to the environment.
-  * Change these entries in the MySQL definition file:
-    - password="ROOT_PASSWORD"
-    - socket={BASE_DIR}/mysql/tmp/mysql.sock
-
-```
 vim mysql.cfg
 chmod 600 mysql.cfg
 ```
 
 For the Slave database, create a seperate MySQL configuration and MySQL definition file.
 
-Make the appropriate change to the Slave environment.  See above for the changes required in each file.  In addition, the "extra_def_file" entry will require "mysql.cfg" to be changed to "mysql\_{SlaveName}.cfg".
+Make the appropriate change to the Slave environment.  See above for the changes required in each file.  In addition, the "extra_def_file" entry will require "mysql.cfg" to be changed to "mysql\_SLAVENAME.cfg".
+  * Replace **SLAVENAME** with the name of the slave being compared to.
 
 ```
-cp mysql_cfg.py.TEMPLATE mysql_cfg_{SlaveName}.py
-vim mysql_cfg_{SlaveName}.py
-chmod 600 mysql_cfg_{SlaveName}.py
-cp mysql.cfg.TEMPLATE mysql_{SlaveName}.cfg
-vim mysql_{SlaveName}.cfg
-chmod 600 mysql_{SlaveName}.cfg
+cp mysql_cfg.py.TEMPLATE mysql_cfg_SLAVENAME.py
+vim mysql_cfg_SLAVENAME.py
+chmod 600 mysql_cfg_SLAVENAME.py
+cp mysql.cfg.TEMPLATE mysql_SLAVENAME.cfg
+vim mysql_SLAVENAME.cfg
+chmod 600 mysql_SLAVENAME.cfg
 ```
 
 
@@ -130,10 +125,7 @@ chmod 600 mysql_{SlaveName}.cfg
 
 # Testing:
 
-
 # Unit Testing:
-
-### Description: Testing consists of unit testing for the functions in the mysql_rep_cmp.py program.
 
 ### Installation:
 
@@ -169,25 +161,17 @@ pip install -r requirements-python-lib.txt --target mysql_lib/lib --trusted-host
 # Unit test runs for mysql_rep_cmp.py:
   * Replace **{Python_Project}** with the baseline path of the python program.
 
-### Unit testing:
+### Testing:
+
 ```
 cd {Python_Project}/mysql-cmp
-test/unit/mysql_rep_cmp/fetch_db_list.py
-test/unit/mysql_rep_cmp/help_message.py
-test/unit/mysql_rep_cmp/main.py
-test/unit/mysql_rep_cmp/recur_tbl_cmp.py
-test/unit/mysql_rep_cmp/run_cmp.py
-test/unit/mysql_rep_cmp/run_program.py
-test/unit/mysql_rep_cmp/setup_cmp.py
-```
-
-### All unit testing
-```
 test/unit/mysql_rep_cmp/unit_test_run.sh
 ```
 
-### Code coverage program
+### Code coverage:
+
 ```
+cd {Python_Project}/mysql-cmp
 test/unit/mysql_rep_cmp/code_coverage.sh
 ```
 
