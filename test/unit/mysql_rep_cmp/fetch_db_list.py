@@ -41,9 +41,9 @@ class Server(object):
     Description:  Class stub holder for mysql_class.Server class.
 
     Methods:
-        __init__ -> Class initialization.
-        fetch_do_db -> Stub holder for mysql_class.Server.fetch_do_db method.
-        fetch_ign_db -> Stub holder for mysql_class.Server.fetch_ign_db method.
+        __init__
+        fetch_do_db
+        fetch_ign_db
 
     """
 
@@ -96,14 +96,14 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_db_name_ign_db_list2 -> Test with db_name and ign_db_list args.
-        test_db_name_ign_db_list -> Test with db_name and ign_db_list args.
-        test_db_name_pass -> Test with db_name passed to function - no matches.
-        test_ign_db_list_pass -> Test with ign_db_list passed to function.
-        test_ign_db_exist -> Test with ign_db attribute exists in class.
-        test_do_db_exist -> Test with do_db attribute exists in class.
-        test_default -> Test with default arguments only.
+        setUp
+        test_db_name_ign_db_list2
+        test_db_name_ign_db_list
+        test_db_name_pass
+        test_ign_db_list_pass
+        test_ign_db_exist
+        test_do_db_exist
+        test_default
 
     """
 
