@@ -41,8 +41,8 @@ class Mail(object):
     Description:  Class stub holder for gen_class.Mail class.
 
     Methods:
-        __init__ -> Class initialization.
-        send_mail -> Stub method holder for Mail.send_mail.
+        __init__
+        send_mail
 
     """
 
@@ -65,7 +65,7 @@ class Mail(object):
         Description:  Stub method holder for Mail.send_mail.
 
         Arguments:
-            (input) use_mailx -> Use the mailx command instead of sendmail.
+            (input) use_mailx
 
         """
 
@@ -84,9 +84,9 @@ class Server(object):
     Description:  Class stub holder for mysql_class.Server class.
 
     Methods:
-        __init__ -> Class initialization.
-        fetch_do_tbl -> Stub holder for mysql_class.Server.fetch_do_tbl method.
-        fetch_ign_tbl -> Stub for mysql_class.Server.fetch_ign_tbl method.
+        __init__
+        fetch_do_tbl
+        fetch_ign_tbl
 
     """
 
@@ -139,22 +139,22 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_no_std_out -> Test with passing no standard out suppression.
-        test_email_mailx2 -> Test with email using use_mailx option.
-        test_email_mailx -> Test with email using use_mailx option.
-        test_email -> Test with email is passed.
-        test_tbl_name -> Test with tbl_name is passed.
-        test_db_name -> Test with db_name is passed.
-        test_sys_ign_db -> Test with sys_ign_db is passed.
-        test_ign_db_tbls -> Test with ign_db_tbl parameter passed.
-        test_ign_tbls -> Test with slave ignore tables found.
-        test_do_tbls2 -> Test with slave do tables found.
-        test_do_tbls -> Test with slave do tables found.
-        test_no_matches -> Test with no matches between master and slave.
-        test_two_dbs -> Test with two databases to check.
-        test_one_db -> Test with one database to check.
-        test_no_dbs -> Test with no databases from master or slave.
+        setUp
+        test_no_std_out
+        test_email_mailx2
+        test_email_mailx
+        test_email
+        test_tbl_name
+        test_db_name
+        test_sys_ign_db
+        test_ign_db_tbls
+        test_ign_tbls
+        test_do_tbls2
+        test_do_tbls
+        test_no_matches
+        test_two_dbs
+        test_one_db
+        test_no_dbs
 
     """
 
