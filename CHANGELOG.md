@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [3.3.0] - 2021-07-28
+
+
 ## [3.2.0] - 2020-08-07
 - Updated to use the mysql_libs v5.0.0 library.
 - Updated to work with (much older) mysql.connector v1.1.6 library module.
