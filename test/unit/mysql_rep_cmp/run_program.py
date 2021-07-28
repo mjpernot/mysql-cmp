@@ -42,9 +42,9 @@ class Mail(object):
     Description:  Class stub holder for gen_class.Mail class.
 
     Methods:
-        __init__ -> Class initialization.
-        add_2_msg -> Stub method holder for Mail.add_2_msg.
-        send_mail -> Stub method holder for Mail.send_mail.
+        __init__
+        add_2_msg
+        send_mail
 
     """
 
@@ -68,8 +68,8 @@ class SlaveRep(object):
     Description:  Class stub holder for mysql_class.SlaveRep class.
 
     Methods:
-        __init__ -> Class initialization.
-        connect -> Method stub holder for mysql_class.SlaveRep.connect.
+        __init__
+        connect
 
     """
 
@@ -117,9 +117,9 @@ class MasterRep(object):
     Description:  Class stub holder for mysql_class.MasterRep class.
 
     Methods:
-        __init__ -> Class initialization.
-        connect -> Method stub holder for mysql_class.MasterRep.connect.
-        show_slv_hosts -> Metho for mysql_class.MasterRep.show_slv_hosts.
+        __init__
+        connect
+        show_slv_hosts
 
     """
 
@@ -180,22 +180,22 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_both_conn_fail -> Test with failed connection on master and slave.
-        test_slave_conn_fail -> Test with failed connection on slave.
-        test_master_conn_fail -> Test with failed connection on master.
-        test_conn_success -> Test with successful connection to master & slave.
-        test_str_server_id -> Test with integer server_id.
-        test_int_server_id -> Test with integer server_id.
-        test_no_std_out -> Test with no standard out suppression selected.
-        test_email_no_subj_mailx -> Test email using mailx and no subj line.
-        test_email_no_subj -> Test with email, but no subject line.
-        test_email_mailx -> Test with using mailx command.
-        test_email -> Test with email setup.
-        test_slave_not_present -> Test with slave not in replic set.
-        test_database_option -> Test with database option in args_array.
-        test_table_option -> Test with table option in args_array.
-        test_run_program -> Test with only default arguments passed.
+        setUp
+        test_both_conn_fail
+        test_slave_conn_fail
+        test_master_conn_fail
+        test_conn_success
+        test_str_server_id
+        test_int_server_id
+        test_no_std_out
+        test_email_no_subj_mailx
+        test_email_no_subj
+        test_email_mailx
+        test_email
+        test_slave_not_present
+        test_database_option
+        test_table_option
+        test_run_program
 
     """
 
