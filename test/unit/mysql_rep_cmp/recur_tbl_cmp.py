@@ -43,7 +43,7 @@ class Server(object):
     Description:  Class stub holder for mysql_class.Server class.
 
     Methods:
-        __init__ -> Class initialization.
+        __init__
 
     """
 
@@ -72,19 +72,19 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_default_no_std -> Test with default arguments with no_std.
-        test_check_once_no_std -> Test with checksumming at once with no_std.
-        test_reached_max_no_std -> Test with reaching max checks with no_std.
-        test_no_recur_no_std -> Test with no recur parameter set with no_std.
-        test_default_email -> Test with default arguments with email.
-        test_check_once_email -> Test with checksumming at once with email.
-        test_reached_max_mail -> Test with reaching max checks with email.
-        test_no_recur_email -> Test with no recur parameter set with email.
-        test_no_recur -> Test with no recur parameter set.
-        test_reached_max -> Test with reaching max checks.
-        test_check_once -> Test with checksumming at once.
-        test_default -> Test with default arguments only.
+        setUp
+        test_default_no_std
+        test_check_once_no_std
+        test_reached_max_no_std
+        test_no_recur_no_std
+        test_default_email
+        test_check_once_email
+        test_reached_max_mail
+        test_no_recur_email
+        test_no_recur
+        test_reached_max
+        test_check_once
+        test_default
 
     """
 
