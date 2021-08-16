@@ -10,6 +10,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Updated to work in MySQL 8.0 and 5.7 environments.
 
 ### Changed
+- setup_cmp:  Determine the MySQL version for dictionary key name.
 - config/mysql_cfg.py.TEMPLATE: Added SSL configuration options.
 - Documentation updates.
 

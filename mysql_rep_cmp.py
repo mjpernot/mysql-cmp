@@ -316,11 +316,17 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
     db_list = gen_libs.del_not_in_list(mst_dbs, slv_dbs)
     slv_do_dict = slave.fetch_do_tbl()
     slv_ign_dict = slave.fetch_ign_tbl()
+    dict_key = "table_name"
+
+    # Determine the MySQL version for dictionary key name
+    if mysql_class.fetch_sys_var(master, "version",
+                                 level="session")["version"] >= "8.0":
+        dict_key = "TABLE_NAME"
 
     for dbs in db_list:
         # Get master list of tables.
         mst_tbl_list = gen_libs.dict_2_list(mysql_libs.fetch_tbl_dict(
-            master, dbs), "table_name")
+            master, dbs), dict_key)
 
         # Database in "to do" list.
         if dbs in slv_do_dict:
@@ -329,7 +335,7 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         else:
             # Get list of tables from slave.
             slv_tbl_list = gen_libs.dict_2_list(
-                mysql_libs.fetch_tbl_dict(slave, dbs), "table_name")
+                mysql_libs.fetch_tbl_dict(slave, dbs), dict_key)
 
         slv_ign_tbl = []
 
