@@ -295,18 +295,8 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
 
     """
 
-    if db_name is None:
-        db_name = list()
-
-    else:
-        db_name = list(db_name)
-
-    if tbl_name is None:
-        tbl_name = list()
-
-    else:
-        tbl_name = list(tbl_name)
-
+    db_name = list() if db_name is None else list(db_name)
+    tbl_name = list() if tbl_name is None else list(tbl_name)
     sys_ign_db = list(sys_ign_db)
     ign_db_tbl = kwargs.get("ign_db_tbl", dict())
     mail = kwargs.get("mail", None)

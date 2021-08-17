@@ -13,7 +13,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - setup_cmp:  Fixed problem with mutable default arguments issue.
 
 ### Changed
-- setup_cmp:  Determine the MySQL version for dictionary key name.
+- setup_cmp:  Determine the MySQL version for dictionary key name and refactored if/else statements.
 - config/mysql_cfg.py.TEMPLATE: Added SSL configuration options.
 - Documentation updates.
 
