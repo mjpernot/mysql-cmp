@@ -140,6 +140,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_mysql_80
+        test_pre_mysql_80
         test_no_std_out
         test_email_mailx2
         test_email_mailx
@@ -173,6 +175,8 @@ class UnitTest(unittest.TestCase):
         self.mail = Mail()
         self.databases = [{"table_name": "tbl1"}, {"table_name": "tbl2"}]
         self.databases2 = [{"table_name": "tbl3"}, {"table_name": "tbl4"}]
+        self.databases3 = [{"TABLE_NAME": "tbl1"}, {"TABLE_NAME": "tbl2"}]
+        self.databases4 = [{"TABLE_NAME": "tbl3"}, {"TABLE_NAME": "tbl4"}]
         self.dblist = ["db1"]
         self.dblist2 = ["db1", "db2"]
         self.dblist3 = ["db3", "db4"]
@@ -181,6 +185,57 @@ class UnitTest(unittest.TestCase):
         self.tbllist = ["tbl1"]
         self.no_std = True
         self.version = {"version": "5.7"}
+        self.version2 = {"version": "8.0"}
+
+    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    @mock.patch("mysql_rep_cmp.fetch_db_list")
+    def test_mysql_80(self, mock_fetch, mock_tbl, mock_version):
+
+        """Function:  test_mysql_80
+
+        Description:  Test with MySQL 8.0 version database.
+
+        Arguments:
+
+        """
+
+        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
+
+        mock_version.return_value = self.version2
+        mock_fetch.side_effect = [self.dblist2, self.dblist2]
+        mock_tbl.side_effect = [self.databases3, self.databases3,
+                                self.databases4, self.databases4]
+
+        self.assertFalse(mysql_rep_cmp.setup_cmp(
+            self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
+            no_std=self.no_std))
+
+    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    @mock.patch("mysql_rep_cmp.fetch_db_list")
+    def test_pre_mysql_80(self, mock_fetch, mock_tbl, mock_version):
+
+        """Function:  test_pre_mysql_80
+
+        Description:  Test with pre MySQL 8.0 version database.
+
+        Arguments:
+
+        """
+
+        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
+
+        mock_version.return_value = self.version
+        mock_fetch.side_effect = [self.dblist2, self.dblist2]
+        mock_tbl.side_effect = [self.databases, self.databases,
+                                self.databases2, self.databases2]
+
+        self.assertFalse(mysql_rep_cmp.setup_cmp(
+            self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
+            no_std=self.no_std))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
