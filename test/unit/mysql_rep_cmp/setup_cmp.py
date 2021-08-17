@@ -180,11 +180,13 @@ class UnitTest(unittest.TestCase):
         self.sys_ign_db = ["performance_schema", "information_schema"]
         self.tbllist = ["tbl1"]
         self.no_std = True
+        self.version = {"version": "5.7"}
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_no_std_out(self, mock_fetch, mock_tbl):
+    def test_no_std_out(self, mock_fetch, mock_tbl, mock_version):
 
         """Function:  test_no_std_out
 
@@ -196,6 +198,7 @@ class UnitTest(unittest.TestCase):
 
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases, self.databases,
                                 self.databases2, self.databases2]
@@ -205,9 +208,10 @@ class UnitTest(unittest.TestCase):
             no_std=self.no_std))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_email_mailx2(self, mock_fetch, mock_tbl):
+    def test_email_mailx2(self, mock_fetch, mock_tbl, mock_version):
 
         """Function:  test_email_mailx2
 
@@ -219,6 +223,7 @@ class UnitTest(unittest.TestCase):
 
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases, self.databases,
                                 self.databases2, self.databases2]
@@ -228,9 +233,10 @@ class UnitTest(unittest.TestCase):
             mail=self.mail, use_mailx=True))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_email_mailx(self, mock_fetch, mock_tbl):
+    def test_email_mailx(self, mock_fetch, mock_tbl, mock_version):
 
         """Function:  test_email_mailx
 
@@ -242,6 +248,7 @@ class UnitTest(unittest.TestCase):
 
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases, self.databases,
                                 self.databases2, self.databases2]
@@ -251,9 +258,10 @@ class UnitTest(unittest.TestCase):
             mail=self.mail, use_mailx=False))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_email(self, mock_fetch, mock_tbl):
+    def test_email(self, mock_fetch, mock_tbl, mock_version):
 
         """Function:  test_email
 
@@ -265,6 +273,7 @@ class UnitTest(unittest.TestCase):
 
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases, self.databases,
                                 self.databases2, self.databases2]
@@ -274,9 +283,10 @@ class UnitTest(unittest.TestCase):
             mail=self.mail))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_tbl_name(self, mock_fetch, mock_tbl):
+    def test_tbl_name(self, mock_fetch, mock_tbl, mock_version):
 
         """Function:  test_tbl_name
 
@@ -288,6 +298,7 @@ class UnitTest(unittest.TestCase):
 
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases, self.databases,
                                 self.databases2, self.databases2]
@@ -296,9 +307,10 @@ class UnitTest(unittest.TestCase):
             self.master, self.slave, self.sys_ign_db, tbl_name=self.tbllist))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_db_name(self, mock_fetch, mock_tbl):
+    def test_db_name(self, mock_fetch, mock_tbl, mock_version):
 
         """Function:  test_db_name
 
@@ -310,6 +322,7 @@ class UnitTest(unittest.TestCase):
 
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases, self.databases,
                                 self.databases2, self.databases2]
@@ -318,9 +331,10 @@ class UnitTest(unittest.TestCase):
             self.master, self.slave, self.sys_ign_db, db_name=self.dblist))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_sys_ign_db(self, mock_fetch, mock_tbl):
+    def test_sys_ign_db(self, mock_fetch, mock_tbl, mock_version):
 
         """Function:  test_sys_ign_db
 
@@ -332,6 +346,7 @@ class UnitTest(unittest.TestCase):
 
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases, self.databases,
                                 self.databases2, self.databases2]
@@ -340,9 +355,10 @@ class UnitTest(unittest.TestCase):
                                                  self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_ign_db_tbls(self, mock_fetch, mock_tbl):
+    def test_ign_db_tbls(self, mock_fetch, mock_tbl, mock_version):
 
         """Function:  test_ign_db_tbls
 
@@ -354,6 +370,7 @@ class UnitTest(unittest.TestCase):
 
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases, self.databases,
                                 self.databases2, self.databases2]
@@ -362,9 +379,10 @@ class UnitTest(unittest.TestCase):
                                                  ign_db_tbl=self.ign_db_tbl))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_ign_tbls(self, mock_fetch, mock_tbl):
+    def test_ign_tbls(self, mock_fetch, mock_tbl, mock_version):
 
         """Function:  test_ign_tbls
 
@@ -376,6 +394,7 @@ class UnitTest(unittest.TestCase):
 
         self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases, self.databases,
                                 self.databases2, self.databases2]
@@ -383,9 +402,10 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_do_tbls2(self, mock_fetch, mock_tbl):
+    def test_do_tbls2(self, mock_fetch, mock_tbl, mock_version):
 
         """Function:  test_do_tbls2
 
@@ -397,6 +417,7 @@ class UnitTest(unittest.TestCase):
 
         self.slave.do_tbl = {"db1": ["tbl1", "tbl2"]}
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases,
                                 self.databases2, self.databases2]
@@ -404,9 +425,10 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_do_tbls(self, mock_fetch, mock_tbl):
+    def test_do_tbls(self, mock_fetch, mock_tbl, mock_version):
 
         """Function:  test_do_tbls
 
@@ -418,13 +440,15 @@ class UnitTest(unittest.TestCase):
 
         self.slave.do_tbl = {"db1": ["tbl1", "tbl2"], "db2": ["tbl3"]}
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases, self.databases2]
 
         self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
 
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_no_matches(self, mock_fetch):
+    def test_no_matches(self, mock_fetch, mock_version):
 
         """Function:  test_no_matches
 
@@ -434,14 +458,16 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist2, self.dblist3]
 
         self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_two_dbs(self, mock_fetch, mock_tbl):
+    def test_two_dbs(self, mock_fetch, mock_tbl, mock_version):
 
         """Function:  test_two_dbs
 
@@ -451,6 +477,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist2, self.dblist2]
         mock_tbl.side_effect = [self.databases, self.databases,
                                 self.databases2, self.databases2]
@@ -458,9 +485,10 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
 
     @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_one_db(self, mock_fetch, mock_tbl):
+    def test_one_db(self, mock_fetch, mock_tbl, mock_version):
 
         """Function:  test_master_db
 
@@ -470,13 +498,15 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [self.dblist, self.dblist]
         mock_tbl.side_effect = [self.databases, self.databases]
 
         self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
 
+    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
     @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_no_dbs(self, mock_fetch):
+    def test_no_dbs(self, mock_fetch, mock_version):
 
         """Function:  test_no_dbs
 
@@ -486,6 +516,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        mock_version.return_value = self.version
         mock_fetch.side_effect = [[], []]
 
         self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
