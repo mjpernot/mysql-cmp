@@ -308,7 +308,7 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         tbl_name = list(tbl_name)
 
     sys_ign_db = list(sys_ign_db)
-    ign_db_tbl = kwargs.get("ign_db_tbl", {})
+    ign_db_tbl = kwargs.get("ign_db_tbl", dict())
     mail = kwargs.get("mail", None)
     no_std = kwargs.get("no_std", False)
     mst_dbs = fetch_db_list(master)
