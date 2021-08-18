@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [3.3.0] - 2021-07-28
+- Updated to work in a SSL environment.
+- Updated to use the mysql_libs v5.2.1 library.
+- Updated to work in MySQL 8.0 and 5.7 environments.
+
+### Fixed
+- setup_cmp:  Fixed problem with mutable default arguments issue.
+
+### Changed
+- setup_cmp:  Determine the MySQL version for dictionary key name and refactored if/else statements.
+- config/mysql_cfg.py.TEMPLATE: Added SSL configuration options.
+- Documentation updates.
+
+
 ## [3.2.0] - 2020-08-07
 - Updated to use the mysql_libs v5.0.0 library.
 - Updated to work with (much older) mysql.connector v1.1.6 library module.

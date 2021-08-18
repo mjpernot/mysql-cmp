@@ -42,8 +42,8 @@ class Mail(object):
     Description:  Class stub holder for gen_class.Mail class.
 
     Methods:
-        __init__ -> Class initialization.
-        add_2_msg -> Stub method holder for Mail.add_2_msg.
+        __init__
+        add_2_msg
 
     """
 
@@ -81,7 +81,7 @@ class Server(object):
     Description:  Class stub holder for mysql_class.Server class.
 
     Methods:
-        __init__ -> Class initialization.
+        __init__
 
     """
 
@@ -110,12 +110,12 @@ class UnitTest(unittest.TestCase):
     Description:  Class which is a representation of a unit testing.
 
     Methods:
-        setUp -> Initialize testing environment.
-        test_no_std__out -> Test with no standard out suppression.
-        test_email -> Test with email.
-        test_multiple_tables -> Test with multiple tables in list.
-        test_empty_list -> Test with empty table list.
-        test_default -> Test with default arguments only.
+        setUp
+        test_no_std__out
+        test_email
+        test_multiple_tables
+        test_empty_list
+        test_default
 
     """
 

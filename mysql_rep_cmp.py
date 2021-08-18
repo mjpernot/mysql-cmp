@@ -63,6 +63,19 @@
             port = 3306
             cfg_file = "MYSQL_DIRECTORY/mysqld.cnf"
 
+            # If SSL connections are being used, configure one or more of these
+                entries:
+            ssl_client_ca = None
+            ssl_client_key = None
+            ssl_client_cert = None
+
+            # Only changes these if necessary and have knowledge in MySQL
+                SSL configuration setup:
+            ssl_client_flag = None
+            ssl_disabled = False
+            ssl_verify_id = False
+            ssl_verify_cert = False
+
         NOTE 1:  Include the cfg_file even if running remotely as the file will
             be used in future releases.
 
@@ -80,8 +93,10 @@
             password="PASSWORD"
             socket=DIRECTORY_PATH/mysql.sock
 
-        NOTE:  The socket information can be obtained from the my.cnf
+        NOTE 1:  The socket information can be obtained from the my.cnf
             file under ~/mysql directory.
+        NOTE 2:  Socket use is only required to be set in certain conditions
+            when connecting using localhost.
 
     Example:
         mysql_rep_cmp.py -c master -r slave -d config -A
@@ -280,20 +295,10 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
 
     """
 
-    if db_name is None:
-        db_name = list()
-
-    else:
-        db_name = list(db_name)
-
-    if tbl_name is None:
-        tbl_name = list()
-
-    else:
-        tbl_name = list(tbl_name)
-
+    db_name = list() if db_name is None else list(db_name)
+    tbl_name = list() if tbl_name is None else list(tbl_name)
     sys_ign_db = list(sys_ign_db)
-    ign_db_tbl = kwargs.get("ign_db_tbl", {})
+    ign_db_tbl = kwargs.get("ign_db_tbl", dict())
     mail = kwargs.get("mail", None)
     no_std = kwargs.get("no_std", False)
     mst_dbs = fetch_db_list(master)
@@ -301,11 +306,17 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
     db_list = gen_libs.del_not_in_list(mst_dbs, slv_dbs)
     slv_do_dict = slave.fetch_do_tbl()
     slv_ign_dict = slave.fetch_ign_tbl()
+    dict_key = "table_name"
+
+    # Determine the MySQL version for dictionary key name
+    if mysql_class.fetch_sys_var(master, "version",
+                                 level="session")["version"] >= "8.0":
+        dict_key = "TABLE_NAME"
 
     for dbs in db_list:
         # Get master list of tables.
         mst_tbl_list = gen_libs.dict_2_list(mysql_libs.fetch_tbl_dict(
-            master, dbs), "table_name")
+            master, dbs), dict_key)
 
         # Database in "to do" list.
         if dbs in slv_do_dict:
@@ -314,7 +325,7 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         else:
             # Get list of tables from slave.
             slv_tbl_list = gen_libs.dict_2_list(
-                mysql_libs.fetch_tbl_dict(slave, dbs), "table_name")
+                mysql_libs.fetch_tbl_dict(slave, dbs), dict_key)
 
         slv_ign_tbl = []
 
