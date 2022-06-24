@@ -8,6 +8,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Upgraded python-lib to v2.9.2
 - Upgraded mysql-lib to v5.3.1
 
+### Changed
+- config/mysql_cfg.py.TEMPLATE: Added TLS entry.
+
 
 ## [3.3.0] - 2021-07-28
 - Updated to work in a SSL environment.
