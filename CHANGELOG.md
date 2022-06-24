@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [3.3.1] - 2022-06-24
+
+
 ## [3.3.0] - 2021-07-28
 - Updated to work in a SSL environment.
 - Updated to use the mysql_libs v5.2.1 library.
