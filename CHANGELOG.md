@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [3.3.1] - 2022-06-24
+- Upgraded python-lib to v2.9.2
+- Upgraded mysql-lib to v5.3.1
+
+### Fixed
+- Fixed formatting of email message body - upgrade to python-lib v2.8.4 or better.
+
+### Changed
+- config/mysql_cfg.py.TEMPLATE: Added TLS entry.
+
+
 ## [3.3.0] - 2021-07-28
 - Updated to work in a SSL environment.
 - Updated to use the mysql_libs v5.2.1 library.
