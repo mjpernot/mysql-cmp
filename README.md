@@ -7,7 +7,6 @@
 
 ###  This README file is broken down into the following sections:
   * Features
-  * Prerequisites
   * Installation
   * Configuration
   * Program Help Function
@@ -18,16 +17,6 @@
 # Features:
   * Compare tables between a master and slave database using checksum to ensure they are in sync.
   * Can check all tables in all databases, select databases, or select tables.
-
-# Prerequisites:
-
-  * List of Linux packages that need to be installed on the server.
-    - git
-    - python-pip
-
-  * Local class/library dependencies within the program structure.
-    - python-lib
-    - mysql-lib
 
 
 # Installation:
