@@ -5,6 +5,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 
 ## [3.4.0] - 2023-08-16
+- Upgraded python-lib to v2.10.1
 
 
 ## [3.3.2] - 2022-11-07
