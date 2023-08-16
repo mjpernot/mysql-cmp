@@ -454,7 +454,6 @@ def main():
 
     """
 
-    cmdline = gen_libs.get_inst(sys)
     dir_chk_list = ["-d"]
     ign_db_tbl = {"mysql": ["innodb_index_stats", "innodb_table_stats",
                             "slave_master_info", "slave_relay_log_info",
@@ -467,8 +466,8 @@ def main():
     sys_ign_db = ["performance_schema", "information_schema"]
 
     # Process argument list from command line.
-    args_array = arg_parser.arg_parse2(cmdline.argv, opt_val_list,
-                                       multi_val=opt_multi_list)
+    args_array = arg_parser.arg_parse2(
+        sys.argv, opt_val_list, multi_val=opt_multi_list)
 
     if not gen_libs.help_func(args_array, __version__, help_message) \
        and arg_parser.arg_req_xor(args_array, opt_req_xor_list) \
@@ -477,8 +476,8 @@ def main():
        and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list):
 
         try:
-            prog_lock = gen_class.ProgramLock(cmdline.argv,
-                                              args_array.get("-y", ""))
+            prog_lock = gen_class.ProgramLock(
+                sys.argv, args_array.get("-y", ""))
             run_program(args_array, sys_ign_db, ign_db_tbl=ign_db_tbl)
             del prog_lock
 
