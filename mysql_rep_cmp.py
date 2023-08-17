@@ -113,7 +113,6 @@ import time
 
 # Local
 try:
-    from .lib import arg_parser
     from .lib import gen_libs
     from .lib import gen_class
     from .mysql_lib import mysql_libs
@@ -121,7 +120,6 @@ try:
     from . import version
 
 except (ValueError, ImportError) as err:
-    import lib.arg_parser as arg_parser
     import lib.gen_libs as gen_libs
     import lib.gen_class as gen_class
     import mysql_lib.mysql_libs as mysql_libs
@@ -156,10 +154,10 @@ def fetch_db_list(server, ign_db_list=None, db_name=None):
         list or return the databases in the do list.
 
     Arguments:
-        (input) server -> Server instance.
-        (input) ign_db_list -> List of databases to be ignored.
-        (input) db_name -> List of specify database names to be checked.
-        (output) db_list | db_name -> List of databases.
+        (input) server -> Server instance
+        (input) ign_db_list -> List of databases to be ignored
+        (input) db_name -> List of specify database names to be checked
+        (output) db_list | db_name -> List of databases
 
     """
 
@@ -204,14 +202,14 @@ def recur_tbl_cmp(master, slave, dbs, tbl, recur=0, **kwargs):
         between calls.
 
     Arguments:
-        (input) master -> Master instance.
-        (input) slave -> Slave instance.
-        (input) dbs -> Database name.
-        (input) tbl -> Table name.
-        (input) recur -> Current level of recursion.
+        (input) master -> Master instance
+        (input) slave -> Slave instance
+        (input) dbs -> Database name
+        (input) tbl -> Table name
+        (input) recur -> Current level of recursion
         (input) **kwargs:
-            mail -> Mail class instance.
-            no_std -> Suppress standard out.
+            mail -> Mail class instance
+            no_std -> Suppress standard out
 
     """
 
@@ -255,13 +253,13 @@ def run_cmp(master, slave, dbs, tbl_list, **kwargs):
         replica databases.
 
     Arguments:
-        (input) master -> Master instance.
-        (input) slave -> Slave instance.
-        (input) dbs -> Database name.
-        (input) tbl_list -> List of tables to be compared.
+        (input) master -> Master instance
+        (input) slave -> Slave instance
+        (input) dbs -> Database name
+        (input) tbl_list -> List of tables to be compared
         (input) **kwargs:
-            mail -> Mail class instance.
-            no_std -> Suppress standard out.
+            mail -> Mail class instance
+            no_std -> Suppress standard out
 
     """
 
@@ -291,16 +289,16 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         tables then calling the compare function.
 
     Arguments:
-        (input) master -> Master instance.
-        (input) slave -> Slave instance.
-        (input) sys_ign_db -> List of system databases to ignore.
-        (input) db_name -> List of database names.
-        (input) tbl_name -> List of table names.
+        (input) master -> Master instance
+        (input) slave -> Slave instance
+        (input) sys_ign_db -> List of system databases to ignore
+        (input) db_name -> List of database names
+        (input) tbl_name -> List of table names
         (input) **kwargs:
-            ign_db_tbl -> Dictionary-List of dbs & tables to be ignored.
-            mail -> Mail class instance.
-            no_std -> Suppress standard out.
-            use_mailx -> Use the mailx command for sending emails.
+            ign_db_tbl -> Dictionary-List of dbs & tables to be ignored
+            mail -> Mail class instance
+            no_std -> Suppress standard out
+            use_mailx -> Use the mailx command for sending emails
 
     """
 
@@ -359,30 +357,29 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         mail.send_mail(use_mailx=kwargs.get("use_mailx", False))
 
 
-def run_program(args_array, sys_ign_db, **kwargs):
+def run_program(args, sys_ign_db, **kwargs):
 
     """Function:  run_program
 
     Description:  Creates class instance(s) and controls flow of the program.
 
     Arguments:
-        (input) args_array -> Array of command line options and values.
-        (input) sys_ign_db -> List of system databases to ignore.
+        (input) args -> ArgParser class instance
+        (input) sys_ign_db -> List of system databases to ignore
 
     """
 
     global SUBJ_LINE
 
-    args_array = dict(args_array)
     sys_ign_db = list(sys_ign_db)
     mail = None
     use_mailx = False
-    no_std = args_array.get("-z", False)
-    master = mysql_libs.create_instance(args_array["-c"], args_array["-d"],
-                                        mysql_class.MasterRep)
+    no_std = args.get_val("-z", def_val=False)
+    master = mysql_libs.create_instance(
+        args.get_val("-c"), args.get_val("-d"), mysql_class.MasterRep)
     master.connect(silent=True)
-    slave = mysql_libs.create_instance(args_array["-r"], args_array["-d"],
-                                       mysql_class.SlaveRep)
+    slave = mysql_libs.create_instance(
+        args.get_val("-r"), args.get_val("-d"), mysql_class.SlaveRep)
     slave.connect(silent=True)
 
     if master.conn_msg or slave.conn_msg:
@@ -391,10 +388,10 @@ def run_program(args_array, sys_ign_db, **kwargs):
         print("\tSlave:  %s" % (slave.conn_msg))
 
     else:
-        if args_array.get("-e", None):
-            mail = gen_class.setup_mail(args_array.get("-e"),
-                                        subj=args_array.get("-s", SUBJ_LINE))
-            use_mailx = args_array.get("-u", False)
+        if args.get_val("-e", def_val=None):
+            mail = gen_class.setup_mail(
+                args.get_val("-e"), subj=args.get_val("-s", def_val=SUBJ_LINE))
+            use_mailx = args.get_val("-u", def_val=False)
 
         # Determine datatype of server_id and convert appropriately.
         #   Required for mysql.connector v1.1.6 as this version assigns the
@@ -407,17 +404,17 @@ def run_program(args_array, sys_ign_db, **kwargs):
         if slv_id in slv_list:
 
             # Check specified tables in database
-            if "-t" in args_array:
+            if args.arg_exist("-t"):
                 setup_cmp(
-                    master, slave, sys_ign_db, args_array["-B"],
-                    args_array["-t"], mail=mail, no_std=no_std,
+                    master, slave, sys_ign_db, args.get_val("-B"),
+                    args.get_val("-t"), mail=mail, no_std=no_std,
                     use_mailx=use_mailx, **kwargs)
 
             # Check single database
-            elif "-B" in args_array:
+            elif args.arg_exist("-B"):
                 setup_cmp(
-                    master, slave, sys_ign_db, args_array["-B"], "", mail=mail,
-                    no_std=no_std, use_mailx=use_mailx, **kwargs)
+                    master, slave, sys_ign_db, args.get_val("-B"), "",
+                    mail=mail, no_std=no_std, use_mailx=use_mailx, **kwargs)
 
             # Check all tables in all databases
             else:
@@ -440,50 +437,51 @@ def main():
         line arguments and values.
 
     Variables:
-        dir_chk_list -> contains options which will be directories.
-        ign_db_tbl -> contains list of databases and tables to be ignored.
-        opt_con_req_list -> contains the options that require other options.
-        opt_multi_list -> contains the options that will have multiple values.
-        opt_req_list -> contains the options that are required for the program.
-        opt_req_xor_list -> contains a list of options that are required XOR.
-        opt_val_list -> contains options which require values.
-        sys_ign_db -> contains a list of system databases to be ignored.
+        dir_perms_chk -> contains directories and their octal permissions
+        ign_db_tbl -> contains list of databases and tables to be ignored
+        multi_val -> contains the options that will have multiple values
+        opt_con_req_list -> contains the options that require other options
+        opt_req_list -> contains the options that are required for the program
+        opt_req_xor_list -> contains a list of options that are required XOR
+        opt_val_list -> contains options which require values
+        sys_ign_db -> contains a list of system databases to be ignored
 
     Arguments:
-        (input) argv -> Arguments from the command line.
+        (input) argv -> Arguments from the command line
 
     """
 
-    dir_chk_list = ["-d"]
-    ign_db_tbl = {"mysql": ["innodb_index_stats", "innodb_table_stats",
-                            "slave_master_info", "slave_relay_log_info",
-                            "slave_worker_info"]}
+    dir_perms_chk = {"-d": 5}
+    ign_db_tbl = {
+        "mysql": [
+            "innodb_index_stats", "innodb_table_stats", "slave_master_info",
+            "slave_relay_log_info", "slave_worker_info"]}
+    multi_val = ["-B", "-e", "-s", "-t"]
     opt_con_req_list = {"-t": ["-B"], "-s": ["-e"], "-u": ["-e"]}
-    opt_multi_list = ["-B", "-e", "-s", "-t"]
     opt_req_list = ["-r", "-c", "-d"]
     opt_req_xor_list = {"-A": "-B"}
     opt_val_list = ["-r", "-c", "-d", "-e", "-s", "-y"]
     sys_ign_db = ["performance_schema", "information_schema"]
 
     # Process argument list from command line.
-    args_array = arg_parser.arg_parse2(
-        sys.argv, opt_val_list, multi_val=opt_multi_list)
+    args = gen_class.ArgParser(
+        sys.argv, opt_val=opt_val_list, multi_val=multi_val, do_parse=True)
 
-    if not gen_libs.help_func(args_array, __version__, help_message) \
-       and arg_parser.arg_req_xor(args_array, opt_req_xor_list) \
-       and not arg_parser.arg_require(args_array, opt_req_list) \
-       and arg_parser.arg_cond_req(args_array, opt_con_req_list) \
-       and not arg_parser.arg_dir_chk_crt(args_array, dir_chk_list):
+    if not gen_libs.help_func(args, __version__, help_message)  \
+       and args.arg_req_xor(opt_xor=opt_req_xor_list)           \
+       and args.arg_require(opt_req=opt_req_list)               \
+       and args.arg_cond_req(opt_con_req=opt_con_req_list)      \
+       and args.arg_dir_chk(dir_perms_chk=dir_perms_chk):
 
         try:
             prog_lock = gen_class.ProgramLock(
-                sys.argv, args_array.get("-y", ""))
-            run_program(args_array, sys_ign_db, ign_db_tbl=ign_db_tbl)
+                sys.argv, args.get_val("-y", def_val=""))
+            run_program(args, sys_ign_db, ign_db_tbl=ign_db_tbl)
             del prog_lock
 
         except gen_class.SingleInstanceException:
             print("WARNING:  lock in place for mysql_rep_cmp with id of: %s"
-                  % (args_array.get("-y", "")))
+                  % (args.get_val("-y", def_val="")))
 
 
 if __name__ == "__main__":
