@@ -28,6 +28,57 @@ import version
 __version__ = version.__version__
 
 
+class ArgParser(object):
+
+    """Class:  ArgParser
+
+    Description:  Class stub holder for gen_class.ArgParser class.
+
+    Methods:
+        __init__
+        get_val
+        arg_exist
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.cmdline = None
+        self.args_array = dict()
+
+    def get_val(self, skey, def_val=None):
+
+        """Method:  get_val
+
+        Description:  Method stub holder for gen_class.ArgParser.get_val.
+
+        Arguments:
+
+        """
+
+        return self.args_array.get(skey, def_val)
+
+    def arg_exist(self, arg):
+
+        """Method:  arg_exist
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_exist.
+
+        Arguments:
+
+        """
+
+        return True if arg in self.args_array else False
+
+
 class Mail(object):
 
     """Class:  Mail
@@ -207,17 +258,33 @@ class UnitTest(unittest.TestCase):
         self.master = MasterRep()
         self.slave = SlaveRep()
         self.sys_ign_db = ["performance_schema", "information_schema"]
-        self.args_array = {"-c": True, "-d": True, "-r": True}
-        self.args_array2 = {"-c": True, "-d": True, "-r": True,
-                            "-e": "email_address", "-s": "subject_line"}
-        self.args_array2a = {"-c": True, "-d": True, "-r": True,
-                             "-e": "email_address", "-s": "subject_line",
-                             "-u": True}
-        self.args_array3 = {"-c": True, "-d": True, "-r": True,
-                            "-e": "email_address"}
-        self.args_array3a = {"-c": True, "-d": True, "-r": True,
-                             "-e": "email_address", "-u": True}
-        self.args_array4 = {"-c": True, "-d": True, "-r": True, "-z": True}
+        self.args = ArgParser()
+        self.args2 = ArgParser()
+        self.args2a = ArgParser()
+        self.args3 = ArgParser()
+        self.args3a = ArgParser()
+        self.args4 = ArgParser()
+        self.args5 = ArgParser()
+        self.args6 = ArgParser()
+        self.args.args_array = {"-c": True, "-d": True, "-r": True}
+        self.args2.args_array = {
+            "-c": True, "-d": True, "-r": True, "-e": "email_address",
+            "-s": "subject_line"}
+        self.args2a.args_array = {
+            "-c": True, "-d": True, "-r": True, "-e": "email_address",
+            "-s": "subject_line", "-u": True}
+        self.args3.args_array = {
+            "-c": True, "-d": True, "-r": True, "-e": "email_address"}
+        self.args3a.args_array = {
+            "-c": True, "-d": True, "-r": True, "-e": "email_address",
+            "-u": True}
+        self.args4.args_array = {
+            "-c": True, "-d": True, "-r": True, "-z": True}
+        self.args5.args_array = {
+            "-c": True, "-d": True, "-r": True, "-t": ["tbl1", "tbl2"],
+            "-B": "db1"}
+        self.args6.args_array = {
+            "-c": True, "-d": True, "-r": True, "-B": "db1"}
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -239,8 +306,8 @@ class UnitTest(unittest.TestCase):
         mock_server.side_effect = [self.master, self.slave]
 
         with gen_libs.no_std_out():
-            self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
-                                                       self.sys_ign_db))
+            self.assertFalse(
+                mysql_rep_cmp.run_program(self.args, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -261,8 +328,8 @@ class UnitTest(unittest.TestCase):
         mock_server.side_effect = [self.master, self.slave]
 
         with gen_libs.no_std_out():
-            self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
-                                                       self.sys_ign_db))
+            self.assertFalse(
+                mysql_rep_cmp.run_program(self.args, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -283,8 +350,8 @@ class UnitTest(unittest.TestCase):
         mock_server.side_effect = [self.master, self.slave]
 
         with gen_libs.no_std_out():
-            self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
-                                                       self.sys_ign_db))
+            self.assertFalse(
+                mysql_rep_cmp.run_program(self.args, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -302,8 +369,7 @@ class UnitTest(unittest.TestCase):
 
         mock_server.side_effect = [self.master, self.slave]
 
-        self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
-                                                   self.sys_ign_db))
+        self.assertFalse(mysql_rep_cmp.run_program(self.args, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -323,8 +389,7 @@ class UnitTest(unittest.TestCase):
 
         mock_server.side_effect = [self.master, self.slave]
 
-        self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
-                                                   self.sys_ign_db))
+        self.assertFalse(mysql_rep_cmp.run_program(self.args, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -342,8 +407,7 @@ class UnitTest(unittest.TestCase):
 
         mock_server.side_effect = [self.master, self.slave]
 
-        self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
-                                                   self.sys_ign_db))
+        self.assertFalse(mysql_rep_cmp.run_program(self.args, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -361,8 +425,8 @@ class UnitTest(unittest.TestCase):
 
         mock_server.side_effect = [self.master, self.slave]
 
-        self.assertFalse(mysql_rep_cmp.run_program(self.args_array4,
-                                                   self.sys_ign_db))
+        self.assertFalse(
+            mysql_rep_cmp.run_program(self.args4, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -382,8 +446,8 @@ class UnitTest(unittest.TestCase):
         mock_mail.return_value = self.mail
         mock_server.side_effect = [self.master, self.slave]
 
-        self.assertFalse(mysql_rep_cmp.run_program(self.args_array3a,
-                                                   self.sys_ign_db))
+        self.assertFalse(
+            mysql_rep_cmp.run_program(self.args3a, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -403,8 +467,8 @@ class UnitTest(unittest.TestCase):
         mock_mail.return_value = self.mail
         mock_server.side_effect = [self.master, self.slave]
 
-        self.assertFalse(mysql_rep_cmp.run_program(self.args_array3,
-                                                   self.sys_ign_db))
+        self.assertFalse(
+            mysql_rep_cmp.run_program(self.args3, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -424,8 +488,8 @@ class UnitTest(unittest.TestCase):
         mock_mail.return_value = self.mail
         mock_server.side_effect = [self.master, self.slave]
 
-        self.assertFalse(mysql_rep_cmp.run_program(self.args_array2a,
-                                                   self.sys_ign_db))
+        self.assertFalse(
+            mysql_rep_cmp.run_program(self.args2a, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -445,8 +509,8 @@ class UnitTest(unittest.TestCase):
         mock_mail.return_value = self.mail
         mock_server.side_effect = [self.master, self.slave]
 
-        self.assertFalse(mysql_rep_cmp.run_program(self.args_array2,
-                                                   self.sys_ign_db))
+        self.assertFalse(
+            mysql_rep_cmp.run_program(self.args2, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
                 mock.Mock(return_value=True))
@@ -466,8 +530,8 @@ class UnitTest(unittest.TestCase):
         mock_server.side_effect = [self.master, self.slave]
 
         with gen_libs.no_std_out():
-            self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
-                                                       self.sys_ign_db))
+            self.assertFalse(
+                mysql_rep_cmp.run_program(self.args, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -485,10 +549,8 @@ class UnitTest(unittest.TestCase):
 
         mock_server.side_effect = [self.master, self.slave]
 
-        self.args_array["-B"] = "db1"
-
-        self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
-                                                   self.sys_ign_db))
+        self.assertFalse(
+            mysql_rep_cmp.run_program(self.args6, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -506,11 +568,8 @@ class UnitTest(unittest.TestCase):
 
         mock_server.side_effect = [self.master, self.slave]
 
-        self.args_array["-t"] = ["tbl1", "tbl2"]
-        self.args_array["-B"] = "db1"
-
-        self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
-                                                   self.sys_ign_db))
+        self.assertFalse(
+            mysql_rep_cmp.run_program(self.args5, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -528,8 +587,7 @@ class UnitTest(unittest.TestCase):
 
         mock_server.side_effect = [self.master, self.slave]
 
-        self.assertFalse(mysql_rep_cmp.run_program(self.args_array,
-                                                   self.sys_ign_db))
+        self.assertFalse(mysql_rep_cmp.run_program(self.args, self.sys_ign_db))
 
 
 if __name__ == "__main__":
