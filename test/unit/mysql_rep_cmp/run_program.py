@@ -184,8 +184,9 @@ class MasterRep(object):
         self.do_tbl = {}
         self.ign_tbl = {}
         self.server_id = 10
-        self.slv_lists = [{"Server_id": 11}]
+        self.slv_lists = [{"Server_Id": 11}]
         self.conn_msg = None
+        self.version = (8, 0, 30)
 
     def connect(self, silent=False):
 
@@ -225,6 +226,9 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_mysql_version3
+        test_mysql_version2
+        test_mysql_version
         test_both_conn_fail
         test_slave_conn_fail
         test_master_conn_fail
@@ -285,6 +289,65 @@ class UnitTest(unittest.TestCase):
             "-B": "db1"}
         self.args6.args_array = {
             "-c": True, "-d": True, "-r": True, "-B": "db1"}
+
+    @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
+                mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
+    def test_mysql_version3(self, mock_server):
+
+        """Function:  test_mysql_version3
+
+        Description:  Test with MySQL version 8.0.6.
+
+        Arguments:
+
+        """
+
+        self.master.version = (8, 0, 6)
+        self.master.slv_lists = [{"Server_id": 11}]
+
+        mock_server.side_effect = [self.master, self.slave]
+
+        self.assertFalse(mysql_rep_cmp.run_program(self.args, self.sys_ign_db))
+
+    @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
+                mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
+    def test_mysql_version2(self, mock_server):
+
+        """Function:  test_mysql_version2
+
+        Description:  Test with MySQL version 8.0.26.
+
+        Arguments:
+
+        """
+
+        self.master.version = (8, 0, 26)
+
+        mock_server.side_effect = [self.master, self.slave]
+
+        self.assertFalse(mysql_rep_cmp.run_program(self.args, self.sys_ign_db))
+
+    @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
+                mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
+    def test_mysql_version(self, mock_server):
+
+        """Function:  test_mysql_version
+
+        Description:  Test with MySQL version 8.0.30.
+
+        Arguments:
+
+        """
+
+        mock_server.side_effect = [self.master, self.slave]
+
+        self.assertFalse(mysql_rep_cmp.run_program(self.args, self.sys_ign_db))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
@@ -385,7 +448,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.master.slv_lists = [{"Server_id": "11"}]
+        self.master.slv_lists = [{"Server_Id": "11"}]
 
         mock_server.side_effect = [self.master, self.slave]
 
