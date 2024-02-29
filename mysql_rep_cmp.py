@@ -396,7 +396,9 @@ def run_program(args, sys_ign_db, **kwargs):
         # Determine datatype of server_id and convert appropriately.
         #   Required for mysql.connector v1.1.6 as this version assigns the
         #   id to a different datatype then later mysql.connector versions.
-        slv_list = gen_libs.dict_2_list(master.show_slv_hosts(), "Server_id")
+
+        sid = "Server_Id" if master.version >= (8, 0, 26) else "Server_id"
+        slv_list = gen_libs.dict_2_list(master.show_slv_hosts(), sid)
         slv_id = str(slave.server_id) \
             if isinstance(slv_list[0], str) else slave.server_id
 
