@@ -20,6 +20,12 @@ serv_os = "Linux"
 port = 3306
 # MySQL configuration settings
 cfg_file = "MYSQL_DIRECTORY/mysqld.cnf"
+# 
+# Database dictionary with list of tables to ignorei for comparing.
+ign_db_tbl = {"mysql": ["innodb_index_stats", "innodb_table_stats", "slave_master_info", "slave_relay_log_info", "slave_worker_info"]}
+# List of databases to ignore for comparing.
+ign_dbs = ["performance_schema", "information_schema"]
+#
 # SSL Configuration settings
 # If not set will connect to MySQL without using SSL connections.
 # File containing the SSL certificate authority.

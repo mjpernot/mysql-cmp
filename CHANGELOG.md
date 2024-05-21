@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [4.0.0] - 2024-05-20
+Breaking Change
+
+- Change output to a JSON format.
+- Add ability to email, insert into Mongo, save to file and/or display to standard out.
+
+### Added
+- create_data_config: Create data_out config parameters.
+- get_json_template: Return a JSON template format.
+- get_all_dbs_tbls: Return a dictionary of databases with table lists.
+- get_db_tbl: Determines which databases and tables will be checked.
+
+### Changed
+- main:  Moved ign_db_tbl and ign_dbs variables to configuration file.
+- run_program:  Removed setting up mail class and removed checks to see what databases and tables will be checked.
+- config/mysql_cfg.py.TEMPLATE: Added ign_db_tbl and ign_dbs entries for ignoring databases and tables.
+
+
 ## [3.4.1] - 2024-02-28
 - Updated to work in Red Hat 8
 - Updated python-lib to v3.0.3

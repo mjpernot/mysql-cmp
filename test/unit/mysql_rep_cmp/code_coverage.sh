@@ -15,6 +15,10 @@ coverage run -a --source=mysql_rep_cmp test/unit/mysql_rep_cmp/recur_tbl_cmp.py
 coverage run -a --source=mysql_rep_cmp test/unit/mysql_rep_cmp/run_cmp.py
 coverage run -a --source=mysql_rep_cmp test/unit/mysql_rep_cmp/run_program.py
 coverage run -a --source=mysql_rep_cmp test/unit/mysql_rep_cmp/setup_cmp.py
+coverage run -a --source=mysql_rep_cmp test/unit/mysql_rep_cmp/create_data_config.py
+coverage run -a --source=mysql_rep_cmp test/unit/mysql_rep_cmp/get_all_dbs_tbls.py
+coverage run -a --source=mysql_rep_cmp test/unit/mysql_rep_cmp/get_db_tbl.py
+coverage run -a --source=mysql_rep_cmp test/unit/mysql_rep_cmp/get_json_template.py
 
 echo ""
 echo "Producing code coverage report"

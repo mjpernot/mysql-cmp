@@ -36,6 +36,25 @@
                 -u => Override the default mail command and use mailx.
             -z => Suppress standard out.
 
+
+            -t table name(s) => Table names to check.
+            -m file => Mongo config file.  Is loaded as a python, do not
+                include the .py extension with the name.
+                -i {database:collection} => Name of database and collection.
+                    Default: sysmon:mysql_db_admin
+            -o path/file => Directory path and file name for output.
+                -w a|w => Append or write to output to output file. Default is
+                    write.
+            -e to_email_address(es) => Enables emailing and sends output to one
+                    or more email addresses.  Email addresses are delimited by
+                    a space.
+                -s subject_line => Subject line of email.
+                -u => Override the default mail command and use mailx.
+            -z => Suppress standard out.
+            -p => Expand the JSON format.
+                -n N => Indentation for expanded JSON format.
+
+
         -y value => A flavor id for the program lock.  To create unique lock.
         -v => Display version of this program.
         -h => Help and usage message.
@@ -144,6 +163,138 @@ def help_message():
     """
 
     print(__doc__)
+
+
+def get_all_dbs_tbls(server, db_list, dict_key, **kwargs):
+
+    """Function:  get_all_dbs_tbls
+
+    Description:  Return a dictionary of databases with table lists.
+
+    Arguments:
+        (input) server -> Server instance
+        (input) db_list -> List of database names
+        (input) dict_key -> Dictionary key that is tuned to the Mysql version
+        (input) kwargs:
+            ign_db_tbl -> Database dictionary with list of tables to ignore
+        (output) db_dict -> Dictionary of databases and lists of tables
+
+    """
+
+    db_dict = dict()
+    db_list = list(db_list)
+    ign_db_tbl = dict(kwargs.get("ign_db_tbl", dict()))
+
+    for dbs in db_list:
+        tbl_list = gen_libs.dict_2_list(
+            mysql_libs.fetch_tbl_dict(server, dbs), dict_key)
+        ign_tbls = ign_db_tbl[dbs] if dbs in ign_db_tbl else list()
+        tbl_list = gen_libs.del_not_and_list(tbl_list, ign_tbls)
+        db_dict[dbs] = tbl_list
+
+    return db_dict
+
+
+def get_db_tbl(server, db_list, **kwargs):
+
+    """Function:  get_db_tbl
+
+    Description:  Determines which databases and tables will be checked.
+
+    Arguments:
+        (input) server -> Server instance
+        (input) db_list -> List of database names
+        (input) **kwargs:
+            ign_dbs -> List of databases to skip
+            tbls -> List of tables to compare
+            ign_db_tbl -> Database dictionary with list of tables to ignore
+        (output) db_dict -> Dictionary of databases and lists of tables
+
+    """
+
+    db_dict = dict()
+    db_list = list(db_list)
+    dict_key = "TABLE_NAME" if server.version >= (8, 0) else "table_name"
+    ign_dbs = list(kwargs.get("ign_dbs", list()))
+    tbls = kwargs.get("tbls", list())
+    ign_db_tbl = dict(kwargs.get("ign_db_tbl", dict()))
+
+    if db_list:
+        db_list = gen_libs.del_not_and_list(db_list, ign_dbs)
+
+        if len(db_list) == 1 and tbls:
+            db_tables = gen_libs.dict_2_list(
+                mysql_libs.fetch_tbl_dict(server, db_list[0]), dict_key)
+            tbl_list = gen_libs.del_not_in_list(tbls, db_tables)
+            db_dict[db_list[0]] = tbl_list
+
+        elif db_list:
+            db_dict = get_all_dbs_tbls(
+                server, db_list, dict_key, ign_db_tbl=ign_db_tbl)
+
+        else:
+            print("get_db_tbl 1: Warning:  No databases to process")
+
+    else:
+        db_list = gen_libs.dict_2_list(
+            mysql_libs.fetch_db_dict(server), "Database")
+        db_list = gen_libs.del_not_and_list(db_list, ign_dbs)
+
+        if db_list:
+            db_dict = get_all_dbs_tbls(
+                server, db_list, dict_key, ign_db_tbl=ign_db_tbl)
+
+        else:
+            print("get_db_tbl 2: Warning:  No databases to process")
+
+    return db_dict
+
+
+def get_json_template(server):
+
+    """Function:  get_json_template
+
+    Description:  Return a JSON template format.
+
+    Arguments:
+        (input) server -> Server instance
+        (output) json_doc -> JSON filled-in template document
+
+    """
+
+    json_doc = dict()
+    json_doc["Platform"] = "MySQL"
+    json_doc["Server"] = server.name
+    json_doc["AsOf"] = gen_libs.get_date() + "T" + gen_libs.get_time()
+
+    return json_doc
+
+
+def create_data_config(args):
+
+    """Function:  create_data_config
+
+    Description:  Create data_out config parameters.
+
+    Arguments:
+        (input) args -> ArgParser class instance
+        (output) data_config -> Dictionary for data_out config parameters
+
+    """
+
+    data_config = dict()
+    data_config["to_addr"] = args.get_val("-e")
+    data_config["subj"] = args.get_val("-s")
+    data_config["mailx"] = args.get_val("-u", def_val=False)
+    data_config["outfile"] = args.get_val("-o")
+    data_config["mode"] = args.get_val("-w", def_val="w")
+    data_config["expand"] = args.get_val("-p", def_val=False)
+    data_config["indent"] = args.get_val("-n")
+    data_config["suppress"] = args.get_val("-z", def_val=False)
+    data_config["mongo"] = args.get_val("-m")
+    data_config["db_tbl"] = args.get_val("-i")
+
+    return data_config
 
 
 def fetch_db_list(server, ign_db_list=None, db_name=None):
@@ -280,8 +431,9 @@ def run_cmp(master, slave, dbs, tbl_list, **kwargs):
         recur_tbl_cmp(master, slave, dbs, tbl, recur, mail=mail, no_std=no_std)
 
 
-def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
-              **kwargs):
+#def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
+#              **kwargs):
+def setup_cmp(master, slave, sys_ign_db):
 
     """Function:  setup_cmp
 
@@ -289,25 +441,27 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         tables then calling the compare function.
 
     Arguments:
+        (input) args -> ArgParser class instance
         (input) master -> Master instance
         (input) slave -> Slave instance
-        (input) sys_ign_db -> List of system databases to ignore
-        (input) db_name -> List of database names
-        (input) tbl_name -> List of table names
-        (input) **kwargs:
-            ign_db_tbl -> Dictionary-List of dbs & tables to be ignored
-            mail -> Mail class instance
-            no_std -> Suppress standard out
-            use_mailx -> Use the mailx command for sending emails
+#        (input) sys_ign_db -> List of system databases to ignore
+#        (input) db_name -> List of database names
+#        (input) tbl_name -> List of table names
+#        (input) **kwargs:
+#            ign_db_tbl -> Dictionary-List of dbs & tables to be ignored
+#            mail -> Mail class instance
+#            no_std -> Suppress standard out
+#            use_mailx -> Use the mailx command for sending emails
 
     """
 
-    db_name = list() if db_name is None else list(db_name)
-    tbl_name = list() if tbl_name is None else list(tbl_name)
-    sys_ign_db = list(sys_ign_db)
-    ign_db_tbl = kwargs.get("ign_db_tbl", dict())
-    mail = kwargs.get("mail", None)
-    no_std = kwargs.get("no_std", False)
+#    db_name = list() if db_name is None else list(db_name)
+#    tbl_name = list() if tbl_name is None else list(tbl_name)
+#    sys_ign_db = list(sys_ign_db)
+#    ign_db_tbl = kwargs.get("ign_db_tbl", dict())
+#    mail = kwargs.get("mail", None)
+#    no_std = kwargs.get("no_std", False)
+
     mst_dbs = fetch_db_list(master)
     slv_dbs = fetch_db_list(slave, sys_ign_db, db_name)
     db_list = gen_libs.del_not_in_list(mst_dbs, slv_dbs)
@@ -357,7 +511,8 @@ def setup_cmp(master, slave, sys_ign_db, db_name=None, tbl_name=None,
         mail.send_mail(use_mailx=kwargs.get("use_mailx", False))
 
 
-def run_program(args, sys_ign_db, **kwargs):
+#def run_program(args, sys_ign_db, **kwargs):
+def run_program(args):
 
     """Function:  run_program
 
@@ -365,16 +520,16 @@ def run_program(args, sys_ign_db, **kwargs):
 
     Arguments:
         (input) args -> ArgParser class instance
-        (input) sys_ign_db -> List of system databases to ignore
+#        (input) sys_ign_db -> List of system databases to ignore
 
     """
 
-    global SUBJ_LINE
+#    global SUBJ_LINE
 
-    sys_ign_db = list(sys_ign_db)
-    mail = None
-    use_mailx = False
-    no_std = args.get_val("-z", def_val=False)
+#    sys_ign_db = list(sys_ign_db)
+#    mail = None
+#    use_mailx = False
+#    no_std = args.get_val("-z", def_val=False)
     master = mysql_libs.create_instance(
         args.get_val("-c"), args.get_val("-d"), mysql_class.MasterRep)
     master.connect(silent=True)
@@ -388,10 +543,10 @@ def run_program(args, sys_ign_db, **kwargs):
         print("\tSlave:  %s" % (slave.conn_msg))
 
     else:
-        if args.get_val("-e", def_val=None):
-            mail = gen_class.setup_mail(
-                args.get_val("-e"), subj=args.get_val("-s", def_val=SUBJ_LINE))
-            use_mailx = args.get_val("-u", def_val=False)
+#        if args.get_val("-e", def_val=None):
+#            mail = gen_class.setup_mail(
+#                args.get_val("-e"), subj=args.get_val("-s", def_val=SUBJ_LINE))
+#            use_mailx = args.get_val("-u", def_val=False)
 
         # Determine datatype of server_id and convert appropriately.
         #   Required for mysql.connector v1.1.6 as this version assigns the
@@ -405,6 +560,8 @@ def run_program(args, sys_ign_db, **kwargs):
         # Is slave in replication with master
         if slv_id in slv_list:
 
+            setup_cmp(args, master, slave)
+            """
             # Check specified tables in database
             if args.arg_exist("-t"):
                 setup_cmp(
@@ -423,12 +580,13 @@ def run_program(args, sys_ign_db, **kwargs):
                 setup_cmp(
                     master, slave, sys_ign_db, "", "", mail=mail,
                     no_std=no_std, use_mailx=use_mailx, **kwargs)
+            """
 
             mysql_libs.disconnect(master, slave)
 
         else:
             mysql_libs.disconnect(master, slave)
-            print("Error:  Replica is not in replication with Master.")
+            print("Error:  Slave is not in replication with Master.")
 
 
 def main():
@@ -440,13 +598,13 @@ def main():
 
     Variables:
         dir_perms_chk -> contains directories and their octal permissions
-        ign_db_tbl -> contains list of databases and tables to be ignored
+#        ign_db_tbl -> contains list of databases and tables to be ignored
         multi_val -> contains the options that will have multiple values
         opt_con_req_list -> contains the options that require other options
         opt_req_list -> contains the options that are required for the program
         opt_req_xor_list -> contains a list of options that are required XOR
         opt_val_list -> contains options which require values
-        sys_ign_db -> contains a list of system databases to be ignored
+#        sys_ign_db -> contains a list of system databases to be ignored
 
     Arguments:
         (input) argv -> Arguments from the command line
@@ -454,16 +612,18 @@ def main():
     """
 
     dir_perms_chk = {"-d": 5}
-    ign_db_tbl = {
-        "mysql": [
-            "innodb_index_stats", "innodb_table_stats", "slave_master_info",
-            "slave_relay_log_info", "slave_worker_info"]}
+# Move to config file.
+#    ign_db_tbl = {
+#        "mysql": [
+#            "innodb_index_stats", "innodb_table_stats", "slave_master_info",
+#            "slave_relay_log_info", "slave_worker_info"]}
     multi_val = ["-B", "-e", "-s", "-t"]
     opt_con_req_list = {"-t": ["-B"], "-s": ["-e"], "-u": ["-e"]}
     opt_req_list = ["-r", "-c", "-d"]
     opt_req_xor_list = {"-A": "-B"}
     opt_val_list = ["-r", "-c", "-d", "-e", "-s", "-y"]
-    sys_ign_db = ["performance_schema", "information_schema"]
+# Move to config file.
+#    sys_ign_db = ["performance_schema", "information_schema"]
 
     # Process argument list from command line.
     args = gen_class.ArgParser(
@@ -478,7 +638,8 @@ def main():
         try:
             prog_lock = gen_class.ProgramLock(
                 sys.argv, args.get_val("-y", def_val=""))
-            run_program(args, sys_ign_db, ign_db_tbl=ign_db_tbl)
+#            run_program(args, sys_ign_db, ign_db_tbl=ign_db_tbl)
+            run_program(args)
             del prog_lock
 
         except gen_class.SingleInstanceException:
