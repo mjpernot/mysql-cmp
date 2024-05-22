@@ -9,17 +9,25 @@ Breaking Change
 
 - Change output to a JSON format.
 - Add ability to email, insert into Mongo, save to file and/or display to standard out.
+- Removed the -A and -B options and replaced with the -C option.
 
 ### Added
+- data_out: Outputs the data in a variety of formats and media.
 - create_data_config: Create data_out config parameters.
 - get_json_template: Return a JSON template format.
 - get_all_dbs_tbls: Return a dictionary of databases with table lists.
 - get_db_tbl: Determines which databases and tables will be checked.
 
 ### Changed
+- setup_cmp: Refactored the entire process to use JSON document as output and also only use the master database/table list as the only source.
+- recur_tbl_cmp:  Removed mail and standard out, replaced with returning the status of the check.
 - main:  Moved ign_db_tbl and ign_dbs variables to configuration file.
 - run_program:  Removed setting up mail class and removed checks to see what databases and tables will be checked.
 - config/mysql_cfg.py.TEMPLATE: Added ign_db_tbl and ign_dbs entries for ignoring databases and tables.
+
+### Removed
+- run_cmp
+- fetch_db_list
 
 
 ## [3.4.1] - 2024-02-28
