@@ -524,7 +524,7 @@ def setup_cmp(args, master, slave):
     tbls = args.get_val("-t", def_val=list())
     cfg = gen_libs.load_module(args.get_val("-c"), args.get_val("-d"))
     mst_db_tbl = get_db_tbl(
-        server, db_list=db_list, tbls=tbls, ign_dbs=cfg.ign_dbs,
+        master, db_list=db_list, tbls=tbls, ign_dbs=cfg.ign_dbs,
         ign_db_tbl=cfg.ign_db_tbl)
     results = get_json_template(master)
     results["Master"] = master.name
