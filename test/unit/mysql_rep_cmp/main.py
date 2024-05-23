@@ -39,7 +39,7 @@ class ArgParser(object):
         arg_cond_req
         arg_dir_chk
         arg_require
-        arg_req_xor
+        arg_file_chk
         get_val
 
     """
@@ -62,8 +62,9 @@ class ArgParser(object):
         self.opt_req2 = True
         self.dir_perms_chk = None
         self.dir_perms_chk2 = True
-        self.opt_xor = None
-        self.opt_xor2 = True
+        self.file_perm_chk = None
+        self.file_perm_chk2 = True
+        self.file_crt = None
 
     def arg_cond_req(self, opt_con_req):
 
@@ -107,19 +108,21 @@ class ArgParser(object):
 
         return self.opt_req2
 
-    def arg_req_xor(self, opt_xor):
+    def arg_file_chk(self, file_perm_chk, file_crt):
 
-        """Method:  arg_req_xor
+        """Method:  arg_file_chk
 
-        Description:  Method stub holder for gen_class.ArgParser.arg_req_xor.
+        Description:  Method stub holder for gen_class.ArgParser.arg_file_chk.
 
         Arguments:
 
         """
 
-        self.opt_xor = opt_xor
+        self.file_perm_chk = file_perm_chk
+        self.file_crt = file_crt
 
-        return self.opt_xor2
+        return self.file_perm_chk2
+
 
     def get_val(self, skey, def_val=None):
 
@@ -173,14 +176,14 @@ class UnitTest(unittest.TestCase):
         test_programlock_false
         test_programlock_true
         test_run_program
+        test_arg_file_true
+        test_arg_file_false
         test_arg_dir_chk_crt_true
         test_arg_dir_chk_crt_false
         test_arg_cond_req_true
         test_arg_cond_req_false
         test_arg_require_true
         test_arg_require_false
-        test_arg_req_xor_true
-        test_arg_req_xor_false
         test_help_false
         test_help_true
 
@@ -286,10 +289,47 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(mysql_rep_cmp.main())
 
     @mock.patch("mysql_rep_cmp.run_program", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.gen_libs.help_func",
+                mock.Mock(return_value=False))
     @mock.patch("mysql_rep_cmp.gen_class.ProgramLock")
+    @mock.patch("mysql_rep_cmp.gen_class.ArgParser")
+    def test_arg_file_true(self, mock_arg, mock_lock):
+
+        """Function:  test_arg_file_true
+
+        Description:  Test arg_file_chk if returns true.
+
+        Arguments:
+
+        """
+
+        mock_arg.return_value = self.args
+        mock_lock.return_value = self.proglock
+
+        self.assertFalse(mysql_rep_cmp.main())
+
     @mock.patch("mysql_rep_cmp.gen_libs.help_func")
     @mock.patch("mysql_rep_cmp.gen_class.ArgParser")
-    def test_arg_dir_chk_crt_true(self, mock_arg, mock_help, mock_lock):
+    def test_arg_file_false(self, mock_arg, mock_help):
+
+        """Function:  test_arg_file_false
+
+        Description:  Test arg_file_chk if returns false.
+
+        Arguments:
+
+        """
+
+        self.args.file_perm_chk2 = False
+
+        mock_arg.return_value = self.args
+        mock_help.return_value = False
+
+        self.assertFalse(mysql_rep_cmp.main())
+
+    @mock.patch("mysql_rep_cmp.gen_libs.help_func")
+    @mock.patch("mysql_rep_cmp.gen_class.ArgParser")
+    def test_arg_dir_chk_crt_true(self, mock_arg, mock_help):
 
         """Function:  test_arg_dir_chk_crt_true
 
@@ -299,9 +339,10 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args.file_perm_chk2 = False
+
         mock_arg.return_value = self.args
         mock_help.return_value = False
-        mock_lock.return_value = self.proglock
 
         self.assertFalse(mysql_rep_cmp.main())
 
@@ -402,44 +443,6 @@ class UnitTest(unittest.TestCase):
 
     @mock.patch("mysql_rep_cmp.gen_libs.help_func")
     @mock.patch("mysql_rep_cmp.gen_class.ArgParser")
-    def test_arg_req_xor_true(self, mock_arg, mock_help):
-
-        """Function:  test_arg_req_xor_true
-
-        Description:  Test arg_req_xor if returns true.
-
-        Arguments:
-
-        """
-
-        self.args.opt_req2 = False
-
-        mock_arg.return_value = self.args
-        mock_help.return_value = False
-
-        self.assertFalse(mysql_rep_cmp.main())
-
-    @mock.patch("mysql_rep_cmp.gen_libs.help_func")
-    @mock.patch("mysql_rep_cmp.gen_class.ArgParser")
-    def test_arg_req_xor_false(self, mock_arg, mock_help):
-
-        """Function:  test_arg_req_xor_false
-
-        Description:  Test arg_req_xor if returns false.
-
-        Arguments:
-
-        """
-
-        self.args.opt_xor2 = False
-
-        mock_arg.return_value = self.args
-        mock_help.return_value = False
-
-        self.assertFalse(mysql_rep_cmp.main())
-
-    @mock.patch("mysql_rep_cmp.gen_libs.help_func")
-    @mock.patch("mysql_rep_cmp.gen_class.ArgParser")
     def test_help_false(self, mock_arg, mock_help):
 
         """Function:  test_help_false
@@ -450,7 +453,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.args.opt_xor2 = False
+        self.args.opt_req2 = False
 
         mock_arg.return_value = self.args
         mock_help.return_value = False

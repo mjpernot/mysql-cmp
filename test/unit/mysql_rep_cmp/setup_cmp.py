@@ -22,20 +22,21 @@ import mock
 # Local
 sys.path.append(os.getcwd())
 import mysql_rep_cmp
+import lib.gen_libs as gen_libs
 import version
 
 __version__ = version.__version__
 
 
-class Mail(object):
+class ArgParser(object):
 
-    """Class:  Mail
+    """Class:  ArgParser
 
-    Description:  Class stub holder for gen_class.Mail class.
+    Description:  Class stub holder for gen_class.ArgParser class.
 
     Methods:
         __init__
-        send_mail
+        get_val
 
     """
 
@@ -49,25 +50,20 @@ class Mail(object):
 
         """
 
-        self.data = None
+        self.cmdline = None
+        self.args_array = {"-C": list(), "-c": "mysql_cfg", "-d": "config"}
 
-    def send_mail(self, use_mailx=False):
+    def get_val(self, skey, def_val=None):
 
-        """Method:  send_mail
+        """Method:  get_val
 
-        Description:  Stub method holder for Mail.send_mail.
+        Description:  Method stub holder for gen_class.ArgParser.get_val.
 
         Arguments:
-            (input) use_mailx
 
         """
 
-        status = True
-
-        if use_mailx:
-            status = True
-
-        return status
+        return self.args_array.get(skey, def_val)
 
 
 class Server(object):
@@ -99,6 +95,7 @@ class Server(object):
         self.port = 3306
         self.do_tbl = {}
         self.ign_tbl = {}
+        self.name = "MasterName"
 
     def fetch_do_tbl(self):
 
@@ -125,6 +122,32 @@ class Server(object):
         return self.ign_tbl
 
 
+class Cfg(object):
+
+    """Class:  Cfg
+
+    Description:  Emulate a configuration file.
+
+    Methods:
+        __init__
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Initialization.
+
+        Arguments:
+
+        """
+
+        self.ign_dbs = [
+            "performance_schema", "information_schema", "mysql", "sys"]
+        self.ign_db_tbl = {"mysql": ["systems"]}
+
+
 class UnitTest(unittest.TestCase):
 
     """Class:  UnitTest
@@ -133,21 +156,9 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
-        test_mysql_80
-        test_pre_mysql_80
-        test_no_std_out
-        test_email_mailx2
-        test_email_mailx
-        test_email
-        test_tbl_name
-        test_db_name
-        test_sys_ign_db
-        test_ign_db_tbls
-        test_ign_tbls
-        test_do_tbls2
-        test_do_tbls
-        test_no_matches
+        test_status_failed
         test_two_dbs
+        test_one_db2
         test_one_db
         test_no_dbs
 
@@ -163,359 +174,55 @@ class UnitTest(unittest.TestCase):
 
         """
 
+        self.args = ArgParser()
         self.master = Server()
         self.slave = Server()
-        self.mail = Mail()
-        self.databases = [{"table_name": "tbl1"}, {"table_name": "tbl2"}]
-        self.databases2 = [{"table_name": "tbl3"}, {"table_name": "tbl4"}]
-        self.databases3 = [{"TABLE_NAME": "tbl1"}, {"TABLE_NAME": "tbl2"}]
-        self.databases4 = [{"TABLE_NAME": "tbl3"}, {"TABLE_NAME": "tbl4"}]
-        self.dblist = ["db1"]
-        self.dblist2 = ["db1", "db2"]
-        self.dblist3 = ["db3", "db4"]
-        self.ign_db_tbl = {"db1": ["tbl1"]}
-        self.sys_ign_db = ["performance_schema", "information_schema"]
-        self.tbllist = ["tbl1"]
-        self.no_std = True
-        self.version = {"version": "5.7"}
-        self.version2 = {"version": "8.0"}
+        self.slave.name = "SlaveName"
+        self.cfg = Cfg()
+        self.json_template = {"Platform": "MySQL"}
+        self.mst_db_tbl = dict()
+        self.mst_db_tbl2 = {"dbs": ["tbl1"]}
+        self.mst_db_tbl3 = {"dbs": ["tbl1", "tbl2"]}
+        self.mst_db_tbl4 = {"dbs": ["tbl1", "tbl2"], "dbs2": ["tbl3", "tbl4"]}
+        self.data_config = {"mongo": "mongo"}
+        self.status = (True, None)
+        self.status2 = (False, "Error Message")
 
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_mysql_80(self, mock_fetch, mock_tbl, mock_version):
+    @mock.patch("mysql_rep_cmp.recur_tbl_cmp", mock.Mock(return_value="OK"))
+    @mock.patch("mysql_rep_cmp.gen_libs.load_module")
+    @mock.patch("mysql_rep_cmp.data_out")
+    @mock.patch("mysql_rep_cmp.create_data_config")
+    @mock.patch("mysql_rep_cmp.get_db_tbl")
+    @mock.patch("mysql_rep_cmp.get_json_template")
+    def test_status_failed(self, mock_template, mock_dbstbls, mock_config,
+                           mock_out, mock_load):
 
-        """Function:  test_mysql_80
+        """Function:  test_status_failed
 
-        Description:  Test with MySQL 8.0 version database.
-
-        Arguments:
-
-        """
-
-        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
-
-        mock_version.return_value = self.version2
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases3, self.databases3,
-                                self.databases4, self.databases4]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(
-            self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
-            no_std=self.no_std))
-
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_pre_mysql_80(self, mock_fetch, mock_tbl, mock_version):
-
-        """Function:  test_pre_mysql_80
-
-        Description:  Test with pre MySQL 8.0 version database.
+        Description:  Test with status failure from data_out call.
 
         Arguments:
 
         """
 
-        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
-
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases, self.databases,
-                                self.databases2, self.databases2]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(
-            self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
-            no_std=self.no_std))
-
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_no_std_out(self, mock_fetch, mock_tbl, mock_version):
-
-        """Function:  test_no_std_out
-
-        Description:  Test with passing no standard out suppression.
-
-        Arguments:
-
-        """
-
-        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
-
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases, self.databases,
-                                self.databases2, self.databases2]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(
-            self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
-            no_std=self.no_std))
-
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_email_mailx2(self, mock_fetch, mock_tbl, mock_version):
-
-        """Function:  test_email_mailx2
-
-        Description:  Test with email using use_mailx option.
-
-        Arguments:
-
-        """
-
-        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
-
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases, self.databases,
-                                self.databases2, self.databases2]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(
-            self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
-            mail=self.mail, use_mailx=True))
-
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_email_mailx(self, mock_fetch, mock_tbl, mock_version):
-
-        """Function:  test_email_mailx
-
-        Description:  Test with email using use_mailx option.
-
-        Arguments:
-
-        """
-
-        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
-
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases, self.databases,
-                                self.databases2, self.databases2]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(
-            self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
-            mail=self.mail, use_mailx=False))
-
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_email(self, mock_fetch, mock_tbl, mock_version):
-
-        """Function:  test_email
-
-        Description:  Test with email is passed.
-
-        Arguments:
-
-        """
-
-        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
-
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases, self.databases,
-                                self.databases2, self.databases2]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(
-            self.master, self.slave, self.sys_ign_db, db_name=self.dblist,
-            mail=self.mail))
-
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_tbl_name(self, mock_fetch, mock_tbl, mock_version):
-
-        """Function:  test_tbl_name
-
-        Description:  Test with tbl_name is passed.
-
-        Arguments:
-
-        """
-
-        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
-
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases, self.databases,
-                                self.databases2, self.databases2]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(
-            self.master, self.slave, self.sys_ign_db, tbl_name=self.tbllist))
-
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_db_name(self, mock_fetch, mock_tbl, mock_version):
-
-        """Function:  test_db_name
-
-        Description:  Test with db_name is passed.
-
-        Arguments:
-
-        """
-
-        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
-
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases, self.databases,
-                                self.databases2, self.databases2]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(
-            self.master, self.slave, self.sys_ign_db, db_name=self.dblist))
-
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_sys_ign_db(self, mock_fetch, mock_tbl, mock_version):
-
-        """Function:  test_sys_ign_db
-
-        Description:  Test with sys_ign_db is passed.
-
-        Arguments:
-
-        """
-
-        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
-
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases, self.databases,
-                                self.databases2, self.databases2]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave,
-                                                 self.sys_ign_db))
-
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_ign_db_tbls(self, mock_fetch, mock_tbl, mock_version):
-
-        """Function:  test_ign_db_tbls
-
-        Description:  Test with ign_db_tbl parameter passed.
-
-        Arguments:
-
-        """
-
-        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
-
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases, self.databases,
-                                self.databases2, self.databases2]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, [],
-                                                 ign_db_tbl=self.ign_db_tbl))
-
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_ign_tbls(self, mock_fetch, mock_tbl, mock_version):
-
-        """Function:  test_ign_tbls
-
-        Description:  Test with slave ignore tables found.
-
-        Arguments:
-
-        """
-
-        self.slave.ign_tbl = {"db1": ["tbl1", "tbl2"]}
-
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases, self.databases,
-                                self.databases2, self.databases2]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
-
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_do_tbls2(self, mock_fetch, mock_tbl, mock_version):
-
-        """Function:  test_do_tbls2
-
-        Description:  Test with slave do tables found.
-
-        Arguments:
-
-        """
-
-        self.slave.do_tbl = {"db1": ["tbl1", "tbl2"]}
-
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases,
-                                self.databases2, self.databases2]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
-
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_do_tbls(self, mock_fetch, mock_tbl, mock_version):
-
-        """Function:  test_do_tbls
-
-        Description:  Test with slave do tables found.
-
-        Arguments:
-
-        """
-
-        self.slave.do_tbl = {"db1": ["tbl1", "tbl2"], "db2": ["tbl3"]}
-
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases, self.databases2]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
-
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_no_matches(self, mock_fetch, mock_version):
-
-        """Function:  test_no_matches
-
-        Description:  Test with no matches between master and slave.
-
-        Arguments:
-
-        """
-
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist3]
-
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
-
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_two_dbs(self, mock_fetch, mock_tbl, mock_version):
+        mock_dbstbls.return_value = self.mst_db_tbl4
+        mock_template.return_value = self.json_template
+        mock_config.return_value = self.data_config
+        mock_out.return_value = self.status2
+        mock_load.return_value = self.cfg
+
+        with gen_libs.no_std_out():
+            self.assertFalse(
+                mysql_rep_cmp.setup_cmp(self.args, self.master, self.slave))
+
+    @mock.patch("mysql_rep_cmp.recur_tbl_cmp", mock.Mock(return_value="OK"))
+    @mock.patch("mysql_rep_cmp.gen_libs.load_module")
+    @mock.patch("mysql_rep_cmp.data_out")
+    @mock.patch("mysql_rep_cmp.create_data_config")
+    @mock.patch("mysql_rep_cmp.get_db_tbl")
+    @mock.patch("mysql_rep_cmp.get_json_template")
+    def test_two_dbs(self, mock_template, mock_dbstbls, mock_config, mock_out,
+                     mock_load):
 
         """Function:  test_two_dbs
 
@@ -525,20 +232,25 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist2, self.dblist2]
-        mock_tbl.side_effect = [self.databases, self.databases,
-                                self.databases2, self.databases2]
+        mock_dbstbls.return_value = self.mst_db_tbl4
+        mock_template.return_value = self.json_template
+        mock_config.return_value = self.data_config
+        mock_out.return_value = self.status
+        mock_load.return_value = self.cfg
 
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
+        self.assertFalse(
+            mysql_rep_cmp.setup_cmp(self.args, self.master, self.slave))
 
-    @mock.patch("mysql_rep_cmp.run_cmp", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_one_db(self, mock_fetch, mock_tbl, mock_version):
+    @mock.patch("mysql_rep_cmp.recur_tbl_cmp", mock.Mock(return_value="OK"))
+    @mock.patch("mysql_rep_cmp.gen_libs.load_module")
+    @mock.patch("mysql_rep_cmp.data_out")
+    @mock.patch("mysql_rep_cmp.create_data_config")
+    @mock.patch("mysql_rep_cmp.get_db_tbl")
+    @mock.patch("mysql_rep_cmp.get_json_template")
+    def test_one_db2(self, mock_template, mock_dbstbls, mock_config, mock_out,
+                    mock_load):
 
-        """Function:  test_master_db
+        """Function:  test_one_db2
 
         Description:  Test with one database to check.
 
@@ -546,28 +258,65 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [self.dblist, self.dblist]
-        mock_tbl.side_effect = [self.databases, self.databases]
+        mock_dbstbls.return_value = self.mst_db_tbl3
+        mock_template.return_value = self.json_template
+        mock_config.return_value = self.data_config
+        mock_out.return_value = self.status
+        mock_load.return_value = self.cfg
 
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
+        self.assertFalse(
+            mysql_rep_cmp.setup_cmp(self.args, self.master, self.slave))
 
-    @mock.patch("mysql_rep_cmp.mysql_class.fetch_sys_var")
-    @mock.patch("mysql_rep_cmp.fetch_db_list")
-    def test_no_dbs(self, mock_fetch, mock_version):
+    @mock.patch("mysql_rep_cmp.recur_tbl_cmp", mock.Mock(return_value="OK"))
+    @mock.patch("mysql_rep_cmp.gen_libs.load_module")
+    @mock.patch("mysql_rep_cmp.data_out")
+    @mock.patch("mysql_rep_cmp.create_data_config")
+    @mock.patch("mysql_rep_cmp.get_db_tbl")
+    @mock.patch("mysql_rep_cmp.get_json_template")
+    def test_one_db(self, mock_template, mock_dbstbls, mock_config, mock_out,
+                    mock_load):
 
-        """Function:  test_no_dbs
+        """Function:  test_one_db
 
-        Description:  Test with no databases from master or slave.
+        Description:  Test with one database to check.
 
         Arguments:
 
         """
 
-        mock_version.return_value = self.version
-        mock_fetch.side_effect = [[], []]
+        mock_dbstbls.return_value = self.mst_db_tbl2
+        mock_template.return_value = self.json_template
+        mock_config.return_value = self.data_config
+        mock_out.return_value = self.status
+        mock_load.return_value = self.cfg
 
-        self.assertFalse(mysql_rep_cmp.setup_cmp(self.master, self.slave, []))
+        self.assertFalse(
+            mysql_rep_cmp.setup_cmp(self.args, self.master, self.slave))
+
+    @mock.patch("mysql_rep_cmp.gen_libs.load_module")
+    @mock.patch("mysql_rep_cmp.data_out")
+    @mock.patch("mysql_rep_cmp.create_data_config")
+    @mock.patch("mysql_rep_cmp.get_db_tbl")
+    @mock.patch("mysql_rep_cmp.get_json_template")
+    def test_no_dbs(self, mock_template, mock_dbstbls, mock_config, mock_out,
+                    mock_load):
+
+        """Function:  test_no_dbs
+
+        Description:  Test with no databases from master.
+
+        Arguments:
+
+        """
+
+        mock_dbstbls.return_value = self.mst_db_tbl
+        mock_template.return_value = self.json_template
+        mock_config.return_value = self.data_config
+        mock_out.return_value = self.status
+        mock_load.return_value = self.cfg
+
+        self.assertFalse(
+            mysql_rep_cmp.setup_cmp(self.args, self.master, self.slave))
 
 
 if __name__ == "__main__":
