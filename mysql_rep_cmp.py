@@ -684,9 +684,12 @@ def main():
 
     Variables:
         dir_perms_chk -> contains directories and their octal permissions
+        file_perms -> file check options with their perms in octal
+        file_crt_list -> contains options which require files to be created
 #        ign_db_tbl -> contains list of databases and tables to be ignored
         multi_val -> contains the options that will have multiple values
         opt_con_req_list -> contains the options that require other options
+        opt_def_dict -> contains options with their default values
         opt_req_list -> contains the options that are required for the program
         opt_req_xor_list -> contains a list of options that are required XOR
         opt_val_list -> contains options which require values
@@ -698,6 +701,8 @@ def main():
     """
 
     dir_perms_chk = {"-d": 5}
+    file_perms = {"-o": 6}
+    file_crt_list = ["-o"]
 # Move to config file.
 #    ign_db_tbl = {
 #        "mysql": [
@@ -705,11 +710,15 @@ def main():
 #            "slave_relay_log_info", "slave_worker_info"]}
 #    multi_val = ["-B", "-e", "-s", "-t"]
     multi_val = ["-C", "-e", "-s", "-t"]
-#    opt_con_req_list = {"-t": ["-C"], "-s": ["-e"], "-u": ["-e"]}
-    opt_con_req_list = {"-t": ["-B"], "-s": ["-e"], "-u": ["-e"]}
+#    opt_con_req_list = {"-t": ["-B"], "-s": ["-e"], "-u": ["-e"]}
+    opt_con_req_list = {
+        "-t": ["-C"], "-s": ["-e"], "-u": ["-e"], "-i": ["-m"], "-w": ["-o"]}
+    opt_def_dict = {
+        "-C": [], "-t": None, "-n": 4, "-i": "sysmon:mysql_rep_cmp"}
     opt_req_list = ["-r", "-c", "-d"]
 #    opt_req_xor_list = {"-A": "-B"}
-    opt_val_list = ["-r", "-c", "-d", "-e", "-s", "-y"]
+    opt_val_list = [
+        "-r", "-c", "-d", "-e", "-s", "-y", "-C", "-n", "-t", "-m", "-i"]
 # Move to config file.
 #    sys_ign_db = ["performance_schema", "information_schema"]
 
@@ -718,10 +727,11 @@ def main():
         sys.argv, opt_val=opt_val_list, multi_val=multi_val, do_parse=True)
 
 #       and args.arg_req_xor(opt_xor=opt_req_xor_list)           \
-    if not gen_libs.help_func(args, __version__, help_message)  \
-       and args.arg_require(opt_req=opt_req_list)               \
-       and args.arg_cond_req(opt_con_req=opt_con_req_list)      \
-       and args.arg_dir_chk(dir_perms_chk=dir_perms_chk):
+    if not gen_libs.help_func(args, __version__, help_message)              \
+       and args.arg_require(opt_req=opt_req_list)                           \
+       and args.arg_cond_req(opt_con_req=opt_con_req_list)                  \
+       and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)                    \
+       and args.arg_file_chk(file_perm_chk=file_perms, file_crt=file_crt_list):
 
         try:
             prog_lock = gen_class.ProgramLock(
