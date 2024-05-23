@@ -698,10 +698,12 @@ def main():
 #        "mysql": [
 #            "innodb_index_stats", "innodb_table_stats", "slave_master_info",
 #            "slave_relay_log_info", "slave_worker_info"]}
-    multi_val = ["-B", "-e", "-s", "-t"]
+#    multi_val = ["-B", "-e", "-s", "-t"]
+    multi_val = ["-C", "-e", "-s", "-t"]
+#    opt_con_req_list = {"-t": ["-C"], "-s": ["-e"], "-u": ["-e"]}
     opt_con_req_list = {"-t": ["-B"], "-s": ["-e"], "-u": ["-e"]}
     opt_req_list = ["-r", "-c", "-d"]
-    opt_req_xor_list = {"-A": "-B"}
+#    opt_req_xor_list = {"-A": "-B"}
     opt_val_list = ["-r", "-c", "-d", "-e", "-s", "-y"]
 # Move to config file.
 #    sys_ign_db = ["performance_schema", "information_schema"]
@@ -710,8 +712,8 @@ def main():
     args = gen_class.ArgParser(
         sys.argv, opt_val=opt_val_list, multi_val=multi_val, do_parse=True)
 
+#       and args.arg_req_xor(opt_xor=opt_req_xor_list)           \
     if not gen_libs.help_func(args, __version__, help_message)  \
-       and args.arg_req_xor(opt_xor=opt_req_xor_list)           \
        and args.arg_require(opt_req=opt_req_list)               \
        and args.arg_cond_req(opt_con_req=opt_con_req_list)      \
        and args.arg_dir_chk(dir_perms_chk=dir_perms_chk):
