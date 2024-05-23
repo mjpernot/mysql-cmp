@@ -411,6 +411,7 @@ def recur_tbl_cmp(master, slave, dbs, tbl, recur=0):
         (input) dbs -> Database name
         (input) tbl -> Table name
         (input) recur -> Current level of recursion
+        (output) data -> Status of the table comparsion
 #        (input) **kwargs:
 #            mail -> Mail class instance
 #            no_std -> Suppress standard out
@@ -442,6 +443,8 @@ def recur_tbl_cmp(master, slave, dbs, tbl, recur=0):
 
     else:
         data = "Checksums do not match"
+
+    return data
 
 #        data = "\tChecking: {0} {1}".format(tbl.ljust(40),
 #                                            "Error:  Checksums do not match")
@@ -530,17 +533,16 @@ def setup_cmp(args, master, slave):
     results = get_json_template(master)
     results["Master"] = master.name
     results["Slave"] = slave.name
-    results["Checks"] = list()
+    results["Checks"] = dict()
     data_config = dict(create_data_config(args))
 
     for dbs in mst_db_tbl:
-        results["Checks"].append({dbs: list()})
+        results["Checks"][dbs] = list()
         for tbl in mst_db_tbl[dbs]:
             # Recursion
             recur = 1
             data = recur_tbl_cmp(master, slave, dbs, tbl, recur)
             results["Checks"][dbs].append({"Table": tbl, "Status": data})
-#            results["Checks"].append({"Table": tbl, "Status": data})
 
     state = data_out(results, **data_config)
 
