@@ -724,7 +724,8 @@ def main():
 
     # Process argument list from command line.
     args = gen_class.ArgParser(
-        sys.argv, opt_val=opt_val_list, multi_val=multi_val, do_parse=True)
+        sys.argv, opt_val=opt_val_list, multi_val=multi_val, opt_def=opt_def_dict,
+        do_parse=True)
 
 #       and args.arg_req_xor(opt_xor=opt_req_xor_list)           \
     if not gen_libs.help_func(args, __version__, help_message)              \
