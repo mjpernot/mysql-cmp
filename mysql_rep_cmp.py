@@ -534,7 +534,7 @@ def setup_cmp(args, master, slave):
     data_config = dict(create_data_config(args))
 
     for dbs in mst_db_tbl:
-        results["Checks"] = {dbs: list()}
+        results["Checks"].append({dbs: list()})
         for tbl in mst_db_tbl[dbs]:
             # Recursion
             recur = 1
