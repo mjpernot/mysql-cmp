@@ -533,7 +533,7 @@ def setup_cmp(args, master, slave):
     data_config = dict(create_data_config(args))
 
     for dbs in mst_db_tbl:
-        for tbl in tbl_list:
+        for tbl in mst_db_tbl[dbs]:
             # Recursion
             recur = 1
             data = recur_tbl_cmp(master, slave, dbs, tbl, recur)
