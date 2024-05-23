@@ -534,11 +534,13 @@ def setup_cmp(args, master, slave):
     data_config = dict(create_data_config(args))
 
     for dbs in mst_db_tbl:
+        results["Checks"] = {dbs: list()}
         for tbl in mst_db_tbl[dbs]:
             # Recursion
             recur = 1
             data = recur_tbl_cmp(master, slave, dbs, tbl, recur)
-            results["Checks"].append({"Table": tbl, "Status": data})
+            results["Checks"][dbs].append({"Table": tbl, "Status": data})
+#            results["Checks"].append({"Table": tbl, "Status": data})
 
     state = data_out(results, **data_config)
 
