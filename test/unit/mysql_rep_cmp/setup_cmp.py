@@ -248,7 +248,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.get_db_tbl")
     @mock.patch("mysql_rep_cmp.get_json_template")
     def test_one_db2(self, mock_template, mock_dbstbls, mock_config, mock_out,
-                    mock_load):
+                     mock_load):
 
         """Function:  test_one_db2
 

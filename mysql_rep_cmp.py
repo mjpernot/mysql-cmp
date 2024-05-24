@@ -126,6 +126,7 @@ try:
     from .lib import gen_class
     from .mysql_lib import mysql_libs
     from .mysql_lib import mysql_class
+    from .mongo_lib import mongo_libs
     from . import version
 
 except (ValueError, ImportError) as err:
@@ -133,6 +134,7 @@ except (ValueError, ImportError) as err:
     import lib.gen_class as gen_class
     import mysql_lib.mysql_libs as mysql_libs
     import mysql_lib.mysql_class as mysql_class
+    import mongo_lib.mongo_libs as mongo_libs
     import version
 
 __version__ = version.__version__

@@ -123,7 +123,6 @@ class ArgParser(object):
 
         return self.file_perm_chk2
 
-
     def get_val(self, skey, def_val=None):
 
         """Method:  get_val
