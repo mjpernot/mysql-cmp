@@ -8,3 +8,4 @@ config/*.py
 config/*.cfg
 lib
 mysql_lib
+mongo_lib
