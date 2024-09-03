@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [4.0.1] - 2024-09-03
+- Updated python-lib to v3.0.4
+- Updated mongo-lib to v4.3.1
+
+
 ## [4.0.0] - 2024-05-20
 Breaking Change
 
