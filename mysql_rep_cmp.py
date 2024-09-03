@@ -283,8 +283,11 @@ def create_data_config(args):
     data_config["expand"] = args.get_val("-p", def_val=False)
     data_config["indent"] = args.get_val("-n")
     data_config["suppress"] = args.get_val("-z", def_val=False)
-    data_config["mongo"] = args.get_val("-m")
     data_config["db_tbl"] = args.get_val("-i")
+
+    if args.get_val("-m", def_val=False):
+        data_config["mongo"] = gen_libs.load_module(
+            args.get_val("-m"), args.get_val("-d"))
 
     return data_config
 
@@ -505,9 +508,10 @@ def main():
     # Process argument list from command line.
     args = gen_class.ArgParser(
         sys.argv, opt_val=opt_val_list, multi_val=multi_val,
-        opt_def=opt_def_dict, do_parse=True)
+        opt_def=opt_def_dict)
 
-    if not gen_libs.help_func(args, __version__, help_message)              \
+    if args.arg_parse2()                                                    \
+       and not gen_libs.help_func(args, __version__, help_message)          \
        and args.arg_require(opt_req=opt_req_list)                           \
        and args.arg_cond_req(opt_con_req=opt_con_req_list)                  \
        and args.arg_dir_chk(dir_perms_chk=dir_perms_chk)                    \
