@@ -19,7 +19,7 @@ serv_os = "Linux"
 # MySQL database port (default is 3306)
 port = 3306
 # MySQL configuration settings
-cfg_file = "MYSQL_DIRECTORY/mysqld.cnf"
+cfg_file = "/etc/my.cnf"
 # 
 # Database dictionary with list of tables to ignore for comparing.
 ign_db_tbl = {"mysql": ["innodb_index_stats", "innodb_table_stats", "slave_master_info", "slave_relay_log_info", "slave_worker_info"]}
