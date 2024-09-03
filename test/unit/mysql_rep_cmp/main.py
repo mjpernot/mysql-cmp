@@ -41,6 +41,7 @@ class ArgParser(object):
         arg_require
         arg_file_chk
         get_val
+        arg_parse2
 
     """
 
@@ -65,6 +66,7 @@ class ArgParser(object):
         self.file_perm_chk = None
         self.file_perm_chk2 = True
         self.file_crt = None
+        self.argparse2 = True
 
     def arg_cond_req(self, opt_con_req):
 
@@ -135,6 +137,18 @@ class ArgParser(object):
 
         return self.args_array.get(skey, def_val)
 
+    def arg_parse2(self):
+
+        """Method:  arg_parse2
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_parse2.
+
+        Arguments:
+
+        """
+
+        return self.argparse2
+
 
 class ProgramLock(object):
 
@@ -171,6 +185,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_arg_parse2_false
+        test_arg_parse2_true
         test_programlock_id
         test_programlock_false
         test_programlock_true
@@ -204,6 +220,40 @@ class UnitTest(unittest.TestCase):
         self.args2.args_array = {
             "-c": "CfgFile", "-d": "CfgDir", "-y": "Flavor"}
         self.proglock = ProgramLock(["cmdline"], "FlavorID")
+
+    @mock.patch("mysql_rep_cmp.gen_class.ArgParser")
+    def test_arg_parse2_false(self, mock_arg):
+
+        """Function:  test_arg_parse2_false
+
+        Description:  Test arg_parse2 returns false.
+
+        Arguments:
+
+        """
+
+        self.args.argparse2 = False
+
+        mock_arg.return_value = self.args
+
+        self.assertFalse(mysql_rep_cmp.main())
+
+    @mock.patch("mysql_rep_cmp.gen_libs.help_func")
+    @mock.patch("mysql_rep_cmp.gen_class.ArgParser")
+    def test_arg_parse2_true(self, mock_arg, mock_help):
+
+        """Function:  test_arg_parse2_true
+
+        Description:  Test arg_parse2 returns true.
+
+        Arguments:
+
+        """
+
+        mock_arg.return_value = self.args
+        mock_help.return_value = True
+
+        self.assertFalse(mysql_rep_cmp.main())
 
     @mock.patch("mysql_rep_cmp.run_program", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.gen_class.ProgramLock")

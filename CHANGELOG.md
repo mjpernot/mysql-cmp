@@ -8,6 +8,12 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Updated python-lib to v3.0.4
 - Updated mongo-lib to v4.3.1
 
+### Fixed
+- create_data_config: Only set "mongo" entry if mongo config file is passed.
+
+### Changed
+- main: Removed parsing from gen_class.ArgParser call and called arg_parse2 as part of "if" statement.
+
 
 ## [4.0.0] - 2024-05-20
 Breaking Change
