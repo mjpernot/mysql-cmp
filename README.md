@@ -159,7 +159,7 @@ Install the project using the procedures in the Installation section.
 
 ```
 cd {Python_Project}/mysql-cmp
-test/unit/mysql_rep_cmp/unit_test_run.sh
+test/unit/mysql_rep_cmp/unit_test_run3.sh
 ```
 
 ### Code coverage:
