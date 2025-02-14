@@ -23,31 +23,20 @@
 # Prerequisites:
 
   * List of Linux packages that need to be installed on the server.
-    - Centos 7 (Running Python 2.7):
-      -> python-pip
-    - Redhat 8 (Running Python 3.6):
-      -> python3-pip
-      -> gcc
+    - python3-pip
+    - gcc
 
 
 # Installation:
 
 Install this project using git.
-  * From here on out, any reference to **{Python_Project}** or **PYTHON_PROJECT** replace with the baseline path of the python program.
 
 ```
 git clone git@sc.appdev.proj.coe.ic.gov:JAC-DSXD/mysql-cmp.git
-cd mysql-cmp
 ```
 
 Install/upgrade system modules.
 
-Centos 7 (Running Python 2.7):
-```
-sudo pip install -r requirements.txt --upgrade --trusted-host pypi.appdev.proj.coe.ic.gov
-```
-
-Redhat 8 (Running Python 3.6):
 NOTE: Install as the user that will run the program.
 
 ```
@@ -57,16 +46,6 @@ python -m pip install --user -r requirements3.txt --upgrade --trusted-host pypi.
 
 Install supporting classes and libraries.
 
-Centos 7 (Running Python 2.7):
-```
-pip install -r requirements-python-lib.txt --target lib --trusted-host pypi.appdev.proj.coe.ic.gov
-pip install -r requirements-mysql-lib.txt --target mysql_lib --trusted-host pypi.appdev.proj.coe.ic.gov
-pip install -r requirements-mysql-python-lib.txt --target mysql_lib/lib --trusted-host pypi.appdev.proj.coe.ic.gov
-pip install -r requirements-mongo-lib.txt --target mongo_lib --trusted-host pypi.appdev.proj.coe.ic.gov
-pip install -r requirements-mongo-python-lib.txt --target mongo_lib/lib --trusted-host pypi.appdev.proj.coe.ic.gov
-```
-
-Redhat 8 (Running Python 3.6):
 ```
 python -m pip install -r requirements-python-lib.txt --target lib --trusted-host pypi.appdev.proj.coe.ic.gov
 python -m pip install -r requirements-mysql-lib.txt --target mysql_lib --trusted-host pypi.appdev.proj.coe.ic.gov
@@ -105,10 +84,9 @@ Make the appropriate change to the environment.
     - ssl_verify_cert = False
 
 ```
-cd config
-cp mysql_cfg.py.TEMPLATE mysql_cfg.py
-vim mysql_cfg.py
-chmod 600 mysql_cfg.py
+cp config/mysql_cfg.py.TEMPLATE config/mysql_cfg.py
+vim config/mysql_cfg.py
+chmod 600 config/mysql_cfg.py
 ```
 
 Create MySQL definition file for Master database.
@@ -119,9 +97,9 @@ Make the appropriate change to the environment.
     - socket=MYSQL_DIRECTORY/mysql.sock
 
 ```
-cp mysql.cfg.TEMPLATE mysql.cfg
-vim mysql.cfg
-chmod 600 mysql.cfg
+cp config/mysql.cfg.TEMPLATE config/mysql.cfg
+vim config/mysql.cfg
+chmod 600 config/mysql.cfg
 ```
 
 For the Slave database, create a seperate MySQL configuration and MySQL definition file.
@@ -130,12 +108,12 @@ Make the appropriate change to the Slave environment.  See above for the changes
   * Replace **SLAVENAME** with the name of the slave being compared to.
 
 ```
-cp mysql_cfg.py.TEMPLATE mysql_cfg_SLAVENAME.py
-vim mysql_cfg_SLAVENAME.py
-chmod 600 mysql_cfg_SLAVENAME.py
-cp mysql.cfg.TEMPLATE mysql_SLAVENAME.cfg
-vim mysql_SLAVENAME.cfg
-chmod 600 mysql_SLAVENAME.cfg
+cp config/mysql_cfg.py.TEMPLATE config/mysql_cfg_SLAVENAME.py
+vim config/mysql_cfg_SLAVENAME.py
+chmod 600 config/mysql_cfg_SLAVENAME.py
+cp config/mysql.cfg.TEMPLATE config/mysql_SLAVENAME.cfg
+vim config/mysql_SLAVENAME.cfg
+chmod 600 config/mysql_SLAVENAME.cfg
 ```
 
 
@@ -144,7 +122,7 @@ chmod 600 mysql_SLAVENAME.cfg
   The program has a -h (Help option) that will show display an usage message.  The help message will usually consist of a description, usage, arugments to the program, example, notes about the program, and any known bugs not yet fixed.  To run the help command:
 
 ```
-{Python_Project}/mysql-cmp/mysql_rep_cmp.py -h
+mysql_rep_cmp.py -h
 ```
 
 
@@ -159,14 +137,7 @@ Install the project using the procedures in the Installation section.
 ### Testing:
 
 ```
-cd {Python_Project}/mysql-cmp
-test/unit/mysql_rep_cmp/unit_test_run3.sh
-```
-
-### Code coverage:
-
-```
-cd {Python_Project}/mysql-cmp
+test/unit/mysql_rep_cmp/unit_test_run.sh
 test/unit/mysql_rep_cmp/code_coverage.sh
 ```
 

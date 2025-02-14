@@ -13,7 +13,6 @@
     Usage:
         mysql_rep_cmp.py -c master_cfg -r slave_cfg -d path
             {-C [db_name [db_name2 ...]] [-t table_name [table_name2 ...]] |
-                 [-m config_file -i db_name:table_name] |
                  [-e to_email [to_email2 ...] [-s subject_line] [-u]] |
                  [-z] [-p [-n N]]]
             [-y flavor_id]
@@ -27,10 +26,6 @@
         -C [database_names] => Check one or more databases
             -t table name(s) => Table names to check.  If this option is used
                 only one database will be checked based on the -C option.
-            -m file => Mongo config file.  Is loaded as a python, do not
-                include the .py extension with the name.
-                -i {database:collection} => Name of database and collection.
-                    Default: sysmon:mysql_db_admin
             -o path/file => Directory path and file name for output.
                 -w a|w => Append or write to output to output file. Default is
                     write.
@@ -111,14 +106,16 @@
 """
 
 # Libraries and Global Variables
-from __future__ import print_function
-from __future__ import absolute_import
 
 # Standard
 import sys
 import time
 import pprint
-import json
+
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 # Local
 try:
@@ -126,21 +123,18 @@ try:
     from .lib import gen_class
     from .mysql_lib import mysql_libs
     from .mysql_lib import mysql_class
-    from .mongo_lib import mongo_libs
     from . import version
 
 except (ValueError, ImportError) as err:
-    import lib.gen_libs as gen_libs
-    import lib.gen_class as gen_class
-    import mysql_lib.mysql_libs as mysql_libs
-    import mysql_lib.mysql_class as mysql_class
-    import mongo_lib.mongo_libs as mongo_libs
+    import lib.gen_libs as gen_libs                     # pylint:disable=R0402
+    import lib.gen_class as gen_class                   # pylint:disable=R0402
+    import mysql_lib.mysql_libs as mysql_libs           # pylint:disable=R0402
+    import mysql_lib.mysql_class as mysql_class         # pylint:disable=R0402
     import version
 
 __version__ = version.__version__
 
 # Global
-SUBJ_LINE = "MySQL_Replication_Comparsion"
 
 
 def help_message():
@@ -173,14 +167,14 @@ def get_all_dbs_tbls(server, db_list, dict_key, **kwargs):
 
     """
 
-    db_dict = dict()
+    db_dict = {}
     db_list = list(db_list)
-    ign_db_tbl = dict(kwargs.get("ign_db_tbl", dict()))
+    ign_db_tbl = dict(kwargs.get("ign_db_tbl", {}))
 
     for dbs in db_list:
         tbl_list = gen_libs.dict_2_list(
             mysql_libs.fetch_tbl_dict(server, dbs), dict_key)
-        ign_tbls = ign_db_tbl[dbs] if dbs in ign_db_tbl else list()
+        ign_tbls = ign_db_tbl[dbs] if dbs in ign_db_tbl else []
         tbl_list = gen_libs.del_not_and_list(tbl_list, ign_tbls)
         db_dict[dbs] = tbl_list
 
@@ -204,12 +198,12 @@ def get_db_tbl(server, db_list, **kwargs):
 
     """
 
-    db_dict = dict()
+    db_dict = {}
     db_list = list(db_list)
     dict_key = "TABLE_NAME" if server.version >= (8, 0) else "table_name"
-    ign_dbs = list(kwargs.get("ign_dbs", list()))
-    tbls = kwargs.get("tbls", list())
-    ign_db_tbl = dict(kwargs.get("ign_db_tbl", dict()))
+    ign_dbs = list(kwargs.get("ign_dbs", []))
+    tbls = kwargs.get("tbls", [])
+    ign_db_tbl = dict(kwargs.get("ign_db_tbl", {}))
 
     if db_list:
         db_list = gen_libs.del_not_and_list(db_list, ign_dbs)
@@ -254,7 +248,7 @@ def get_json_template(server):
 
     """
 
-    json_doc = dict()
+    json_doc = {}
     json_doc["Platform"] = "MySQL"
     json_doc["Server"] = server.name
     json_doc["AsOf"] = gen_libs.get_date() + "T" + gen_libs.get_time()
@@ -274,7 +268,7 @@ def create_data_config(args):
 
     """
 
-    data_config = dict()
+    data_config = {}
     data_config["to_addr"] = args.get_val("-e")
     data_config["subj"] = args.get_val("-s")
     data_config["mailx"] = args.get_val("-u", def_val=False)
@@ -283,11 +277,6 @@ def create_data_config(args):
     data_config["expand"] = args.get_val("-p", def_val=False)
     data_config["indent"] = args.get_val("-n")
     data_config["suppress"] = args.get_val("-z", def_val=False)
-    data_config["db_tbl"] = args.get_val("-i")
-
-    if args.get_val("-m", def_val=False):
-        data_config["mongo"] = gen_libs.load_module(
-            args.get_val("-m"), args.get_val("-d"))
 
     return data_config
 
@@ -309,35 +298,38 @@ def data_out(data, **kwargs):
             expand -> True|False - Expand the JSON format
             indent -> Indentation of JSON document if expanded
             suppress -> True|False - Suppress standard out
-            mongo -> Mongo config file - Insert into Mongo database
-            db_tbl -> database:table - Database name:Table name
         (output) state -> True|False - Successful operation
         (output) msg -> None or error message
 
     """
 
-    global SUBJ_LINE
-
     state = True
     msg = None
 
     if not isinstance(data, dict):
-        return False, "Error: Is not a dictionary: %s" % (data)
+        return False, f"Error: Is not a dictionary: {data}"
 
     mail = None
     data = dict(data)
     cfg = {"indent": kwargs.get("indent", 4)} if kwargs.get("indent", False) \
-        else dict()
+        else {}
 
     if kwargs.get("to_addr", False):
-        subj = kwargs.get("subj", SUBJ_LINE)
+        subj = kwargs.get("subj", "MySQL_Replication_Comparsion")
         mail = gen_class.setup_mail(kwargs.get("to_addr"), subj=subj)
         mail.add_2_msg(json.dumps(data, **cfg))
         mail.send_mail(use_mailx=kwargs.get("mailx", False))
 
     if kwargs.get("outfile", False):
-        outfile = open(kwargs.get("outfile"), kwargs.get("mode", "w"))
-        pprint.pprint(data, stream=outfile, **cfg)
+        if kwargs.get("expand", False):
+            with open(kwargs.get("outfile"), kwargs.get("mode", "w"),
+                      encoding="UTF-8") as outfile:
+                pprint.pprint(data, stream=outfile, **cfg)
+
+        else:
+            gen_libs.write_file(
+                kwargs.get("outfile"), kwargs.get("mode", "w"),
+                json.dumps(data, indent=kwargs.get("indent")))
 
     if not kwargs.get("suppress", False):
         if kwargs.get("expand", False):
@@ -345,10 +337,6 @@ def data_out(data, **kwargs):
 
         else:
             print(data)
-
-    if kwargs.get("mongo", False):
-        dbs, tbl = kwargs.get("db_tbl").split(":")
-        state, msg = mongo_libs.ins_doc(kwargs.get("mongo"), dbs, tbl, data)
 
     return state, msg
 
@@ -402,8 +390,8 @@ def setup_cmp(args, master, slave):
 
     """
 
-    db_list = args.get_val("-C", def_val=list())
-    tbls = args.get_val("-t", def_val=list())
+    db_list = args.get_val("-C", def_val=[])
+    tbls = args.get_val("-t", def_val=[])
     cfg = gen_libs.load_module(args.get_val("-c"), args.get_val("-d"))
     mst_db_tbl = get_db_tbl(
         master, db_list=db_list, tbls=tbls, ign_dbs=cfg.ign_dbs,
@@ -411,11 +399,11 @@ def setup_cmp(args, master, slave):
     results = get_json_template(master)
     results["Master"] = master.name
     results["Slave"] = slave.name
-    results["Checks"] = dict()
+    results["Checks"] = {}
     data_config = dict(create_data_config(args))
 
-    for dbs in mst_db_tbl:
-        results["Checks"][dbs] = list()
+    for dbs in mst_db_tbl:                              # pylint:disable=C0206
+        results["Checks"][dbs] = []
         for tbl in mst_db_tbl[dbs]:
             # Recursion
             recur = 1
@@ -425,7 +413,7 @@ def setup_cmp(args, master, slave):
     state = data_out(results, **data_config)
 
     if not state[0]:
-        print("setup_cmp: Error encountered: %s" % (state[1]))
+        print(f"setup_cmp: Error encountered: {state[1]}")
 
 
 def run_program(args):
@@ -448,8 +436,8 @@ def run_program(args):
 
     if master.conn_msg or slave.conn_msg:
         print("run_program: Error encountered with connection of master/slave")
-        print("\tMaster:  %s" % (master.conn_msg))
-        print("\tSlave:  %s" % (slave.conn_msg))
+        print(f"\tMaster:  {master.conn_msg}")
+        print(f"\tSlave:  {slave.conn_msg}")
 
     else:
         # Determine datatype of server_id and convert appropriately.
@@ -497,13 +485,10 @@ def main():
     file_perms = {"-o": 6}
     file_crt_list = ["-o"]
     multi_val = ["-C", "-e", "-s", "-t"]
-    opt_con_req_list = {
-        "-t": ["-C"], "-s": ["-e"], "-u": ["-e"], "-i": ["-m"], "-w": ["-o"]}
-    opt_def_dict = {
-        "-C": [], "-t": None, "-n": 4, "-i": "sysmon:mysql_rep_cmp"}
+    opt_con_req_list = {"-t": ["-C"], "-s": ["-e"], "-u": ["-e"], "-w": ["-o"]}
+    opt_def_dict = {"-C": [], "-t": None, "-n": 4}
     opt_req_list = ["-r", "-c", "-d"]
-    opt_val_list = [
-        "-r", "-c", "-d", "-e", "-s", "-y", "-C", "-n", "-t", "-m", "-i"]
+    opt_val_list = ["-r", "-c", "-d", "-e", "-s", "-y", "-C", "-n", "-t"]
 
     # Process argument list from command line.
     args = gen_class.ArgParser(
@@ -524,8 +509,8 @@ def main():
             del prog_lock
 
         except gen_class.SingleInstanceException:
-            print("WARNING:  lock in place for mysql_rep_cmp with id of: %s"
-                  % (args.get_val("-y", def_val="")))
+            print(f'WARNING:  lock in place for mysql_rep_cmp with id of:'
+                  f' {args.get_val("-y", def_val="")}')
 
 
 if __name__ == "__main__":
