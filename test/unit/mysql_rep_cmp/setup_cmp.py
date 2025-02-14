@@ -21,14 +21,14 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import mysql_rep_cmp
-import lib.gen_libs as gen_libs
-import version
+import mysql_rep_cmp                            # pylint:disable=E0401,C0413
+import lib.gen_libs as gen_libs             # pylint:disable=E0401,C0413,R0402
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class ArgParser(object):
+class ArgParser():                                      # pylint:disable=R0903
 
     """Class:  ArgParser
 
@@ -51,7 +51,7 @@ class ArgParser(object):
         """
 
         self.cmdline = None
-        self.args_array = {"-C": list(), "-c": "mysql_cfg", "-d": "config"}
+        self.args_array = {"-C": [], "-c": "mysql_cfg", "-d": "config"}
 
     def get_val(self, skey, def_val=None):
 
@@ -66,7 +66,7 @@ class ArgParser(object):
         return self.args_array.get(skey, def_val)
 
 
-class Server(object):
+class Server():
 
     """Class:  Server
 
@@ -122,7 +122,7 @@ class Server(object):
         return self.ign_tbl
 
 
-class Cfg(object):
+class Cfg():                                            # pylint:disable=R0903
 
     """Class:  Cfg
 
@@ -180,7 +180,7 @@ class UnitTest(unittest.TestCase):
         self.slave.name = "SlaveName"
         self.cfg = Cfg()
         self.json_template = {"Platform": "MySQL"}
-        self.mst_db_tbl = dict()
+        self.mst_db_tbl = {}
         self.mst_db_tbl2 = {"dbs": ["tbl1"]}
         self.mst_db_tbl3 = {"dbs": ["tbl1", "tbl2"]}
         self.mst_db_tbl4 = {"dbs": ["tbl1", "tbl2"], "dbs2": ["tbl3", "tbl4"]}
@@ -194,8 +194,9 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.create_data_config")
     @mock.patch("mysql_rep_cmp.get_db_tbl")
     @mock.patch("mysql_rep_cmp.get_json_template")
-    def test_status_failed(self, mock_template, mock_dbstbls, mock_config,
-                           mock_out, mock_load):
+    def test_status_failed(                             # pylint:disable=R0913
+            self, mock_template, mock_dbstbls, mock_config, mock_out,
+            mock_load):
 
         """Function:  test_status_failed
 
@@ -221,8 +222,9 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.create_data_config")
     @mock.patch("mysql_rep_cmp.get_db_tbl")
     @mock.patch("mysql_rep_cmp.get_json_template")
-    def test_two_dbs(self, mock_template, mock_dbstbls, mock_config, mock_out,
-                     mock_load):
+    def test_two_dbs(                                   # pylint:disable=R0913
+            self, mock_template, mock_dbstbls, mock_config, mock_out,
+            mock_load):
 
         """Function:  test_two_dbs
 
@@ -247,8 +249,9 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.create_data_config")
     @mock.patch("mysql_rep_cmp.get_db_tbl")
     @mock.patch("mysql_rep_cmp.get_json_template")
-    def test_one_db2(self, mock_template, mock_dbstbls, mock_config, mock_out,
-                     mock_load):
+    def test_one_db2(                                   # pylint:disable=R0913
+            self, mock_template, mock_dbstbls, mock_config, mock_out,
+            mock_load):
 
         """Function:  test_one_db2
 
@@ -273,8 +276,9 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.create_data_config")
     @mock.patch("mysql_rep_cmp.get_db_tbl")
     @mock.patch("mysql_rep_cmp.get_json_template")
-    def test_one_db(self, mock_template, mock_dbstbls, mock_config, mock_out,
-                    mock_load):
+    def test_one_db(                                    # pylint:disable=R0913
+            self, mock_template, mock_dbstbls, mock_config, mock_out,
+            mock_load):
 
         """Function:  test_one_db
 
@@ -298,8 +302,9 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.create_data_config")
     @mock.patch("mysql_rep_cmp.get_db_tbl")
     @mock.patch("mysql_rep_cmp.get_json_template")
-    def test_no_dbs(self, mock_template, mock_dbstbls, mock_config, mock_out,
-                    mock_load):
+    def test_no_dbs(                                    # pylint:disable=R0913
+            self, mock_template, mock_dbstbls, mock_config, mock_out,
+            mock_load):
 
         """Function:  test_no_dbs
 

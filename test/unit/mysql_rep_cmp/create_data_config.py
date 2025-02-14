@@ -21,13 +21,13 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import mysql_rep_cmp
-import version
+import mysql_rep_cmp                            # pylint:disable=E0401,C0413
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class ArgParser(object):
+class ArgParser():                                      # pylint:disable=R0903
 
     """Class:  ArgParser
 
@@ -114,7 +114,7 @@ class UnitTest(unittest.TestCase):
 
         data_config = mysql_rep_cmp.create_data_config(self.args2)
 
-        self.assertTrue("mongo" not in data_config)
+        self.assertNotIn("mongo", data_config)
 
     @mock.patch("mysql_rep_cmp.gen_libs.load_module")
     def test_with_mongo(self, mock_load):
