@@ -22,15 +22,14 @@ import mock
 
 # Local
 sys.path.append(os.getcwd())
-import lib.gen_libs as gen_libs
-import mysql_rep_cmp
-
-import version
+import mysql_rep_cmp                            # pylint:disable=E0401,C0413
+import lib.gen_libs as gen_libs             # pylint:disable=E0401,C0413,R0402
+import version                                  # pylint:disable=E0401,C0413
 
 __version__ = version.__version__
 
 
-class MailTest(object):
+class MailTest():
 
     """Class:  MailTest
 
@@ -111,8 +110,9 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
-        test_mongo_error
-        test_mongo
+        test_outfile_mode_expand2
+        test_outfile_mode_expand
+        test_outfile_expand
         test_outfile_mode2
         test_outfile_mode
         test_outfile
@@ -157,49 +157,76 @@ class UnitTest(unittest.TestCase):
         self.indent = 4
         self.suppress = True
         self.suppress2 = False
-        self.mongo = "mongo"
-        self.db_tbl = "db1:tbl1"
         self.results = (True, None)
         self.results2 = (
             False, "Error: Is not a dictionary: %s" % (self.data2))
         self.results3 = (False, "Error Message")
 
-    @mock.patch("mysql_rep_cmp.mongo_libs.ins_doc",
-                mock.Mock(return_value=(False, "Error Message")))
-    def test_mongo_error(self):
+    @mock.patch("mysql_rep_cmp.pprint.pprint", mock.Mock(return_value=True))
+    @mock.patch("builtins.open", new_callable=mock.mock_open, read_data="data")
+    def test_outfile_mode_expand2(self, mock_file):
 
-        """Function:  test_mongo_error
+        """Function:  test_outfile_mode_expand2
 
-        Description:  Test with mongo option with an error status.
-
-        Arguments:
-
-        """
-
-        self.assertEqual(
-            mysql_rep_cmp.data_out(
-                self.data, suppress=self.suppress, mongo=self.mongo,
-                db_tbl=self.db_tbl), self.results3)
-
-    @mock.patch("mysql_rep_cmp.mongo_libs.ins_doc",
-                mock.Mock(return_value=(True, None)))
-    def test_mongo(self):
-
-        """Function:  test_mongo
-
-        Description:  Test with mongo option.
+        Description:  Test with outfile and mode and expand options.
 
         Arguments:
 
         """
 
+        assert open(                            # pylint:disable=R1732,W1514
+            self.outfile).read() == "data"
+        mock_file.assert_called_with(self.outfile)
+
         self.assertEqual(
             mysql_rep_cmp.data_out(
-                self.data, suppress=self.suppress, mongo=self.mongo,
-                db_tbl=self.db_tbl), self.results)
+                self.data, suppress=self.suppress, outfile=self.outfile,
+                mode=self.mode2, expand=True), self.results)
 
     @mock.patch("mysql_rep_cmp.pprint.pprint", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.open", mock.Mock(return_value=True))
+    @mock.patch("builtins.open", new_callable=mock.mock_open, read_data="data")
+    def test_outfile_mode_expand(self, mock_file):
+
+        """Function:  test_outfile_mode_expand
+
+        Description:  Test with outfile and mode and expand options.
+
+        Arguments:
+
+        """
+
+        assert open(                            # pylint:disable=R1732,W1514
+            self.outfile).read() == "data"
+        mock_file.assert_called_with(self.outfile)
+
+        self.assertEqual(
+            mysql_rep_cmp.data_out(
+                self.data, suppress=self.suppress, outfile=self.outfile,
+                mode=self.mode, expand=True), self.results)
+
+    @mock.patch("mysql_rep_cmp.pprint.pprint", mock.Mock(return_value=True))
+    @mock.patch("builtins.open", new_callable=mock.mock_open, read_data="data")
+    def test_outfile_expand(self, mock_file):
+
+        """Function:  test_outfile_expand
+
+        Description:  Test with outfile option with expand.
+
+        Arguments:
+
+        """
+
+        assert open(                            # pylint:disable=R1732,W1514
+            self.outfile).read() == "data"
+        mock_file.assert_called_with(self.outfile)
+
+        self.assertEqual(
+            mysql_rep_cmp.data_out(
+                self.data, suppress=self.suppress, outfile=self.outfile,
+                expand=True), self.results)
+
+    @mock.patch("mysql_rep_cmp.gen_libs.write_file",
+                mock.Mock(return_value=True))
     def test_outfile_mode2(self):
 
         """Function:  test_outfile_mode2
@@ -215,8 +242,8 @@ class UnitTest(unittest.TestCase):
                 self.data, suppress=self.suppress, outfile=self.outfile,
                 mode=self.mode2), self.results)
 
-    @mock.patch("mysql_rep_cmp.pprint.pprint", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.open", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.gen_libs.write_file",
+                mock.Mock(return_value=True))
     def test_outfile_mode(self):
 
         """Function:  test_outfile_mode
@@ -232,8 +259,8 @@ class UnitTest(unittest.TestCase):
                 self.data, suppress=self.suppress, outfile=self.outfile,
                 mode=self.mode), self.results)
 
-    @mock.patch("mysql_rep_cmp.pprint.pprint", mock.Mock(return_value=True))
-    @mock.patch("mysql_rep_cmp.open", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.gen_libs.write_file",
+                mock.Mock(return_value=True))
     def test_outfile(self):
 
         """Function:  test_outfile
