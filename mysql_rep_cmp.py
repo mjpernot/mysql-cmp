@@ -198,7 +198,7 @@ def get_db_tbl(server, db_list, **kwargs):
 
     db_dict = {}
     db_list = list(db_list)
-    dict_key = "TABLE_NAME" if server.version >= (8, 0) else "table_name"
+    dict_key = "TABLE_NAME"
     ign_dbs = list(kwargs.get("ign_dbs", []))
     tbls = kwargs.get("tbls", [])
     ign_db_tbl = dict(kwargs.get("ign_db_tbl", {}))
@@ -216,9 +216,6 @@ def get_db_tbl(server, db_list, **kwargs):
             db_dict = get_all_dbs_tbls(
                 server, db_list, dict_key, ign_db_tbl=ign_db_tbl)
 
-        else:
-            print("get_db_tbl 1: Warning:  No databases to process")
-
     else:
         db_list = gen_libs.dict_2_list(
             mysql_libs.fetch_db_dict(server), "Database")
@@ -227,9 +224,6 @@ def get_db_tbl(server, db_list, **kwargs):
         if db_list:
             db_dict = get_all_dbs_tbls(
                 server, db_list, dict_key, ign_db_tbl=ign_db_tbl)
-
-        else:
-            print("get_db_tbl 2: Warning:  No databases to process")
 
     return db_dict
 
@@ -430,20 +424,12 @@ def run_program(args):
     master.connect(silent=True)
 
     server_type = mysql_class.SlaveRep
+
     if args.arg_exist("-i"):
         server_type = mysql_class.Server
+
     slave = mysql_libs.create_instance(
         args.get_val("-r"), args.get_val("-d"), server_type)
-    """
-    if args.arg_exist("-i"):
-        slave = mysql_libs.create_instance(
-            args.get_val("-r"), args.get_val("-d"), mysql_class.Server)
-
-    else:
-        slave = mysql_libs.create_instance(
-            args.get_val("-r"), args.get_val("-d"), mysql_class.SlaveRep)
-    """
-
     slave.connect(silent=True)
 
     if master.conn_msg or slave.conn_msg:
