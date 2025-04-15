@@ -79,33 +79,9 @@ class ArgParser():
         return  arg in self.args_array
 
 
-class Mail():                                           # pylint:disable=R0903
-
-    """Class:  Mail
-
-    Description:  Class stub holder for gen_class.Mail class.
-
-    Methods:
-        __init__
-
-    """
-
-    def __init__(self):
-
-        """Method:  __init__
-
-        Description:  Class initialization.
-
-        Arguments:
-
-        """
-
-        self.data = None
-
-
 class SlaveRep():                                       # pylint:disable=R0903
 
-    """Class:  Server
+    """Class:  SlaveRep
 
     Description:  Class stub holder for mysql_class.SlaveRep class.
 
@@ -152,9 +128,58 @@ class SlaveRep():                                       # pylint:disable=R0903
         return status
 
 
-class MasterRep():
+class Server():                                       # pylint:disable=R0903
 
     """Class:  Server
+
+    Description:  Class stub holder for mysql_class.Server class.
+
+    Methods:
+        __init__
+        connect
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.extra_def_file = None
+        self.sql_user = "mysql"
+        self.host = "hostname"
+        self.port = 3306
+        self.do_tbl = {}
+        self.ign_tbl = {}
+        self.server_id = 11
+        self.conn_msg = None
+
+    def connect(self, silent=False):
+
+        """Method:  connect
+
+        Description:  Method stub holder for mysql_class.SlaveRep.connect.
+
+        Arguments:
+
+        """
+
+        status = True
+
+        if silent:
+            status = True
+
+        return status
+
+
+class MasterRep():
+
+    """Class:  MasterRep
 
     Description:  Class stub holder for mysql_class.MasterRep class.
 
@@ -252,9 +277,9 @@ class UnitTest(unittest.TestCase):
         """
 
         self.err_msg = "Failed Conection Message"
-        self.mail = Mail()
         self.master = MasterRep()
         self.slave = SlaveRep()
+        self.server = Server()
         self.sys_ign_db = ["performance_schema", "information_schema"]
 
         self.args = ArgParser()
@@ -286,9 +311,7 @@ class UnitTest(unittest.TestCase):
 
         """
 
-        self.slave.server_id = 12
-
-        mock_server.side_effect = [self.master, self.slave]
+        mock_server.side_effect = [self.master, self.server]
 
         self.assertFalse(mysql_rep_cmp.run_program(self.args2))
 

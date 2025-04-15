@@ -429,15 +429,22 @@ def run_program(args):
         args.get_val("-c"), args.get_val("-d"), mysql_class.MasterRep)
     master.connect(silent=True)
 
+    server_type = mysql_class.SlaveRep
+    if args.arg_exist("-i"):
+        server_type = mysql_class.Server
+    slave = mysql_libs.create_instance(
+        args.get_val("-r"), args.get_val("-d"), server_type)
+    """
     if args.arg_exist("-i"):
         slave = mysql_libs.create_instance(
             args.get_val("-r"), args.get_val("-d"), mysql_class.Server)
-        slave.connect(silent=True)
 
     else:
         slave = mysql_libs.create_instance(
             args.get_val("-r"), args.get_val("-d"), mysql_class.SlaveRep)
-        slave.connect(silent=True)
+    """
+
+    slave.connect(silent=True)
 
     if master.conn_msg or slave.conn_msg:
         print("run_program: Error encountered with connection of master/slave")
