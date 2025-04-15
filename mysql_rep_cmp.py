@@ -37,15 +37,13 @@
             -z => Suppress standard out.
             -p => Expand the JSON format.
                 -n N => Indentation for expanded JSON format.
+            -i => Override the master/slave check and compare the databases.
 
         -y value => A flavor id for the program lock.  To create unique lock.
         -v => Display version of this program.
         -h => Help and usage message.
 
         NOTE 1:  -v or -h overrides the other options.
-
-        NOTE 2:  -s option:  If not provided, then a default subject line will
-            be created.
 
     Notes:
         Database configuration file format (config/mysql_cfg.py.TEMPLATE):
@@ -315,7 +313,7 @@ def data_out(data, **kwargs):
         else {}
 
     if kwargs.get("to_addr", False):
-        subj = kwargs.get("subj", "MySQL_Replication_Comparsion")
+        subj = kwargs.get("subj", "MySQLRepCompare")
         mail = gen_class.setup_mail(kwargs.get("to_addr"), subj=subj)
         mail.add_2_msg(json.dumps(data, **cfg))
         mail.send_mail(use_mailx=kwargs.get("mailx", False))
@@ -449,7 +447,7 @@ def run_program(args):
             if isinstance(slv_list[0], str) else slave.server_id
 
         # Is slave in replication with master
-        if slv_id in slv_list:
+        if slv_id in slv_list or args.arg_exist("-i"):
             setup_cmp(args, master, slave)
             mysql_libs.disconnect(master, slave)
 
