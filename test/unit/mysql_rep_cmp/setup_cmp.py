@@ -28,7 +28,7 @@ import version                                  # pylint:disable=E0401,C0413
 __version__ = version.__version__
 
 
-class ArgParser():                                      # pylint:disable=R0903
+class ArgParser():
 
     """Class:  ArgParser
 
@@ -37,6 +37,7 @@ class ArgParser():                                      # pylint:disable=R0903
     Methods:
         __init__
         get_val
+        arg_exist
 
     """
 
@@ -64,6 +65,18 @@ class ArgParser():                                      # pylint:disable=R0903
         """
 
         return self.args_array.get(skey, def_val)
+
+    def arg_exist(self, arg):
+
+        """Method:  arg_exist
+
+        Description:  Method stub holder for gen_class.ArgParser.arg_exist.
+
+        Arguments:
+
+        """
+
+        return  arg in self.args_array
 
 
 class Server():
@@ -156,6 +169,8 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_b_option2
+        test_b_option
         test_status_failed
         test_two_dbs
         test_one_db2
@@ -188,7 +203,64 @@ class UnitTest(unittest.TestCase):
         self.status = (True, None)
         self.status2 = (False, "Error Message")
 
-    @mock.patch("mysql_rep_cmp.recur_tbl_cmp", mock.Mock(return_value="OK"))
+    @mock.patch("mysql_rep_cmp.recur_tbl_cmp",
+                mock.Mock(return_value="Checksums do not match"))
+    @mock.patch("mysql_rep_cmp.gen_libs.load_module")
+    @mock.patch("mysql_rep_cmp.data_out")
+    @mock.patch("mysql_rep_cmp.create_data_config")
+    @mock.patch("mysql_rep_cmp.get_db_tbl")
+    @mock.patch("mysql_rep_cmp.get_json_template")
+    def test_b_option2(                                  # pylint:disable=R0913
+            self, mock_template, mock_dbstbls, mock_config, mock_out,
+            mock_load):
+
+        """Function:  test_b_option2
+
+        Description:  Test with -b option and tables not in sync.
+
+        Arguments:
+
+        """
+
+        mock_dbstbls.return_value = self.mst_db_tbl2
+        mock_template.return_value = self.json_template
+        mock_config.return_value = self.data_config
+        mock_out.return_value = self.status
+        mock_load.return_value = self.cfg
+
+        self.assertFalse(
+            mysql_rep_cmp.setup_cmp(self.args, self.master, self.slave))
+
+    @mock.patch("mysql_rep_cmp.recur_tbl_cmp",
+                mock.Mock(return_value="Synced"))
+    @mock.patch("mysql_rep_cmp.gen_libs.load_module")
+    @mock.patch("mysql_rep_cmp.data_out")
+    @mock.patch("mysql_rep_cmp.create_data_config")
+    @mock.patch("mysql_rep_cmp.get_db_tbl")
+    @mock.patch("mysql_rep_cmp.get_json_template")
+    def test_b_option(                                  # pylint:disable=R0913
+            self, mock_template, mock_dbstbls, mock_config, mock_out,
+            mock_load):
+
+        """Function:  test_b_option
+
+        Description:  Test with -b option and tables in sync.
+
+        Arguments:
+
+        """
+
+        mock_dbstbls.return_value = self.mst_db_tbl2
+        mock_template.return_value = self.json_template
+        mock_config.return_value = self.data_config
+        mock_out.return_value = self.status
+        mock_load.return_value = self.cfg
+
+        self.assertFalse(
+            mysql_rep_cmp.setup_cmp(self.args, self.master, self.slave))
+
+    @mock.patch("mysql_rep_cmp.recur_tbl_cmp",
+                mock.Mock(return_value="Synced"))
     @mock.patch("mysql_rep_cmp.gen_libs.load_module")
     @mock.patch("mysql_rep_cmp.data_out")
     @mock.patch("mysql_rep_cmp.create_data_config")
@@ -216,7 +288,8 @@ class UnitTest(unittest.TestCase):
             self.assertFalse(
                 mysql_rep_cmp.setup_cmp(self.args, self.master, self.slave))
 
-    @mock.patch("mysql_rep_cmp.recur_tbl_cmp", mock.Mock(return_value="OK"))
+    @mock.patch("mysql_rep_cmp.recur_tbl_cmp",
+                mock.Mock(return_value="Synced"))
     @mock.patch("mysql_rep_cmp.gen_libs.load_module")
     @mock.patch("mysql_rep_cmp.data_out")
     @mock.patch("mysql_rep_cmp.create_data_config")
@@ -243,7 +316,8 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(
             mysql_rep_cmp.setup_cmp(self.args, self.master, self.slave))
 
-    @mock.patch("mysql_rep_cmp.recur_tbl_cmp", mock.Mock(return_value="OK"))
+    @mock.patch("mysql_rep_cmp.recur_tbl_cmp",
+                mock.Mock(return_value="Synced"))
     @mock.patch("mysql_rep_cmp.gen_libs.load_module")
     @mock.patch("mysql_rep_cmp.data_out")
     @mock.patch("mysql_rep_cmp.create_data_config")
@@ -270,7 +344,8 @@ class UnitTest(unittest.TestCase):
         self.assertFalse(
             mysql_rep_cmp.setup_cmp(self.args, self.master, self.slave))
 
-    @mock.patch("mysql_rep_cmp.recur_tbl_cmp", mock.Mock(return_value="OK"))
+    @mock.patch("mysql_rep_cmp.recur_tbl_cmp",
+                mock.Mock(return_value="Synced"))
     @mock.patch("mysql_rep_cmp.gen_libs.load_module")
     @mock.patch("mysql_rep_cmp.data_out")
     @mock.patch("mysql_rep_cmp.create_data_config")

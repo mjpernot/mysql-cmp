@@ -14,7 +14,7 @@
         mysql_rep_cmp.py -c master_cfg -r slave_cfg -d path
             {-C [db_name [db_name2 ...]] [-t table_name [table_name2 ...]] |
                  [-e to_email [to_email2 ...] [-s subject_line] [-u]] |
-                 [-z] [-p [-n N]]]
+                 [-z] [-b] [-p [-n N]]]
             [-y flavor_id]
             [-v | -h]
 
@@ -35,6 +35,7 @@
                 -s subject_line => Subject line of email.
                 -u => Override the default mail command and use mailx.
             -z => Suppress standard out.
+            -b => Only return those tables that are not in sync.
             -p => Expand the JSON format.
                 -n N => Indentation for expanded JSON format.
             -i => Override the master/slave check and compare the databases.
@@ -400,10 +401,17 @@ def setup_cmp(args, master, slave):
     for dbs in mst_db_tbl:                              # pylint:disable=C0206
         results["Checks"][dbs] = []
         for tbl in mst_db_tbl[dbs]:
-            # Recursion
+            # Recursion to ensure tables are out of sync if detected
             recur = 1
             data = recur_tbl_cmp(master, slave, dbs, tbl, recur)
-            results["Checks"][dbs].append({"Table": tbl, "Status": data})
+
+            if args.arg_exist("-b"):
+                if data != "Synced":
+                    results["Checks"][dbs].append(
+                        {"Table": tbl, "Status": data})
+
+            else:
+                results["Checks"][dbs].append({"Table": tbl, "Status": data})
 
     state = data_out(results, **data_config)
 
