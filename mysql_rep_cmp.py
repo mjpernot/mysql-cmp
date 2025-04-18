@@ -14,7 +14,7 @@
         mysql_rep_cmp.py -c master_cfg -r slave_cfg -d path
             {-C [db_name [db_name2 ...]] [-t table_name [table_name2 ...]] |
                  [-e to_email [to_email2 ...] [-s subject_line] [-u]] |
-                 [-z] [-p [-n N]]]
+                 [-z] [-b] [-p [-n N]]]
             [-y flavor_id]
             [-v | -h]
 
@@ -35,17 +35,16 @@
                 -s subject_line => Subject line of email.
                 -u => Override the default mail command and use mailx.
             -z => Suppress standard out.
+            -b => Only return those tables that are not in sync.
             -p => Expand the JSON format.
                 -n N => Indentation for expanded JSON format.
+            -i => Override the master/slave check and compare the databases.
 
         -y value => A flavor id for the program lock.  To create unique lock.
         -v => Display version of this program.
         -h => Help and usage message.
 
         NOTE 1:  -v or -h overrides the other options.
-
-        NOTE 2:  -s option:  If not provided, then a default subject line will
-            be created.
 
     Notes:
         Database configuration file format (config/mysql_cfg.py.TEMPLATE):
@@ -200,7 +199,7 @@ def get_db_tbl(server, db_list, **kwargs):
 
     db_dict = {}
     db_list = list(db_list)
-    dict_key = "TABLE_NAME" if server.version >= (8, 0) else "table_name"
+    dict_key = "TABLE_NAME"
     ign_dbs = list(kwargs.get("ign_dbs", []))
     tbls = kwargs.get("tbls", [])
     ign_db_tbl = dict(kwargs.get("ign_db_tbl", {}))
@@ -212,14 +211,14 @@ def get_db_tbl(server, db_list, **kwargs):
             db_tables = gen_libs.dict_2_list(
                 mysql_libs.fetch_tbl_dict(server, db_list[0]), dict_key)
             tbl_list = gen_libs.del_not_in_list(tbls, db_tables)
+            ign_tbls = \
+                ign_db_tbl[db_list[0]] if db_list[0] in ign_db_tbl else []
+            tbl_list = gen_libs.del_not_and_list(tbl_list, ign_tbls)
             db_dict[db_list[0]] = tbl_list
 
         elif db_list:
             db_dict = get_all_dbs_tbls(
                 server, db_list, dict_key, ign_db_tbl=ign_db_tbl)
-
-        else:
-            print("get_db_tbl 1: Warning:  No databases to process")
 
     else:
         db_list = gen_libs.dict_2_list(
@@ -229,9 +228,6 @@ def get_db_tbl(server, db_list, **kwargs):
         if db_list:
             db_dict = get_all_dbs_tbls(
                 server, db_list, dict_key, ign_db_tbl=ign_db_tbl)
-
-        else:
-            print("get_db_tbl 2: Warning:  No databases to process")
 
     return db_dict
 
@@ -315,7 +311,7 @@ def data_out(data, **kwargs):
         else {}
 
     if kwargs.get("to_addr", False):
-        subj = kwargs.get("subj", "MySQL_Replication_Comparsion")
+        subj = kwargs.get("subj", "MySQLRepCompare")
         mail = gen_class.setup_mail(kwargs.get("to_addr"), subj=subj)
         mail.add_2_msg(json.dumps(data, **cfg))
         mail.send_mail(use_mailx=kwargs.get("mailx", False))
@@ -405,10 +401,17 @@ def setup_cmp(args, master, slave):
     for dbs in mst_db_tbl:                              # pylint:disable=C0206
         results["Checks"][dbs] = []
         for tbl in mst_db_tbl[dbs]:
-            # Recursion
+            # Recursion to ensure tables are out of sync if detected
             recur = 1
             data = recur_tbl_cmp(master, slave, dbs, tbl, recur)
-            results["Checks"][dbs].append({"Table": tbl, "Status": data})
+
+            if args.arg_exist("-b"):
+                if data != "Synced":
+                    results["Checks"][dbs].append(
+                        {"Table": tbl, "Status": data})
+
+            else:
+                results["Checks"][dbs].append({"Table": tbl, "Status": data})
 
     state = data_out(results, **data_config)
 
@@ -430,14 +433,25 @@ def run_program(args):
     master = mysql_libs.create_instance(
         args.get_val("-c"), args.get_val("-d"), mysql_class.MasterRep)
     master.connect(silent=True)
+
+    server_type = mysql_class.SlaveRep
+
+    if args.arg_exist("-i"):
+        server_type = mysql_class.Server
+
     slave = mysql_libs.create_instance(
-        args.get_val("-r"), args.get_val("-d"), mysql_class.SlaveRep)
+        args.get_val("-r"), args.get_val("-d"), server_type)
     slave.connect(silent=True)
 
     if master.conn_msg or slave.conn_msg:
         print("run_program: Error encountered with connection of master/slave")
         print(f"\tMaster:  {master.conn_msg}")
         print(f"\tSlave:  {slave.conn_msg}")
+        return
+
+    if args.arg_exist("-i"):
+        setup_cmp(args, master, slave)
+        mysql_libs.disconnect(master, slave)
 
     else:
         # Determine datatype of server_id and convert appropriately.

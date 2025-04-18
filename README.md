@@ -50,8 +50,6 @@ Install supporting classes and libraries.
 python -m pip install -r requirements-python-lib.txt --target lib --trusted-host pypi.appdev.proj.coe.ic.gov
 python -m pip install -r requirements-mysql-lib.txt --target mysql_lib --trusted-host pypi.appdev.proj.coe.ic.gov
 python -m pip install -r requirements-mysql-python-lib.txt --target mysql_lib/lib --trusted-host pypi.appdev.proj.coe.ic.gov
-python -m pip install -r requirements-mongo-lib.txt --target mongo_lib --trusted-host pypi.appdev.proj.coe.ic.gov
-python -m pip install -r requirements-mongo-python-lib.txt --target mongo_lib/lib --trusted-host pypi.appdev.proj.coe.ic.gov
 ```
 
 
@@ -85,8 +83,8 @@ Make the appropriate change to the environment.
 
 ```
 cp config/mysql_cfg.py.TEMPLATE config/mysql_cfg.py
-vim config/mysql_cfg.py
 chmod 600 config/mysql_cfg.py
+vim config/mysql_cfg.py
 ```
 
 Create MySQL definition file for Master database.
@@ -98,8 +96,8 @@ Make the appropriate change to the environment.
 
 ```
 cp config/mysql.cfg.TEMPLATE config/mysql.cfg
-vim config/mysql.cfg
 chmod 600 config/mysql.cfg
+vim config/mysql.cfg
 ```
 
 For the Slave database, create a seperate MySQL configuration and MySQL definition file.
@@ -109,11 +107,11 @@ Make the appropriate change to the Slave environment.  See above for the changes
 
 ```
 cp config/mysql_cfg.py.TEMPLATE config/mysql_cfg_SLAVENAME.py
-vim config/mysql_cfg_SLAVENAME.py
 chmod 600 config/mysql_cfg_SLAVENAME.py
+vim config/mysql_cfg_SLAVENAME.py
 cp config/mysql.cfg.TEMPLATE config/mysql_SLAVENAME.cfg
-vim config/mysql_SLAVENAME.cfg
 chmod 600 config/mysql_SLAVENAME.cfg
+vim config/mysql_SLAVENAME.cfg
 ```
 
 
