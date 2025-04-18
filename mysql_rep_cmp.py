@@ -447,29 +447,29 @@ def run_program(args):
         print("run_program: Error encountered with connection of master/slave")
         print(f"\tMaster:  {master.conn_msg}")
         print(f"\tSlave:  {slave.conn_msg}")
+        return
+
+    if args.arg_exist("-i"):
+        setup_cmp(args, master, slave)
+        mysql_libs.disconnect(master, slave)
 
     else:
-        if args.arg_exist("-i"):
+        # Determine datatype of server_id and convert appropriately.
+        #   Required for mysql.connector v1.1.6 as this version assigns the
+        #   id to a different datatype then later mysql.connector versions.
+        sid = "Server_Id" if master.version >= (8, 0, 26) else "Server_id"
+        slv_list = gen_libs.dict_2_list(master.show_slv_hosts(), sid)
+        slv_id = str(slave.server_id) \
+            if isinstance(slv_list[0], str) else slave.server_id
+
+        # Is slave in replication with master
+        if slv_id in slv_list:
             setup_cmp(args, master, slave)
             mysql_libs.disconnect(master, slave)
 
         else:
-            # Determine datatype of server_id and convert appropriately.
-            #   Required for mysql.connector v1.1.6 as this version assigns the
-            #   id to a different datatype then later mysql.connector versions.
-            sid = "Server_Id" if master.version >= (8, 0, 26) else "Server_id"
-            slv_list = gen_libs.dict_2_list(master.show_slv_hosts(), sid)
-            slv_id = str(slave.server_id) \
-                if isinstance(slv_list[0], str) else slave.server_id
-
-            # Is slave in replication with master
-            if slv_id in slv_list:
-                setup_cmp(args, master, slave)
-                mysql_libs.disconnect(master, slave)
-
-            else:
-                mysql_libs.disconnect(master, slave)
-                print("Error:  Slave is not in replication with Master.")
+            mysql_libs.disconnect(master, slave)
+            print("Error:  Slave is not in replication with Master.")
 
 
 def main():
