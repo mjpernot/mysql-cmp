@@ -5,7 +5,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 
 ## [5.1.0] - 2025-04-15
-- Added option to only report tables not in sync.
+- Added option (-b) to only report tables not in sync.
 - Removed support for pre-MySQL 8 versions.
 - Added override option (-i) to compare non-master/slave databases.
 - Updated python-lib v4.0.1
