@@ -28,7 +28,7 @@ import version                                  # pylint:disable=E0401,C0413
 __version__ = version.__version__
 
 
-class ArgParser():                                      # pylint:disable=R0903
+class ArgParser():
 
     """Class:  ArgParser
 
@@ -37,6 +37,7 @@ class ArgParser():                                      # pylint:disable=R0903
     Methods:
         __init__
         get_val
+        arg_exist
 
     """
 
@@ -65,34 +66,22 @@ class ArgParser():                                      # pylint:disable=R0903
 
         return self.args_array.get(skey, def_val)
 
+    def arg_exist(self, arg):
 
-class Mail():                                           # pylint:disable=R0903
+        """Method:  arg_exist
 
-    """Class:  Mail
-
-    Description:  Class stub holder for gen_class.Mail class.
-
-    Methods:
-        __init__
-
-    """
-
-    def __init__(self):
-
-        """Method:  __init__
-
-        Description:  Class initialization.
+        Description:  Method stub holder for gen_class.ArgParser.arg_exist.
 
         Arguments:
 
         """
 
-        self.data = None
+        return arg in self.args_array
 
 
 class SlaveRep():                                       # pylint:disable=R0903
 
-    """Class:  Server
+    """Class:  SlaveRep
 
     Description:  Class stub holder for mysql_class.SlaveRep class.
 
@@ -139,9 +128,58 @@ class SlaveRep():                                       # pylint:disable=R0903
         return status
 
 
-class MasterRep():
+class Server():                                       # pylint:disable=R0903
 
     """Class:  Server
+
+    Description:  Class stub holder for mysql_class.Server class.
+
+    Methods:
+        __init__
+        connect
+
+    """
+
+    def __init__(self):
+
+        """Method:  __init__
+
+        Description:  Class initialization.
+
+        Arguments:
+
+        """
+
+        self.extra_def_file = None
+        self.sql_user = "mysql"
+        self.host = "hostname"
+        self.port = 3306
+        self.do_tbl = {}
+        self.ign_tbl = {}
+        self.server_id = 11
+        self.conn_msg = None
+
+    def connect(self, silent=False):
+
+        """Method:  connect
+
+        Description:  Method stub holder for mysql_class.SlaveRep.connect.
+
+        Arguments:
+
+        """
+
+        status = True
+
+        if silent:
+            status = True
+
+        return status
+
+
+class MasterRep():
+
+    """Class:  MasterRep
 
     Description:  Class stub holder for mysql_class.MasterRep class.
 
@@ -211,6 +249,7 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_non_slave_compare
         test_mysql_version3
         test_mysql_version2
         test_mysql_version
@@ -238,37 +277,43 @@ class UnitTest(unittest.TestCase):
         """
 
         self.err_msg = "Failed Conection Message"
-        self.mail = Mail()
         self.master = MasterRep()
         self.slave = SlaveRep()
+        self.server = Server()
         self.sys_ign_db = ["performance_schema", "information_schema"]
+
         self.args = ArgParser()
         self.args2 = ArgParser()
-        self.args2a = ArgParser()
-        self.args3 = ArgParser()
-        self.args3a = ArgParser()
-        self.args4 = ArgParser()
         self.args5 = ArgParser()
         self.args6 = ArgParser()
+        self.args7 = ArgParser()
+
         self.args.args_array = {"-c": True, "-d": True, "-r": True}
         self.args2.args_array = {
-            "-c": True, "-d": True, "-r": True, "-e": "email_address",
-            "-s": "subject_line"}
-        self.args2a.args_array = {
-            "-c": True, "-d": True, "-r": True, "-e": "email_address",
-            "-s": "subject_line", "-u": True}
-        self.args3.args_array = {
-            "-c": True, "-d": True, "-r": True, "-e": "email_address"}
-        self.args3a.args_array = {
-            "-c": True, "-d": True, "-r": True, "-e": "email_address",
-            "-u": True}
-        self.args4.args_array = {
-            "-c": True, "-d": True, "-r": True, "-z": True}
+            "-c": True, "-d": True, "-r": True, "-i": True}
         self.args5.args_array = {
             "-c": True, "-d": True, "-r": True, "-t": ["tbl1", "tbl2"],
             "-B": "db1"}
         self.args6.args_array = {
             "-c": True, "-d": True, "-r": True, "-B": "db1"}
+
+    @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",
+                mock.Mock(return_value=True))
+    @mock.patch("mysql_rep_cmp.mysql_libs.create_instance")
+    def test_non_slave_compare(self, mock_server):
+
+        """Function:  test_non_slave_compare
+
+        Description:  Test with a non-slave database.
+
+        Arguments:
+
+        """
+
+        mock_server.side_effect = [self.master, self.server]
+
+        self.assertFalse(mysql_rep_cmp.run_program(self.args2))
 
     @mock.patch("mysql_rep_cmp.setup_cmp", mock.Mock(return_value=True))
     @mock.patch("mysql_rep_cmp.mysql_libs.disconnect",

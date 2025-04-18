@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [5.1.0] - 2025-04-15
+- Added option (-b) to only report tables not in sync.
+- Removed support for pre-MySQL 8 versions.
+- Added override option (-i) to compare non-master/slave databases.
+- Updated python-lib v4.0.1
+- Updated mysql-lib v5.5.0
+
+### Fixed:
+- get_db_tbl: Removed tables to be ignored from table list for single database check.
+
+### Changed
+- setup_cmp: Added check for "-b" option and report only tables out of sync.
+- get_db_tbl: Removed check for pre-MySQL v8.0 when setting dict_key variable, removed print warnings for no databases to process.
+- run_program: Added check for override option (-i) for non-slave database comparsion.
+- data_out: Changed default email subject line.
+- Documentation changes.
+
+
 ## [5.0.0] - 2025-02-14
 Breaking Changes
 
