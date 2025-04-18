@@ -59,6 +59,9 @@ class UnitTest(unittest.TestCase):
 
     Methods:
         setUp
+        test_remove_tbl
+        test_ignore_db_tbl2
+        test_ignore_db_tbl
         test_812
         test_81
         test_802
@@ -98,10 +101,81 @@ class UnitTest(unittest.TestCase):
         self.all_tbls = {"db1": ["t2"]}
         self.all_tbls2 = {"db1": ["t2"], "db2": ["t1"]}
         self.ign_dbs = ["systemdb"]
+
+        self.tbl_dict6 = [
+            {"TABLE_NAME": "tbl1"}, {"TABLE_NAME": "tbl2"},
+            {"TABLE_NAME": "tbl3"}]
+        self.tbl_dict8 = [
+            {"TABLE_NAME": "tbl1"}, {"TABLE_NAME": "tbl2"}]
+        self.ign_db_tbl6 = {"db1": ["tbl1", "tbl3"]}
+        self.ign_db_tbl7 = {"db2": ["tbl1", "tbl3"]}
+        self.tbl_list6 = ["tbl1", "tbl2", "tbl3"]
+        self.results6 = {"db1": ["tbl2"]}
+        self.results7 = {"db1": ["tbl1", "tbl2", "tbl3"]}
+        self.results8 = {"db1": ["tbl1", "tbl2"]}
+
         self.results = {"db1": ["t2"]}
         self.results2 = {"db1": ["t2"], "db2": ["t1"]}
         self.results3 = {}
         self.results4 = {"db1": ["t1", "t2"]}
+
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    def test_remove_tbl(self, mock_fetch):
+
+        """Function:  test_remove_tbl
+
+        Description:  Test with remove tables passed that are not in the
+            database.
+
+        Arguments:
+
+        """
+
+        mock_fetch.return_value = self.tbl_dict8
+
+        self.assertEqual(
+            mysql_rep_cmp.get_db_tbl(
+                self.server, self.db_list2, ign_dbs=self.ign_dbs,
+                tbls=self.tbl_list6, ign_db_tbl=self.ign_db_tbl7),
+            self.results8)
+
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    def test_ignore_db_tbl2(self, mock_fetch):
+
+        """Function:  test_ignore_db_tbl2
+
+        Description:  Test with ignoring some tables, but not in same database.
+
+        Arguments:
+
+        """
+
+        mock_fetch.return_value = self.tbl_dict6
+
+        self.assertEqual(
+            mysql_rep_cmp.get_db_tbl(
+                self.server, self.db_list2, ign_dbs=self.ign_dbs,
+                tbls=self.tbl_list6, ign_db_tbl=self.ign_db_tbl7),
+            self.results7)
+
+    @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
+    def test_ignore_db_tbl(self, mock_fetch):
+
+        """Function:  test_ignore_db_tbl
+
+        Description:  Test with ignoring some tables.
+
+        Arguments:
+
+        """
+
+        mock_fetch.return_value = self.tbl_dict6
+
+        self.assertEqual(
+            mysql_rep_cmp.get_db_tbl(
+                self.server, self.db_list2, ign_dbs=self.ign_dbs,
+                tbls=self.tbl_list6, ign_db_tbl=self.ign_db_tbl6),
+            self.results6)
 
     @mock.patch("mysql_rep_cmp.mysql_libs.fetch_tbl_dict")
     def test_812(self, mock_fetch):
@@ -278,7 +352,7 @@ class UnitTest(unittest.TestCase):
 
         """Function:  test_with_single_db
 
-        Description:  Test with single database.
+        Description:  Test with single database and get all tables in database.
 
         Arguments:
 

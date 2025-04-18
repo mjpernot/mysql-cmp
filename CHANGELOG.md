@@ -10,6 +10,9 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 - Updated python-lib v4.0.1
 - Updated mysql-lib v5.5.0
 
+### Fixed:
+- get_db_tbl: Removed tables to be ignored from table list for single database check.
+
 ### Changed
 - get_db_tbl: Removed check for pre-MySQL v8.0 when setting dict_key variable, removed print warnings for no databases to process.
 - run_program: Added check for override option (-i) for non-slave database comparsion.
