@@ -76,7 +76,7 @@ class ArgParser():
 
         """
 
-        return  arg in self.args_array
+        return arg in self.args_array
 
 
 class Server():

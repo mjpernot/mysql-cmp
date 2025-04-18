@@ -212,7 +212,7 @@ def get_db_tbl(server, db_list, **kwargs):
                 mysql_libs.fetch_tbl_dict(server, db_list[0]), dict_key)
             tbl_list = gen_libs.del_not_in_list(tbls, db_tables)
             ign_tbls = \
-                ign_db_tbl[db_list[0]] if db_list[0] in ign_db_tbl else list()
+                ign_db_tbl[db_list[0]] if db_list[0] in ign_db_tbl else []
             tbl_list = gen_libs.del_not_and_list(tbl_list, ign_tbls)
             db_dict[db_list[0]] = tbl_list
 

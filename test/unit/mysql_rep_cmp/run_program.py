@@ -76,7 +76,7 @@ class ArgParser():
 
         """
 
-        return  arg in self.args_array
+        return arg in self.args_array
 
 
 class SlaveRep():                                       # pylint:disable=R0903
