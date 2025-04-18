@@ -200,6 +200,7 @@ class UnitTest(unittest.TestCase):
         self.mst_db_tbl3 = {"dbs": ["tbl1", "tbl2"]}
         self.mst_db_tbl4 = {"dbs": ["tbl1", "tbl2"], "dbs2": ["tbl3", "tbl4"]}
         self.data_config = {"mongo": "mongo"}
+        self.args_array = {"-c": True, "-d": True, "-b": True}
         self.status = (True, None)
         self.status2 = (False, "Error Message")
 
@@ -221,6 +222,8 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
+
+        self.args.args_array = self.args_array
 
         mock_dbstbls.return_value = self.mst_db_tbl2
         mock_template.return_value = self.json_template
@@ -249,6 +252,8 @@ class UnitTest(unittest.TestCase):
         Arguments:
 
         """
+
+        self.args.args_array = self.args_array
 
         mock_dbstbls.return_value = self.mst_db_tbl2
         mock_template.return_value = self.json_template
