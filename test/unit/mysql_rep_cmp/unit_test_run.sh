@@ -12,7 +12,5 @@ echo "Unit testing..."
 /usr/bin/python test/unit/mysql_rep_cmp/run_program.py
 /usr/bin/python test/unit/mysql_rep_cmp/setup_cmp.py
 /usr/bin/python test/unit/mysql_rep_cmp/create_data_config.py
-/usr/bin/python test/unit/mysql_rep_cmp/get_all_dbs_tbls.py
-/usr/bin/python test/unit/mysql_rep_cmp/get_db_tbl.py
 /usr/bin/python test/unit/mysql_rep_cmp/get_json_template.py
 /usr/bin/python test/unit/mysql_rep_cmp/data_out.py

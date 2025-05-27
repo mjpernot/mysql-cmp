@@ -12,39 +12,42 @@
 
     Usage:
         mysql_rep_cmp.py -c master_cfg -r slave_cfg -d path
-            {-C [db_name [db_name2 ...]] [-t table_name [table_name2 ...]] |
-                 [-e to_email [to_email2 ...] [-s subject_line] [-u]] |
-                 [-z] [-b] [-p [-n N]]]
+            [-C db_name [db_name2 ...] [-t table_name [table_name2 ...]]]
+            [-e to_email [to_email2 ...] [-s subject_line] [-u]]
+            [-z] [-b] [-p [-n N]] [-i]
             [-y flavor_id]
             [-v | -h]
 
     Arguments:
-        -c master_cfg => Master configuration file.  Required arg.
-        -r slave_cfg => Slave configuration file.  Required arg.
-        -d dir path => Directory path to config files.  Required arg.
+        -c master_cfg => Master configuration file.
+        -r slave_cfg => Slave configuration file.
+        -d dir path => Directory path to config files.
 
-        -C [database_names] => Check one or more databases
+        -C database_names => Compare one or more databases
             -t table name(s) => Table names to check.  If this option is used
                 only one database will be checked based on the -C option.
-            -o path/file => Directory path and file name for output.
-                -w a|w => Append or write to output to output file. Default is
-                    write.
-            -e to_email_address(es) => Enables emailing and sends output to one
-                    or more email addresses.  Email addresses are delimited by
-                    a space.
-                -s subject_line => Subject line of email.
-                -u => Override the default mail command and use mailx.
-            -z => Suppress standard out.
-            -b => Only return those tables that are not in sync.
-            -p => Expand the JSON format.
-                -n N => Indentation for expanded JSON format.
-            -i => Override the master/slave check and compare the databases.
+
+        -o path/file => Directory path and file name for output.
+            -w a|w => Append or write to output to output file. Default is
+                write.
+        -e to_email_address(es) => Enables emailing and sends output to one
+                or more email addresses.  Email addresses are delimited by
+                a space.
+            -s subject_line => Subject line of email.
+            -u => Override the default mail command and use mailx.
+        -z => Suppress standard out.
+        -b => Only return those tables that are not in sync.
+        -p => Expand the JSON format.
+            -n N => Indentation for expanded JSON format.
+        -i => Override the master/slave check and compare the databases.
 
         -y value => A flavor id for the program lock.  To create unique lock.
         -v => Display version of this program.
         -h => Help and usage message.
 
-        NOTE 1:  -v or -h overrides the other options.
+        NOTE 1: -v or -h overrides the other options.
+        NOTE 2: If the -C option is not selected, then all of the databases
+            will be compared.
 
     Notes:
         Database configuration file format (config/mysql_cfg.py.TEMPLATE):
@@ -79,7 +82,6 @@
 
         NOTE 1:  Include the cfg_file even if running remotely as the file will
             be used in future releases.
-
         NOTE 2:  In MySQL 5.6 - it now gives warning if password is passed on
             the command line.  To suppress this warning, will require the use
             of the --defaults-extra-file option (i.e. extra_def_file) in the
@@ -99,8 +101,11 @@
         NOTE 2:  Socket use is only required to be set in certain conditions
             when connecting using localhost.
 
-    Example:
-        mysql_rep_cmp.py -c master -r slave -d config -A
+    Example compare one database:
+        mysql_rep_cmp.py -c master -r slave -d config -C GMI
+
+    Example compare all databases:
+        mysql_rep_cmp.py -c master -r slave -d config
 
 """
 
@@ -148,88 +153,6 @@ def help_message():
     """
 
     print(__doc__)
-
-
-def get_all_dbs_tbls(server, db_list, dict_key, **kwargs):
-
-    """Function:  get_all_dbs_tbls
-
-    Description:  Return a dictionary of databases with table lists.
-
-    Arguments:
-        (input) server -> Server instance
-        (input) db_list -> List of database names
-        (input) dict_key -> Dictionary key that is tuned to the Mysql version
-        (input) kwargs:
-            ign_db_tbl -> Database dictionary with list of tables to ignore
-        (output) db_dict -> Dictionary of databases and lists of tables
-
-    """
-
-    db_dict = {}
-    db_list = list(db_list)
-    ign_db_tbl = dict(kwargs.get("ign_db_tbl", {}))
-
-    for dbs in db_list:
-        tbl_list = gen_libs.dict_2_list(
-            mysql_libs.fetch_tbl_dict(server, dbs), dict_key)
-        ign_tbls = ign_db_tbl[dbs] if dbs in ign_db_tbl else []
-        tbl_list = gen_libs.del_not_and_list(tbl_list, ign_tbls)
-        db_dict[dbs] = tbl_list
-
-    return db_dict
-
-
-def get_db_tbl(server, db_list, **kwargs):
-
-    """Function:  get_db_tbl
-
-    Description:  Determines which databases and tables will be checked.
-
-    Arguments:
-        (input) server -> Server instance
-        (input) db_list -> List of database names
-        (input) **kwargs:
-            ign_dbs -> List of databases to skip
-            tbls -> List of tables to compare
-            ign_db_tbl -> Database dictionary with list of tables to ignore
-        (output) db_dict -> Dictionary of databases and lists of tables
-
-    """
-
-    db_dict = {}
-    db_list = list(db_list)
-    dict_key = "TABLE_NAME"
-    ign_dbs = list(kwargs.get("ign_dbs", []))
-    tbls = kwargs.get("tbls", [])
-    ign_db_tbl = dict(kwargs.get("ign_db_tbl", {}))
-
-    if db_list:
-        db_list = gen_libs.del_not_and_list(db_list, ign_dbs)
-
-        if len(db_list) == 1 and tbls:
-            db_tables = gen_libs.dict_2_list(
-                mysql_libs.fetch_tbl_dict(server, db_list[0]), dict_key)
-            tbl_list = gen_libs.del_not_in_list(tbls, db_tables)
-            ign_tbls = \
-                ign_db_tbl[db_list[0]] if db_list[0] in ign_db_tbl else []
-            tbl_list = gen_libs.del_not_and_list(tbl_list, ign_tbls)
-            db_dict[db_list[0]] = tbl_list
-
-        elif db_list:
-            db_dict = get_all_dbs_tbls(
-                server, db_list, dict_key, ign_db_tbl=ign_db_tbl)
-
-    else:
-        db_list = gen_libs.dict_2_list(
-            mysql_libs.fetch_db_dict(server), "Database")
-        db_list = gen_libs.del_not_and_list(db_list, ign_dbs)
-
-        if db_list:
-            db_dict = get_all_dbs_tbls(
-                server, db_list, dict_key, ign_db_tbl=ign_db_tbl)
-
-    return db_dict
 
 
 def get_json_template(server):
@@ -389,7 +312,7 @@ def setup_cmp(args, master, slave):
     db_list = args.get_val("-C", def_val=[])
     tbls = args.get_val("-t", def_val=[])
     cfg = gen_libs.load_module(args.get_val("-c"), args.get_val("-d"))
-    mst_db_tbl = get_db_tbl(
+    mst_db_tbl = mysql_libs.get_db_tbl(
         master, db_list=db_list, tbls=tbls, ign_dbs=cfg.ign_dbs,
         ign_db_tbl=cfg.ign_db_tbl)
     results = get_json_template(master)
