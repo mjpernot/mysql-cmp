@@ -9,6 +9,7 @@ The format is based on "Keep a Changelog".  This project adheres to Semantic Ver
 
 ### Changed
 - setup_cmp: Replaced get_db_tbl with mysql_libs.get_db_tbl call.
+- Documentation changes.
 
 ### Removed
 - get_db_tbl function
