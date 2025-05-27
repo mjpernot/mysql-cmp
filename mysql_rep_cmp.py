@@ -389,7 +389,7 @@ def setup_cmp(args, master, slave):
     db_list = args.get_val("-C", def_val=[])
     tbls = args.get_val("-t", def_val=[])
     cfg = gen_libs.load_module(args.get_val("-c"), args.get_val("-d"))
-    mst_db_tbl = get_db_tbl(
+    mst_db_tbl = mysql_libs.get_db_tbl(
         master, db_list=db_list, tbls=tbls, ign_dbs=cfg.ign_dbs,
         ign_db_tbl=cfg.ign_db_tbl)
     results = get_json_template(master)

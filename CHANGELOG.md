@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on "Keep a Changelog".  This project adheres to Semantic Versioning.
 
 
+## [5.1.1] - 2025-05-27
+- Updated mysql-lib to v5.5.1
+
+### Changed
+- setup_cmp: Replaced get_db_tbl with mysql_libs.get_db_tbl call.
+
+### Removed
+- get_db_tbl function
+- get_all_dbs_tbls function
+
+
 ## [5.1.0] - 2025-04-15
 - Added option (-b) to only report tables not in sync.
 - Removed support for pre-MySQL 8 versions.
