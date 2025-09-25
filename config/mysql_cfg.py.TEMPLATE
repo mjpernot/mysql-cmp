@@ -3,9 +3,6 @@
 # Unclassified until filled in.
 user = "USER"
 japd = "PSWORD"
-# Replication user information
-rep_user = "REP_USER"
-rep_japd = "REP_PSWORD"
 # MySQL DB host information
 # DO NOT USE 127.0.0.1 or localhost for the master, use actual IP.
 host = "HOST_IP"
