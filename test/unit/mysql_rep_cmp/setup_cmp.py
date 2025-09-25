@@ -211,7 +211,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.create_data_config")
     @mock.patch("mysql_rep_cmp.mysql_libs.get_db_tbl")
     @mock.patch("mysql_rep_cmp.get_json_template")
-    def test_b_option2(                                  # pylint:disable=R0913
+    def test_b_option2(                         # pylint:disable=R0913,R0917
             self, mock_template, mock_dbstbls, mock_config, mock_out,
             mock_load):
 
@@ -241,7 +241,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.create_data_config")
     @mock.patch("mysql_rep_cmp.mysql_libs.get_db_tbl")
     @mock.patch("mysql_rep_cmp.get_json_template")
-    def test_b_option(                                  # pylint:disable=R0913
+    def test_b_option(                          # pylint:disable=R0913,R0917
             self, mock_template, mock_dbstbls, mock_config, mock_out,
             mock_load):
 
@@ -271,7 +271,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.create_data_config")
     @mock.patch("mysql_rep_cmp.mysql_libs.get_db_tbl")
     @mock.patch("mysql_rep_cmp.get_json_template")
-    def test_status_failed(                             # pylint:disable=R0913
+    def test_status_failed(                     # pylint:disable=R0913,R0917
             self, mock_template, mock_dbstbls, mock_config, mock_out,
             mock_load):
 
@@ -300,7 +300,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.create_data_config")
     @mock.patch("mysql_rep_cmp.mysql_libs.get_db_tbl")
     @mock.patch("mysql_rep_cmp.get_json_template")
-    def test_two_dbs(                                   # pylint:disable=R0913
+    def test_two_dbs(                           # pylint:disable=R0913,R0917
             self, mock_template, mock_dbstbls, mock_config, mock_out,
             mock_load):
 
@@ -328,7 +328,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.create_data_config")
     @mock.patch("mysql_rep_cmp.mysql_libs.get_db_tbl")
     @mock.patch("mysql_rep_cmp.get_json_template")
-    def test_one_db2(                                   # pylint:disable=R0913
+    def test_one_db2(                           # pylint:disable=R0913,R0917
             self, mock_template, mock_dbstbls, mock_config, mock_out,
             mock_load):
 
@@ -356,7 +356,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.create_data_config")
     @mock.patch("mysql_rep_cmp.mysql_libs.get_db_tbl")
     @mock.patch("mysql_rep_cmp.get_json_template")
-    def test_one_db(                                    # pylint:disable=R0913
+    def test_one_db(                            # pylint:disable=R0913,R0917
             self, mock_template, mock_dbstbls, mock_config, mock_out,
             mock_load):
 
@@ -382,7 +382,7 @@ class UnitTest(unittest.TestCase):
     @mock.patch("mysql_rep_cmp.create_data_config")
     @mock.patch("mysql_rep_cmp.mysql_libs.get_db_tbl")
     @mock.patch("mysql_rep_cmp.get_json_template")
-    def test_no_dbs(                                    # pylint:disable=R0913
+    def test_no_dbs(                            # pylint:disable=R0913,R0917
             self, mock_template, mock_dbstbls, mock_config, mock_out,
             mock_load):
 
